@@ -1,6 +1,6 @@
 let modulePromise;
 
-const AylluX = {
+const Ayllux = {
     async init(...args) {
         const module = await loadModule();
         return module.init(...args);
@@ -12,20 +12,17 @@ async function loadModule() {
         modulePromise = import("./ayllux.module.js")
             .then(module => {
                 // Incorpora a API real no mesmo objeto
-                Object.assign(AylluX, module);
+                Object.assign(Ayllux, module);
                 return module;
             });
     }
     return modulePromise;
 }
 
-
-// Disponibiliza globalmente em qualquer ambiente que tenha globalThis
 if (typeof globalThis !== "undefined") {
-    globalThis.AylluX = AylluX;
-}
-
-// CommonJS
-if (typeof module !== "undefined" && module.exports) {
-    module.exports = AylluX;
+    globalThis.Ayllux = Ayllux;
+} else if (typeof window !== "undefined") {
+    window.AylluX = Ayllux;
+} else if (typeof module !== "undefined" && module.exports) {
+    module.exports = Ayllux;
 }

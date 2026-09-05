@@ -1,3 +1,3 @@
-export function init(...args){
-  
+export function init(elements, options = {}) {
+
 }

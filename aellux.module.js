@@ -1,21 +1,6 @@
 const defaults = {
   shortAttribute: false,
-  styles: `
-    :where(body) {
-      min-height: 100vh;
-      min-height: 100dvh;
-      font-family: system-ui; 
-      color-scheme: light dark;
-      background-color: Canvas;
-      color: CanvasText;
-    }
-
-    :where([ux-fill]) {
-      width: 100%;
-      height: 100%;
-      min-width:0;
-      min-height:0;
-    }`,
+  themePreferenceAttribute: "ux-theme",
   importMap: {
     "@ux/bscroll": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
     "@ux/interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
@@ -25,7 +10,7 @@ const defaults = {
     "@ux/floating": "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.8.0/+esm"
   },
   getSelector: function (attr) {
-    return `[data-ayll${attr}]` + (this.shortAttribute ? `,[${attr}]` : ``);
+    return `[data-aell${attr}]` + (this.shortAttribute ? `,[${attr}]` : ``);
   }
 };
 const options = {};
@@ -61,23 +46,24 @@ const uxLoad = [
   "ux-ajax-content"
 ];
 
-const Ayllux = {
+const Aellux = {
   init: function (...args) {
     Object.assign(options, defaults, args[0]);
 
     addImportMap();
     addViewportMeta();
+    addBaseWeakStyles();
     addPreconnect("https://cdn.jsdelivr.net");
 
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", loadModules, { once: true });
     } else loadModules();
 
-    document.addEventListener("AylluxUpdateDOM", loadModules);
+    document.addEventListener("AelluxUpdateDOM", loadModules);
   },
 
   kill: function () {
-    document.removeEventListener("AylluxUpdateDOM", loadModules);
+    document.removeEventListener("AelluxUpdateDOM", loadModules);
   }
 };
 
@@ -86,15 +72,13 @@ async function loadModules() {
   await loadModuleUX("ux-adaptive");
   uxLoad.forEach(attr => allModules.push(loadModuleUX(attr)));
   await Promise.all(allModules);
-  addBaseStyles();
 }
 
 async function loadModuleUX(attr) {
   const elements = document.querySelectorAll(options.getSelector(attr));
   if (elements.length == 0) return;
 
-  const module = await import(`./ayllux.${attr}.js`);
-  if (module.styles) options.styles += module.styles;
+  const module = await import(`./aellux.${attr}.js`);
   module.init(elements, options);
 }
 
@@ -110,7 +94,7 @@ function addPreconnect(url) {
 }
 
 function addImportMap() {
-  if (document.querySelector("[data-ayllux-importmap]"))
+  if (document.querySelector("[data-aellux-importmap]"))
     return;
   const script = document.createElement("script");
   script.type = "importmap";
@@ -127,19 +111,16 @@ function addViewportMeta() {
   document.head.appendChild(meta);
 }
 
-function addBaseStyles() {
-  const exists = document.querySelector("[data-ayllux-base-style]");
-  if (!exists) {
-    const style = document.createElement("style");
-    style.dataset.aylluxBaseStyle = "";
-    style.textContent = options.styles;
-    document.head.appendChild(style);
+function addBaseWeakStyles() {
+  const url = "./aellux.weak-style.css";
+  if (document.querySelector(`link[rel="stylesheet"][href="${url}"]`))
     return;
-  }
-  //Update
-  if (exists.textContent !== options.styles) {
-    exists.textContent = options.styles;
-  }
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = url;
+  link.crossOrigin = "anonymous";
+  document.head.appendChild(link);
 }
 
-export default Ayllux;
+export default Aellux;

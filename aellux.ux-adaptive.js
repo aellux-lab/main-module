@@ -1,18 +1,9 @@
-export const styles = `
-  :where([ux-adaptive]) {
-    position:relative;
-    box-sizing: border-box;
-    display:inline-flex;
-    overflow:clip;
-  }
-`;
-
 export function init(elements, options = {}) {
   selector.tabsBar = options.getSelector("ux-tabs-bar");
   selector.contentArea = options.getSelector("ux-content-area");
 
   elements.forEach(element => {
-    const adaptiveType = element.dataset.aylluxAdaptive ?? element.getAttribute("ux-adaptive");
+    const adaptiveType = element.dataset.aelluxAdaptive ?? element.getAttribute("ux-adaptive");
     setup[adaptiveType](element, options);
   });
 }

@@ -1,5 +1,17 @@
 const defaults = {
   shortAttribute: false,
+  styles: `
+    :where(body) {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    :where([ux-fill]) {
+      width: 100%;
+      height: 100%;
+      min-width:0;
+      min-height:0;
+    }`,
   importMap: {
     "@ux/bscroll": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
     "@ux/interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
@@ -7,7 +19,8 @@ const defaults = {
     "@ux/swiper": "https://cdn.jsdelivr.net/npm/swiper@14.2.0/+esm",
     "@ux/sortable": "https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/+esm",
     "@ux/floating": "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.8.0/+esm"
-  }
+  },
+  getSelector: (attr) => `[data-ayll${attr}]` + (this.shortAttribute ? `,[${attr}]` : ``)
 };
 const options = {};
 
@@ -46,6 +59,7 @@ export function init(...args) {
   Object.assign(options, defaults, args[0]);
 
   addImportMap();
+  addViewportMeta();
   addPreconnect("https://cdn.jsdelivr.net");
 
   if (document.readyState === "loading") {
@@ -60,24 +74,20 @@ export function kill() {
 }
 
 async function loadModules() {
-  await loadModuleUX("ux-layout");
-  uxLoad.forEach(attr => loadModuleUX(attr));
+  const allModules = [];
+  await loadModuleUX("ux-adaptive");
+  uxLoad.forEach(attr => allModules.push(loadModuleUX(attr)));
+  await Promise.all(allModules);
+  addBaseStyles();
 }
 
-function loadModuleUX(attr) {
-  const selector = `[data-ayll${attr}]`
-    + (options.shortAttribute ? `,[${attr}]` : ``);
-
-  const elements = document.querySelectorAll(selector);
+async function loadModuleUX(attr) {
+  const elements = document.querySelectorAll(options.getSelector(attr));
   if (elements.length == 0) return;
 
-  return new Promise((resolve, reject) => {
-    import(`./ayllux.${attr}.js`)
-      .then(module => {
-        module.init(elements, options)
-        resolve();
-      });
-  });
+  const module = await import(`./ayllux.${attr}.js`);
+  if (module.styles) options.styles += module.styles;
+  module.init(elements, options);
 }
 
 function addPreconnect(url) {
@@ -98,4 +108,28 @@ function addImportMap() {
   script.type = "importmap";
   script.textContent = JSON.stringify({ imports: options.importMap });
   document.head.append(script);
+}
+
+function addViewportMeta() {
+  if (document.querySelector('meta[name="viewport"]'))
+    return;
+  const meta = document.createElement("meta");
+  meta.name = "viewport";
+  meta.content = "width=device-width, initial-scale=1";
+  document.head.appendChild(meta);
+}
+
+function addBaseStyles() {
+  const exists = document.querySelector("[data-ayllux-base-style]");
+  if (!exists) {
+    const style = document.createElement("style");
+    style.dataset.aylluxBaseStyle = "";
+    style.textContent = options.styles;
+    document.head.appendChild(style);
+    return;
+  }
+  //Update
+  if (exists.textContent !== options.styles) {
+    exists.textContent = options.styles;
+  }
 }

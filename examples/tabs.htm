@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Ayllux Adaptive Tabs</title>
+  <script type="module">
+    import Ayllux from "./ayllux.js";
+    Ayllux.init({
+      shortAttribute: true
+    });
+  </script>
+</head>
+
+<body>
+
+  <main ux-adaptive="tabs" ux-fill>
+
+    <nav ux-tabs-bar="bottom horizontal" ux-compact-bar="bottom horizontal" ux-mid-bar="first vertical"
+      ux-wide-bar="first vetical">
+      <a href="#home" ux-tab="home">
+        <span>#</span>
+        <span>Home</span>
+      </a>
+      <a href="#profile" ux-tab="profile">Perfil</a>
+      <a href="#settings" ux-tab="settings">Configurações</a>
+    </nav>
+
+    <section ux-content-area ux-carousel>
+      <section ux-tab-content="home" ux-scrollbox>
+        <h1>Home</h1>
+        <p>Conteúdo da página inicial.</p>
+      </section>
+
+      <section ux-tab-content="profile" ux-scrollbox>
+        <h1>Perfil</h1>
+        <p>Conteúdo do perfil.</p>
+      </section>
+
+      <section ux-tab-content="settings" ux-scrollbox>
+        <h1>Configurações</h1>
+        <p>Conteúdo das configurações.</p>
+      </section>
+    </section>
+
+  </main>
+
+</body>
+
+</html>

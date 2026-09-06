@@ -45,10 +45,13 @@ const Aellux = {
     document.removeEventListener("AelluxUpdateDOM", loadModules);
   },
 
-  on: function (event, handler) {
+  on: function (event, ...args) {
+    document.addEventListener(`Aellux${event}`, ...args);
+  },
 
+  off: function (event, handler) {
+    document.removeEventListener(`Aellux${event}`, ...args);
   }
-
 
 };
 

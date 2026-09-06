@@ -1,7 +1,5 @@
 let modulePromise;
 
-addBaseWeakStyles(); // Pre-render best theme UX
-
 const Aellux = {
     async init(...args) {
         const loadedModule = await loadModule();
@@ -22,17 +20,37 @@ async function loadModule() {
     return modulePromise;
 }
 
-function addBaseWeakStyles() {
-    const url = "./aellux.weak-style.css";
-    if (document.querySelector(`link[rel="stylesheet"][href="${url}"]`))
-        return;
-
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = url;
-    link.crossOrigin = "anonymous";
-    document.head.appendChild(link);
+function addWeakStyles() {
+    const style = document.createElement("style");
+    style.dataset.aelluxWeakStyle = "";
+    style.textContent = `
+:where(body) {
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: system-ui;
+  color-scheme: light dark;
+  background-color: Canvas;
+  color: CanvasText;
 }
+
+:where([ux-fill]) {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+:where([ux-adaptive]) {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  overflow: clip;
+}
+    `;
+    document.head.appendChild(style);
+}
+
+addWeakStyles();
 
 if (typeof module !== "undefined" && module.exports) {
     module.exports = Aellux;

@@ -52,7 +52,6 @@ const Aellux = {
 
     addImportMap();
     addViewportMeta();
-    addBaseWeakStyles();
     addPreconnect("https://cdn.jsdelivr.net");
 
     if (document.readyState === "loading") {
@@ -109,18 +108,6 @@ function addViewportMeta() {
   meta.name = "viewport";
   meta.content = "width=device-width, initial-scale=1";
   document.head.appendChild(meta);
-}
-
-function addBaseWeakStyles() {
-  const url = "./aellux.weak-style.css";
-  if (document.querySelector(`link[rel="stylesheet"][href="${url}"]`))
-    return;
-
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = url;
-  link.crossOrigin = "anonymous";
-  document.head.appendChild(link);
 }
 
 export default Aellux;

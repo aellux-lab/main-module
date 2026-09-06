@@ -65,6 +65,7 @@ const Ayllux = {
   init: function (...args) {
     Object.assign(options, defaults, args[0]);
 
+    addBaseStyles();
     addImportMap();
     addViewportMeta();
     addPreconnect("https://cdn.jsdelivr.net");

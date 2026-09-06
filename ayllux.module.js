@@ -77,6 +77,7 @@ const Ayllux = {
   }
 };
 
+if (typeof module !== "undefined" && module.exports) { module.exports = Ayllux; }
 export default Ayllux;
 
 async function loadModules() {

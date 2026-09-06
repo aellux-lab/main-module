@@ -1,3 +1,5 @@
+const selector = {};
+
 export function init(elements, options = {}) {
   selector.tabsBar = options.getSelector("ux-tabs-bar");
   selector.contentArea = options.getSelector("ux-content-area");

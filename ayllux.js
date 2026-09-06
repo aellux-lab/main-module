@@ -2,8 +2,10 @@ let modulePromise;
 
 const Ayllux = {
     async init(...args) {
-        const module = await loadModule();
-        return module.init(...args);
+        const loadedModule = await loadModule();
+        // Incorpora a API real no mesmo objeto
+        Object.assign(Ayllux, loadedModule); //!IMPORTANTE
+        return loadedModule.init(...args);
     }
 };
 
@@ -11,9 +13,8 @@ async function loadModule() {
     if (!modulePromise) {
         modulePromise = import("./ayllux.module.js")
             .then(module => {
-                // Incorpora a API real no mesmo objeto
-                Object.assign(Ayllux, module);
-                return module;
+                const realModule = module.default || module;
+                return realModule;
             });
     }
     return modulePromise;

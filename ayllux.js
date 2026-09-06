@@ -25,4 +25,4 @@ if (typeof module !== "undefined" && module.exports) {
     globalThis.Ayllux = Ayllux;
 } else if (typeof window !== "undefined") {
     window.AylluX = Ayllux;
-} 
+}

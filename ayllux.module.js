@@ -144,3 +144,9 @@ function addBaseStyles() {
     exists.textContent = options.styles;
   }
 }
+
+if (typeof globalThis !== "undefined") {
+  globalThis.Ayllux = Ayllux;
+} else if (typeof window !== "undefined") {
+  window.AylluX = Ayllux;
+}

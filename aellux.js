@@ -48,6 +48,7 @@ function addWeakStyles() {
 }
     `;
     document.head.appendChild(style);
+    document.style.display = "none";
 }
 
 addWeakStyles();

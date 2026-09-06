@@ -11,22 +11,22 @@ export function init(elements, options = {}) {
 const selectors = {};
 
 const setup = {
-  "tabs": (element) => {
+  "tabs": function (element) {
     const tabsBar = element.querySelector(selector.tabsBar);
     const contentArea = element.querySelector(selector.contentArea);
 
 
   }, // horizontal/vertical if scroll lock sidebars
 
-  "flow": (element) => {
+  "flow": function (element) {
 
   },
 
-  "stack": (element) => {
+  "stack": function (element) {
 
   },
 
-  "list-content": (element) => {
+  "list-content": function (element) {
 
   }, //Links, list or grid 
 };

@@ -16,34 +16,14 @@ const defaults = {
 const options = {};
 
 const uxLoad = [
-  "ux-scrollbox",
-  "ux-drawer",
-  "ux-sheet",
-  "ux-swipe",
-  "ux-carousel",
-  "ux-draggable",
-  "ux-droppable",
-  "ux-sortable",
-  "ux-resizable",
-  "ux-pinch",
-  "ux-zoom",
-  "ux-popover",
-  "ux-tooltip",
-  "ux-dropdown",
-  "ux-contextmenu",
-  "ux-autocomplete",
-  "ux-picker",
-  "ux-pullrefresh",
-  "ux-infinitescroll",
-  "ux-nestedscroll",
-  "ux-floatingbar",
-  "ux-haptic",
-  "ux-toast",
-  "ux-alert",
-  "ux-snackbar",
-  "ux-banner",
-  "ux-animate",
-  "ux-ajax-content"
+  "ux-preferences", // Preferencias de usabilidade
+  "ux-events", // Ambiente de dispatch de eventos de input usados pelos outros módulos
+  "ux-adaptive", // Navegação adaptativa
+  "ux-nav-state", // Continuidade de estado scroll, avançar/voltar back button popstate hash
+  "ux-dialog", // Usabilidade de dialogo/modal
+  "ux-ajax", // Conteúdo assíncrono
+  "ux-feedback", // Ambiente de eventos de feedback
+  //"ux-scrollbox"
 ];
 
 const Aellux = {
@@ -63,7 +43,13 @@ const Aellux = {
 
   kill: function () {
     document.removeEventListener("AelluxUpdateDOM", loadModules);
+  },
+
+  on: function (event, handler) {
+
   }
+
+
 };
 
 async function loadModules() {
@@ -71,11 +57,12 @@ async function loadModules() {
   await loadModuleUX("ux-adaptive");
   uxLoad.forEach(attr => allModules.push(loadModuleUX(attr)));
   await Promise.all(allModules);
+  document.style.display = null; //Show body
 }
 
 async function loadModuleUX(attr) {
   const elements = document.querySelectorAll(options.getSelector(attr));
-  if (elements.length == 0) return;
+  if (elements.length === 0) return;
 
   const module = await import(`./aellux.${attr}.js`);
   module.init(elements, options);

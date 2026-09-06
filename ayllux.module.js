@@ -20,7 +20,9 @@ const defaults = {
     "@ux/sortable": "https://cdn.jsdelivr.net/npm/sortablejs@1.15.7/+esm",
     "@ux/floating": "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.8.0/+esm"
   },
-  getSelector: (attr) => `[data-ayll${attr}]` + (this.shortAttribute ? `,[${attr}]` : ``)
+  getSelector: function (attr) {
+    return `[data-ayll${attr}]` + (this.shortAttribute ? `,[${attr}]` : ``);
+  }
 };
 const options = {};
 
@@ -55,23 +57,27 @@ const uxLoad = [
   "ux-ajax-content"
 ];
 
-export function init(...args) {
-  Object.assign(options, defaults, args[0]);
+const Ayllux = {
+  init: function (...args) {
+    Object.assign(options, defaults, args[0]);
 
-  addImportMap();
-  addViewportMeta();
-  addPreconnect("https://cdn.jsdelivr.net");
+    addImportMap();
+    addViewportMeta();
+    addPreconnect("https://cdn.jsdelivr.net");
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadModules, { once: true });
-  } else loadModules();
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", loadModules, { once: true });
+    } else loadModules();
 
-  document.addEventListener("AylluxUpdateDOM", loadModules);
-}
+    document.addEventListener("AylluxUpdateDOM", loadModules);
+  },
 
-export function kill() {
-  document.removeEventListener("AylluxUpdateDOM", loadModules);
-}
+  kill: function () {
+    document.removeEventListener("AylluxUpdateDOM", loadModules);
+  }
+};
+
+export default Ayllux;
 
 async function loadModules() {
   const allModules = [];

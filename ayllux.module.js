@@ -4,6 +4,10 @@ const defaults = {
     :where(body) {
       min-height: 100vh;
       min-height: 100dvh;
+      font-family: system-ui; 
+      color-scheme: light dark;
+      background-color: Canvas;
+      color: CanvasText;
     }
 
     :where([ux-fill]) {

@@ -65,7 +65,6 @@ const Ayllux = {
   init: function (...args) {
     Object.assign(options, defaults, args[0]);
 
-    addBaseStyles();
     addImportMap();
     addViewportMeta();
     addPreconnect("https://cdn.jsdelivr.net");
@@ -81,8 +80,6 @@ const Ayllux = {
     document.removeEventListener("AylluxUpdateDOM", loadModules);
   }
 };
-
-export default Ayllux;
 
 async function loadModules() {
   const allModules = [];
@@ -150,3 +147,7 @@ if (typeof globalThis !== "undefined") {
 } else if (typeof window !== "undefined") {
   window.AylluX = Ayllux;
 }
+
+addBaseStyles();
+
+export default Ayllux;

@@ -19,10 +19,10 @@ async function loadModule() {
     return modulePromise;
 }
 
-if (typeof globalThis !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
+    module.exports = Ayllux;
+} else if (typeof globalThis !== "undefined") {
     globalThis.Ayllux = Ayllux;
 } else if (typeof window !== "undefined") {
     window.AylluX = Ayllux;
-} else if (typeof module !== "undefined" && module.exports) {
-    module.exports = Ayllux;
-}
+} 

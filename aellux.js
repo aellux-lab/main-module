@@ -24,7 +24,7 @@ function addWeakStyles() {
     const style = document.createElement("style");
     style.dataset.aelluxWeakStyle = "";
     style.textContent = `
-:where(body) {
+:where(body,html) {
   min-height: 100vh;
   min-height: 100dvh;
   font-family: system-ui;
@@ -48,7 +48,7 @@ function addWeakStyles() {
 }
     `;
     document.head.appendChild(style);
-    document.style.display = "none";
+    document.body.style.display = "none";
 }
 
 addWeakStyles();

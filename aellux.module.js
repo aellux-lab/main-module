@@ -60,7 +60,9 @@ async function loadModules() {
   await loadModuleUX("ux-adaptive");
   uxLoad.forEach(attr => allModules.push(loadModuleUX(attr)));
   await Promise.all(allModules);
-  document.style.display = null; //Show body
+  if (document.body.style.display === "none") {
+    document.body.style.display = null; //Show body
+  }
 }
 
 async function loadModuleUX(attr) {

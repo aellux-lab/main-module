@@ -119,7 +119,7 @@ function addViewportMeta() {
 }
 
 if (typeof globalThis !== "undefined") {
-  Object.assign(globalThis.Aellux, Aellux);
+  globalThis.Aellux = Aellux;
 } else if (typeof window !== "undefined") {
-  Object.assign(window.Aellux, Aellux);
+  window.Aellux = Aellux;
 }

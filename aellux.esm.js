@@ -84,9 +84,8 @@ function toCamelCase(name) {
 
 async function loadUXM(mName) {
   const module = await import(`./aellux.uxm.${mName}.js`);
-  const realModule = module.defaults || module;
   const key = toCamelCase(mName);
-  Aellux[key] = realModule;
+  Aellux[key] = module;
 }
 
 function addPreconnect(url) {

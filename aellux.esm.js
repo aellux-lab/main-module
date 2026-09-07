@@ -20,8 +20,8 @@ const uxmLoad = [
 
 const Aellux = {
   options: {},
-  init: function (...args) {
-    Object.assign(Aellux.options, defaultOptions, args[0]);
+  init: function () {
+    Object.assign(Aellux.options, defaultOptions);
 
     addImportMap();
     addViewportMeta();
@@ -71,7 +71,7 @@ async function setupAllModules() {
   await Promise.all(allModules);
 
   //Initialize In Order
-  uxmLoad.forEach(mName => Aellux[mName].init());
+  uxmLoad.forEach(mName => Aellux[toCamelCase(mName)].init());
 
   if (document.body.style.display === "none") {
     document.body.style.display = null; //Show body
@@ -84,8 +84,9 @@ function toCamelCase(name) {
 
 async function loadUXM(mName) {
   const module = await import(`./aellux.uxm.${mName}.js`);
+  const realModule = module.defaults || module;
   const key = toCamelCase(mName);
-  Aellux[key] = module;
+  Aellux[key] = realModule;
 }
 
 function addPreconnect(url) {
@@ -118,7 +119,9 @@ function addViewportMeta() {
 }
 
 if (typeof globalThis !== "undefined") {
+  Aellux.options = globalThis.Aellux.options;
   globalThis.Aellux = Aellux;
 } else if (typeof window !== "undefined") {
+  Aellux.options = window.Aellux.options;
   window.Aellux = Aellux;
 }

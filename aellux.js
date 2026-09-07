@@ -19,6 +19,20 @@ var Aellux = {
     }
 };
 
+var aelluxBootstrapSrc =
+    typeof document !== "undefined" &&
+        document.currentScript &&
+        document.currentScript.src
+        ? document.currentScript.src
+        : "";
+
+var aelluxBasePath = aelluxBootstrapSrc
+    ? aelluxBootstrapSrc.substring(
+        0,
+        aelluxBootstrapSrc.lastIndexOf("/") + 1
+    )
+    : "";
+
 function dispatchReady() {
     var event = document.createEvent("Event");
     event.initEvent("AelluxReady", false, false);
@@ -34,7 +48,7 @@ function loadAellux() {
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = "./aellux.esm.js";
+    script.src = aelluxBasePath + "aellux.esm.js";
     script.setAttribute("data-aellux-module", "true");
     script.onload = function () {
         Aellux.legacy = false;
@@ -61,7 +75,7 @@ function loadLegacyFallback() {
     Aellux.supported = false;
 
     var script = document.createElement("script");
-    script.src = "./aellux.legacy.js";
+    script.src = aelluxBasePath + "aellux.legacy.js";
     script.setAttribute("data-aellux-legacy", "true");
     script.onload = function () {
         dispatchReady();

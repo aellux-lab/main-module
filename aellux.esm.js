@@ -21,7 +21,7 @@ const uxmLoad = [
 const Aellux = {
   options: {},
   init: function (...args) {
-    Object.assign(this.options, defaultOptions, args[0]);
+    Object.assign(Aellux.options, defaultOptions, args[0]);
 
     addImportMap();
     addViewportMeta();
@@ -48,16 +48,16 @@ const Aellux = {
 
   wait: function (moduleName) {
     return new Promise((resolve, reject) => {
-      resolve(this[moduleName]);
+      resolve(Aellux[moduleName]);
     });
   },
 
   getSelector: function (attr) {
-    return `[${this.getAttributeName(attr)}]`;
+    return `[${Aellux.getAttributeName(attr)}]`;
   },
 
   getAttributeName: function (attr) {
-    return this.options.shortAttribute ? `${(this.shortAttribute + attr)}` : `data-aellux-${attr}`;
+    return Aellux.options.shortAttribute ? `${(Aellux.shortAttribute + attr)}` : `data-aellux-${attr}`;
   },
 
 };
@@ -105,7 +105,7 @@ function addImportMap() {
     return;
   const script = document.createElement("script");
   script.type = "importmap";
-  script.textContent = JSON.stringify({ imports: options.importMap });
+  script.textContent = JSON.stringify({ imports: Aellux.options.importMap });
   document.head.append(script);
 }
 

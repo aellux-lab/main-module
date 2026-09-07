@@ -1,13 +1,18 @@
 const selector = {};
 
-export function init(elements, options = {}) {
-  selector.tabsBar = options.getSelector("ux-tabs-bar");
-  selector.contentArea = options.getSelector("ux-content-area");
+export function init() {
+  // selector.tabsBar = options.getSelector("ux-tabs-bar");
+  // selector.contentArea = options.getSelector("ux-content-area");
 
-  elements.forEach(element => {
-    const adaptiveType = element.dataset.aelluxAdaptive ?? element.getAttribute("ux-adaptive");
-    setup[adaptiveType](element, options);
-  });
+  // elements.forEach(element => {
+  //   const adaptiveType = element.dataset.aelluxAdaptive ?? element.getAttribute("ux-adaptive");
+  //   setup[adaptiveType](element, options);
+  // });
+  try {
+    const a = Aellux.options;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 const selectors = {};

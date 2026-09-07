@@ -1,56 +1,109 @@
-let modulePromise;
+var Aellux = {
+    legacy: false,
+    supported: false,
+    options: {},
+    notAvailable: [],
+    init: function (options) {
+        if (typeof document === "undefined") {
+            console.warn("[Aellux] Browser not supported.");
+            return;
+        }
 
-const Aellux = {
-    async init(...args) {
-        const loadedModule = await loadModule();
-        // Incorpora a API real no mesmo objeto
-        Object.assign(Aellux, loadedModule); //!IMPORTANTE
-        return loadedModule.init(...args);
+        if (document.querySelector("[data-aellux-legacy]") ||
+            document.querySelector("[data-aellux-module]")) return;
+
+        Aellux.options = options || {};
+        Aellux.notAvailable = [];
+        addWeakStyles();
+        loadAellux();
     }
 };
 
-async function loadModule() {
-    if (!modulePromise) {
-        modulePromise = import("./aellux.module.js")
-            .then(module => {
-                const realModule = module.default || module;
-                return realModule;
-            });
-    }
-    return modulePromise;
+function dispatchReady() {
+    var event = document.createEvent("Event");
+    event.initEvent("AelluxReady", false, false);
+    document.dispatchEvent(event);
+}
+
+function loadAellux() {
+    if (typeof Promise === "undefined") { Aellux.notAvailable.push("Promise"); }
+    if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
+
+    if (Aellux.notAvailable.length !== 0)
+        return loadLegacyFallback();
+
+    var script = document.createElement("script");
+    script.type = "module";
+    script.src = "./aellux.esm.js";
+    script.setAttribute("data-aellux-module", "true");
+    script.onload = function () {
+        Aellux.legacy = false;
+        Aellux.supported = true;
+        dispatchReady();
+    };
+    script.onerror = function () {
+        script.parentNode.removeChild(script);
+        console.warn("[Aellux] Modern runtime not supported. Fallback to legacy.");
+        loadLegacyFallback();
+    };
+    document.head.appendChild(script);
+}
+
+function loadLegacyFallback() {
+    if (typeof document === "undefined" ||
+        document.querySelector("[data-aellux-legacy]"))
+        return;
+
+    if (Aellux.notAvailable.length !== 0)
+        console.warn("[Aellux] " + Aellux.notAvailable.join(", ") + " not available in browser.");
+
+    Aellux.legacy = true;
+    Aellux.supported = false;
+
+    var script = document.createElement("script");
+    script.src = "./aellux.legacy.js";
+    script.setAttribute("data-aellux-legacy", "true");
+    script.onload = function () {
+        dispatchReady();
+    };
+    script.onerror = function () {
+        console.error("[Aellux] Legacy fallback could not be loaded.");
+    };
+    document.head.appendChild(script);
 }
 
 function addWeakStyles() {
-    const style = document.createElement("style");
-    style.dataset.aelluxWeakStyle = "";
-    style.textContent = `
-:where(body,html) {
-  min-height: 100vh;
-  min-height: 100dvh;
-  font-family: system-ui;
-  color-scheme: light dark;
-  background-color: Canvas;
-  color: CanvasText;
-}
+    if (typeof document === "undefined" ||
+        document.querySelector("[data-aellux-style]"))
+        return;
 
-:where([ux-fill]) {
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-}
+    var style = document.createElement("style");
+    style.setAttribute("data-aellux-style", "true");
+    style.textContent =
+        ":where(body,html) {" +
+        "min-height:100vh;" +
+        "min-height:100dvh;" +
+        "font-family:system-ui;" +
+        "color-scheme:light dark;" +
+        "background-color:Canvas;" +
+        "color:CanvasText;" +
+        "}" +
 
-:where([ux-adaptive]) {
-  position: relative;
-  box-sizing: border-box;
-  display: inline-flex;
-  overflow: clip;
-}
-    `;
+        ":where(.ux-fill) {" +
+        "width:100%;" +
+        "height:100%;" +
+        "min-width:0;" +
+        "min-height:0;" +
+        "}" +
+
+        ":where([data-aellux-adaptive]) {" +
+        "position:relative;" +
+        "box-sizing:border-box;" +
+        "display:inline-flex;" +
+        "overflow:clip;" +
+        "}";
     document.head.appendChild(style);
 }
-
-addWeakStyles();
 
 if (typeof module !== "undefined" && module.exports) {
     module.exports = Aellux;

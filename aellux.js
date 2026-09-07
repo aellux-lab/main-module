@@ -27,10 +27,8 @@ var aelluxBootstrapSrc =
         : "";
 
 var aelluxBasePath = aelluxBootstrapSrc
-    ? aelluxBootstrapSrc.substring(
-        0,
-        aelluxBootstrapSrc.lastIndexOf("/") + 1
-    )
+    ? aelluxBootstrapSrc.substring(0,
+        aelluxBootstrapSrc.lastIndexOf("/") + 1)
     : "";
 
 function dispatchReady() {
@@ -53,6 +51,7 @@ function loadAellux() {
     script.onload = function () {
         Aellux.legacy = false;
         Aellux.supported = true;
+        Aellux.init();
         dispatchReady();
     };
     script.onerror = function () {

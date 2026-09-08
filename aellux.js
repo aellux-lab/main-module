@@ -163,8 +163,8 @@ function addWeakStyles() {
         "overflow: clip;" +
         "width: 100%;height: 100%;min-width: 0;min-height: 0;" +
         "}" +
-        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > *) {visibility: hidden;}" +
-        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > progress[data-aellux-adaptive-progress]){visibility:visible;}" +
+        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > *) {display: none;}" +
+        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > progress[data-aellux-adaptive-progress]){display:initial;}" +
         ":where([data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress]) {display: none;}";
     document.head.appendChild(style);
 

@@ -13,36 +13,32 @@
 
 <body style="display: none;">
 
-  <main ux-adaptive="tabs" ux-fill aria-busy="true">
-    <progress>
+  <main data-aellux-adaptive="tabs">
+    <progress>Carregando...</progress>
 
-    </progress>
-
-    <nav ux-tabs-bar="bottom horizontal" ux-compact-bar="bottom horizontal" ux-mid-bar="first vertical"
-      ux-wide-bar="first vetical">
-      <a href="#home" ux-tab="home">
+    <nav>
+      <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
+      <a href="#profile">Perfil</a>
+      <div data-aellux-tab="section#settings">Configurações</div>
+      <button data-aellux-tab="section#home">
         <span>#</span>
         <span>Home</span>
-      </a>
-      <a href="#profile" ux-tab="profile">Perfil</a>
-      <a href="#settings" ux-tab="settings">Configurações</a>
+      </button>
     </nav>
 
-    <section ux-content-area ux-carousel>
-      <section ux-tab-content="home" ux-scrollbox>
-        <h1>Home</h1>
-        <p>Conteúdo da página inicial.</p>
-      </section>
+    <section id="home">
+      <h1>Home</h1>
+      <p>Conteúdo da página inicial.</p>
+    </section>
 
-      <section ux-tab-content="profile" ux-scrollbox>
-        <h1>Perfil</h1>
-        <p>Conteúdo do perfil.</p>
-      </section>
+    <section id="profile">
+      <h1>Perfil</h1>
+      <p>Conteúdo do perfil.</p>
+    </section>
 
-      <section ux-tab-content="settings" ux-scrollbox>
-        <h1>Configurações</h1>
-        <p>Conteúdo das configurações.</p>
-      </section>
+    <section id="settings">
+      <h1>Configurações</h1>
+      <p>Conteúdo das configurações.</p>
     </section>
 
   </main>

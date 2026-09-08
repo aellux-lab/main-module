@@ -3,19 +3,22 @@
 // It must load either the ESM runtime or the legacy fallback without itself depending on 
 // Promise, modules, async/await, or other modern-only features.
 
+var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
 var Aellux = {
     options: {
         themePreferenceAttribute: "data-aellux-theme",
         adaptiveStyles: true,
         preconnect: ["https://cdn.jsdelivr.net"],
-        importMap: {
-            "interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
-            "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
+        dependencies: {
+            components: {
+                "interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
+                "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
+            }
         },
         load: [
-            "preferences", // Preferencias de usuário toggle
+            "preferences", // Preferencias de usuário togglers
             "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-            "adaptive-composition", // Navegação adaptativa
+            "adaptive-composition", // Composição adaptativa ao espaço/forma
             "ajax-content", // Conteúdo assíncrono substituído
             "components" // Comportamentos de componentes de interação pré-fabricados
         ],
@@ -133,7 +136,7 @@ function addAdaptiveStyles() {
 
     var link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = aelluxBasePath + "aellux.uxm.nav-adaptive.style.css";
+    link.href = aelluxBasePath + aelluxAdaptiveStyle;
     link.setAttribute(attr, "true");
     document.head.appendChild(link);
 }

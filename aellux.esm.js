@@ -49,8 +49,8 @@ Object.assign(Aellux, {
     adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive));
   },
 
-  resolve: function (alias) {
-    return Aellux.options.importMap[alias];
+  resolve: function (uxm, alias) {
+    return Aellux.options.dependencies[uxm][alias];
   }
 });
 
@@ -106,6 +106,7 @@ function addPreconnect(url) {
 function AdaptiveResizeObserver(entries) {
   for (var i = 0; i < entries.length; i++) {
     var entry = entries[i];
+    //ARE PARENTS DISPLAYED
     applyAdaptiveClasses(
       entry.target,
       entry.contentRect.width,

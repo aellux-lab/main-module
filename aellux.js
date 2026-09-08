@@ -10,7 +10,7 @@ var Aellux = {
         preconnect: ["https://cdn.jsdelivr.net"],
         dependencies: {
             components: {
-                "interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
+                "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
                 "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
             }
         },

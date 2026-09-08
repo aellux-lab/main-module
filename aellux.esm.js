@@ -161,6 +161,7 @@ function addDefaultAdaptiveStyles() {
     link.setAttribute(attr, "true");
     document.head.appendChild(link);
 
-    link.onload(resolve);
+    link.onload = () => { resolve(); };
+    link.onerror = (error) => { resolve(); };
   });
 }

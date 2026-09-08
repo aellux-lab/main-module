@@ -7,7 +7,7 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
-    addDefaultAdaptiveStyles().then(() => {
+    addDefaultAdaptiveCSS().then(() => {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
       } else {
@@ -146,18 +146,18 @@ function applyAdaptiveClasses(element, width, height) {
   }
 }
 
-function addDefaultAdaptiveStyles() {
+function addDefaultAdaptiveCSS() {
   return new Promise((resolve, reject) => {
-    var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
+    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
     var attr = "data-aellux-adaptive-style";
-    if (!Aellux.options.defaultAdaptiveStyles ||
+    if (!Aellux.options.defaultAdaptiveCSS ||
       typeof document === "undefined" ||
       document.querySelector("[" + attr + "]"))
       return resolve();
 
     var link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = Aellux.aelluxBasePath + aelluxAdaptiveStyle;
+    link.href = Aellux.aelluxBasePath + aelluxAdaptiveCSS;
     link.setAttribute(attr, "true");
     document.head.appendChild(link);
 

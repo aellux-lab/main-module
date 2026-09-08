@@ -52,6 +52,16 @@ var Aellux = {
 
         addWeakStyles();
         loadAellux();
+
+        var start = Date.now();
+        document.addEventListener("AelluxAwake", function () {
+            var time = Date.now() - start;
+            console.log("[Aellux] Awake in " + (time / 1000) + "ms")
+        });
+        document.addEventListener("AelluxReady", function () {
+            var time = Date.now() - start;
+            console.log("[Aellux] Ready in " + (time / 1000) + "ms")
+        });
     },
     legacy: false,
     supported: false,
@@ -143,7 +153,7 @@ function addWeakStyles() {
         "color:CanvasText;" +
         "}" +
 
-        ":where([data-aellux-fill-viewport]) {height:100vh;height:100dvh;width:100vw;width:100dvw;position:absolute;inset:0;overflow:auto;}" +
+        ":where([data-aellux-fill-viewport]) {height:100vh;height:100dvh;width:100vw;width:100dvw;position:fixed;inset:0;overflow:auto;}" +
 
         //ADAPTIVE INITIAL STATE
         ":where([data-aellux-adaptive]) {" +

@@ -4,6 +4,7 @@
 // Promise, modules, async/await, or other modern-only features.
 
 var Aellux = {
+    defaultAdaptiveCSSReady: false,
     options: {
         themePreferenceAttribute: "data-aellux-theme",
         defaultAdaptiveCSS: true,

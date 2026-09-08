@@ -1,6 +1,6 @@
 const selector = {};
 
-export function init() {
+export async function init() {
   // selector.tabsBar = options.getSelector("ux-tabs-bar");
   // selector.contentArea = options.getSelector("ux-content-area");
 
@@ -8,11 +8,16 @@ export function init() {
   //   const adaptiveType = element.dataset.aelluxAdaptive ?? element.getAttribute("ux-adaptive");
   //   setup[adaptiveType](element, options);
   // });
+
   try {
     const a = Aellux.options;
   } catch (e) {
     console.error(e);
   }
+}
+
+export async function kill() {
+
 }
 
 const selectors = {};

@@ -1,92 +1,94 @@
-const defaultOptions = {
-  shortAttribute: null,
-  themePreferenceAttribute: "data-ux-theme",
-  importMap: {
-    "@ux/interact": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
-    "@ux/motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm",
-    "@ux/swiper": "https://cdn.jsdelivr.net/npm/swiper@14.2.0/+esm",
-  }
-};
+const root =
+  typeof globalThis !== "undefined"
+    ? globalThis
+    : window;
+const Aellux = root.Aellux || {};
+const modulePromises = {};
 
-const uxmLoad = [
-  "preferences", // Preferencias de usabilidade
-  "events", // Ambiente de dispatch de eventos de input/feedback usados pelos outros módulos
-  "nav-adaptive", // Navegação adaptativa
-  "nav-state", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-  "dialog", // Usabilidade de dialogo/modal
-  "ajax", // Conteúdo assíncrono
-  //"components"
-];
-
-const Aellux = {
-  options: {},
-  init: function () {
-    Object.assign(Aellux.options, defaultOptions);
-
-    addImportMap();
-    addViewportMeta();
-    addPreconnect("https://cdn.jsdelivr.net");
-
+Object.assign(Aellux, {
+  initModule: function () {
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", setupAllModules, { once: true });
-    } else setupAllModules();
-
-    document.addEventListener("AelluxUpdateDOM", setupAllModules);
-  },
-
-  kill: function () {
-    document.removeEventListener("AelluxUpdateDOM", setupAllModules);
-  },
-
-  on: function (event, ...args) {
-    document.addEventListener(`Aellux${event}`, ...args);
-  },
-
-  off: function (event, handler) {
-    document.removeEventListener(`Aellux${event}`, ...args);
-  },
-
-  wait: function (moduleName) {
-    return new Promise((resolve, reject) => {
-      resolve(Aellux[moduleName]);
+      document.addEventListener("DOMContentLoaded", Aellux.adaptiveUpdate, { once: true });
+    } else { Aellux.adaptiveUpdate(); }
+    setupAllModules().catch(error => {
+      console.error(
+        "[Aellux] Module initialization failed.",
+        error
+      );
     });
   },
 
-  getSelector: function (attr) {
-    return `[${Aellux.getAttributeName(attr)}]`;
+  kill: function () {
+    //document.removeEventListener("AelluxUpdateDOM", setupAllModules);
+    Aellux.adaptiveObserver.disconnect();
   },
 
-  getAttributeName: function (attr) {
-    return Aellux.options.shortAttribute ? `${(Aellux.shortAttribute + attr)}` : `data-aellux-${attr}`;
+  on: function (event, handler, options) {
+    document.addEventListener(`Aellux${event}`, handler, options);
   },
 
-};
+  off: function (event, handler, options) {
+    document.removeEventListener(`Aellux${event}`, handler, options);
+  },
+
+  wait: function (moduleName) {
+    const key = toCamelCase(moduleName);
+    if (key in Aellux)
+      return Promise.resolve(Aellux[key]);
+
+    if (modulePromises[moduleName])
+      return modulePromises[moduleName];
+
+    return loadUXM(moduleName);
+  },
+
+  adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),
+  adaptiveUpdate: function () {
+    const adaptives = document.querySelectorAll("[data-aellux-adaptive]:not([data-aellux-ready])");
+    adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive));
+  },
+
+  resolve: function (alias) {
+    return Aellux.options.importMap[alias];
+  }
+});
 
 async function setupAllModules() {
   const allModules = [];
-
-  //Load Async
-  uxmLoad.forEach(mName => allModules.push(loadUXM(mName)));
-
+  Aellux.options.load.forEach(mName => allModules.push(
+    loadUXM(mName).then(module => {
+      if ("init" in module && typeof module.init === "function")
+        return module.init();
+    })));
   await Promise.all(allModules);
+  dispatchReady();
+}
 
-  //Initialize In Order
-  uxmLoad.forEach(mName => Aellux[toCamelCase(mName)].init());
-
-  if (document.body.style.display === "none") {
-    document.body.style.display = null; //Show body
-  }
+function dispatchReady() {
+  var event = document.createEvent("Event");
+  event.initEvent("AelluxReady", false, false);
+  document.dispatchEvent(event);
 }
 
 function toCamelCase(name) {
   return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 }
 
-async function loadUXM(mName) {
-  const module = await import(`./aellux.uxm.${mName}.js`);
-  const realModule = module.defaults || module;
-  const key = toCamelCase(mName);
-  Aellux[key] = realModule;
+function loadUXM(mName) {
+  if (modulePromises[mName])
+    return modulePromises[mName];
+
+  modulePromises[mName] =
+    import(`./aellux.uxm.${mName}.js`)
+      .then(module => {
+        const realModule =
+          module.default || module;
+        const key = toCamelCase(mName);
+        Aellux[key] = realModule;
+        return realModule;
+      });
+
+  return modulePromises[mName];
 }
 
 function addPreconnect(url) {
@@ -100,28 +102,41 @@ function addPreconnect(url) {
   document.head.appendChild(link);
 }
 
-function addImportMap() {
-  if (document.querySelector("[data-aellux-importmap]"))
-    return;
-  const script = document.createElement("script");
-  script.type = "importmap";
-  script.textContent = JSON.stringify({ imports: Aellux.options.importMap });
-  document.head.append(script);
+function AdaptiveResizeObserver(entries) {
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    applyAdaptiveClasses(
+      entry.target,
+      entry.contentRect.width,
+      entry.contentRect.height
+    );
+    entry.target.setAttribute("data-aellux-ready", "");
+  }
 }
 
-function addViewportMeta() {
-  if (document.querySelector('meta[name="viewport"]'))
-    return;
-  const meta = document.createElement("meta");
-  meta.name = "viewport";
-  meta.content = "width=device-width, initial-scale=1";
-  document.head.appendChild(meta);
-}
+function applyAdaptiveClasses(element, width, height) {
+  const params = Aellux.options.adaptiveParams;
+  //RATIO SHAPE
+  const ratioBreakpoints = params.ratioShapes;
+  const ratio = height > 0 ? width / height : 0;
 
-if (typeof globalThis !== "undefined") {
-  Aellux.options = globalThis.Aellux.options;
-  globalThis.Aellux = Aellux;
-} else if (typeof window !== "undefined") {
-  Aellux.options = window.Aellux.options;
-  window.Aellux = Aellux;
+  element.classList.toggle("ux-shape-vertical", ratio < ratioBreakpoints.vertical);
+  element.classList.toggle("ux-shape-horizontal", ratio > ratioBreakpoints.horizontal);
+  element.classList.toggle("ux-shape-square",
+    ratio >= ratioBreakpoints.vertical &&
+    ratio <= ratioBreakpoints.horizontal
+  );
+
+  //SPACE SIZE
+  const sizes = Object.keys(params.minSizes);
+  const spaceBreakpoints = params.minSizes;
+  const space = Math.sqrt(width * height);
+
+  for (var i = 0; i < sizes.length; i++) {
+    var size = sizes[i];
+    element.classList.toggle(
+      "ux-fits-" + size,
+      space >= spaceBreakpoints[size]
+    );
+  }
 }

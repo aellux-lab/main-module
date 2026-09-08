@@ -7,14 +7,16 @@
   <script src="../aellux.js" type="text/javascript"></script>
   <script>
     Aellux.init({
-      shortAttribute: 'ux-'
     });
   </script>
 </head>
 
 <body style="display: none;">
 
-  <main ux-adaptive="tabs" ux-fill>
+  <main ux-adaptive="tabs" ux-fill aria-busy="true">
+    <progress>
+
+    </progress>
 
     <nav ux-tabs-bar="bottom horizontal" ux-compact-bar="bottom horizontal" ux-mid-bar="first vertical"
       ux-wide-bar="first vetical">

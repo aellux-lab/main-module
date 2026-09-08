@@ -7,7 +7,7 @@ var Aellux = {
     defaultAdaptiveCSSReady: false,
     options: {
         themePreferenceAttribute: "data-aellux-theme",
-        defaultAdaptiveCSS: true,
+        defaultAdaptiveCSS: false,
         preconnect: ["https://cdn.jsdelivr.net"],
         dependencies: {
             components: {

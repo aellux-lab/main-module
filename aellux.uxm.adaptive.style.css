@@ -1,0 +1,19 @@
+*[data-aellux-adaptive='tabs'].ux-shape-vertical {
+  flex-flow: column;
+  text-align: center;
+}
+
+*[data-aellux-adaptive='tabs'].ux-shape-square {
+  flex-flow: column;
+  text-align: center;
+}
+
+*[data-aellux-adaptive='tabs'].ux-shape-horizontal {
+  flex-flow: row;
+  text-align: left;
+}
+
+[data-aellux-adaptive='tabs'] nav[data-aellux-tab] {
+  padding: 10px;
+  background-color: transparent;
+}

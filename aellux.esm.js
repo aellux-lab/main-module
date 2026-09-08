@@ -9,9 +9,9 @@ Object.assign(Aellux, {
   initModule: function () {
     Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
+        document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserverUpdate, { once: true });
       } else {
-        Aellux.adaptiveObserveNew();
+        Aellux.adaptiveObserverUpdate();
       }
     });
     setupAllModules().catch(error => {
@@ -47,9 +47,9 @@ Object.assign(Aellux, {
   },
 
   adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),
-  adaptiveObserveNew: function () {
-    const adaptives = document.querySelectorAll("[data-aellux-adaptive]:not([data-aellux-ready])");
-    adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive));
+  adaptiveObserverUpdate: function () {
+    const adaptives = document.querySelectorAll("[data-aellux-adaptive]");
+    adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive)); //Safe to call again
   },
 
   resolve: function (uxm, alias) {

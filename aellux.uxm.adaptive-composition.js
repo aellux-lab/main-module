@@ -5,7 +5,7 @@ export async function init() {
 }
 
 export async function update() {
-  const elements = document.querySelectorAll("[data-aellux-adaptive]:not([data-aellux-ready])");
+  const elements = document.querySelectorAll("[data-aellux-adaptive]");
   elements.forEach(element => {
     const adaptiveType = element.dataset.aelluxAdaptive;
     setup[adaptiveType](element);
@@ -18,10 +18,21 @@ export async function kill() {
 
 const setup = {
   "tabs": function (element) {
-    // const tabsBar = element.querySelector(selector.tabsBar);
-    // const contentArea = element.querySelector(selector.contentArea);
+    const nav = element.querySelector("nav");
 
+    const tabs = nav.querySelectorAll("[data-aellux-tab]");
+    tabs.forEach(tab => {
+      const selected = false;
+      const panelId = tab.getAttribute("data-aellux-tab");
+      const panel = element.querySelector(`#${panelId}`);
+      tab.setAttribute("aria-selected", selected);
+      panel.classList.toggle("ux-active", selected);
 
+      tab.setAttribute("role", "tab");
+      tab.setAttribute("aria-controls", panelId);
+
+      //Se tiver LI de parent role=presentation
+    });
   },
 
   "flow": function (element) {

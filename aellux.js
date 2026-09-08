@@ -50,6 +50,7 @@ var Aellux = {
         Aellux.aelluxBasePath = aelluxBasePath;
         Aellux.notAvailable = [];
 
+        addDefaultAdaptiveCSS();
         addWeakStyles();
         loadAellux();
 
@@ -134,6 +135,21 @@ function loadLegacyFallback() {
         console.error("[Aellux] Legacy fallback could not be loaded.");
     };
     document.head.appendChild(script);
+}
+
+function addDefaultAdaptiveCSS() {
+    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
+    var attr = "data-aellux-adaptive-style";
+    if (!Aellux.options.defaultAdaptiveCSS ||
+        typeof document === "undefined" ||
+        document.querySelector("[" + attr + "]"))
+        return;
+
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = aelluxBasePath + aelluxAdaptiveCSS;
+    link.setAttribute(attr, "true");
+    document.head.appendChild(link);
 }
 
 function addWeakStyles() {

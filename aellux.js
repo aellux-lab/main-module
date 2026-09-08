@@ -3,7 +3,6 @@
 // It must load either the ESM runtime or the legacy fallback without itself depending on 
 // Promise, modules, async/await, or other modern-only features.
 
-var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
 var Aellux = {
     options: {
         themePreferenceAttribute: "data-aellux-theme",
@@ -48,10 +47,10 @@ var Aellux = {
             document.querySelector("[data-aellux-esm]")) return;
 
         mergeOptions(Aellux.options, options || {});
+        Aellux.aelluxBasePath = aelluxBasePath;
         Aellux.notAvailable = [];
 
         addWeakStyles();
-        addAdaptiveStyles();
         loadAellux();
     },
     legacy: false,
@@ -127,20 +126,6 @@ function loadLegacyFallback() {
     document.head.appendChild(script);
 }
 
-function addAdaptiveStyles() {
-    var attr = "data-aellux-adaptive-style";
-    if (!Aellux.options.adaptiveStyles ||
-        typeof document === "undefined" ||
-        document.querySelector("[" + attr + "]"))
-        return;
-
-    var link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = aelluxBasePath + aelluxAdaptiveStyle;
-    link.setAttribute(attr, "true");
-    document.head.appendChild(link);
-}
-
 function addWeakStyles() {
     var attr = "data-aellux-weak-style";
     if (typeof document === "undefined" ||
@@ -154,10 +139,25 @@ function addWeakStyles() {
         "min-height:100vh;" +
         "min-height:100dvh;" +
         "font-family:system-ui;" +
-        "color-scheme:light dark;" +
+        "color-scheme:light dark;" + //depends pref both or 1
         "background-color:Canvas;" +
         "color:CanvasText;" +
-        "}";
+        "}" +
+
+        //ADAPTIVE INITIAL STATE
+        ":where([data-aellux-adaptive]) {" +
+        "position: relative;" +
+        "box-sizing: border-box;" +
+        "display: inline-flex;" +
+        "overflow: clip;" +
+        "width: 100%;height: 100%;min-width: 0;min-height: 0;" +
+        "}" +
+        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > *) {visibility: hidden;}" +
+        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > progress[data-aellux-adaptive-progress]){visibility:visible;}" +
+        ":where([data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress]) {display: none;}" +
+
+        //SPINNER
+        ":where(progress .ux-spinner){width:2rem;height:2rem;border:2px solid;border-top-color:gray;border-radius:2rem;animation:1s infinite aellux-spin}@keyframes aellux-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}";
     document.head.appendChild(style);
 
     if (!document.querySelector('meta[name="viewport"]')) {

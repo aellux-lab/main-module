@@ -5,20 +5,19 @@
   <meta charset="UTF-8">
   <title>Aellux Adaptive Tabs</title>
   <script src="../aellux.js" type="text/javascript"></script>
-  <script>
-    Aellux.init({
-    });
-  </script>
+  <script> Aellux.init(); </script>
 </head>
 
 <body style="display: none;">
 
   <main data-aellux-adaptive="tabs">
-    <progress>Carregando...</progress>
+    <progress data-aellux-adaptive-progress>
+      <span class="ux-spinner"></span>
+    </progress>
 
     <nav>
       <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
-      <a href="#profile">Perfil</a>
+      <a data-aellux-tab="section#settings" href="#">Perfil</a>
       <div data-aellux-tab="section#settings">Configurações</div>
       <button data-aellux-tab="section#home">
         <span>#</span>

@@ -1,44 +1,38 @@
 const selector = {};
 
 export async function init() {
-  // selector.tabsBar = options.getSelector("ux-tabs-bar");
-  // selector.contentArea = options.getSelector("ux-content-area");
+  return update();
+}
 
-  // elements.forEach(element => {
-  //   const adaptiveType = element.dataset.aelluxAdaptive ?? element.getAttribute("ux-adaptive");
-  //   setup[adaptiveType](element, options);
-  // });
-
-  try {
-    const a = Aellux.options;
-  } catch (e) {
-    console.error(e);
-  }
+export async function update() {
+  const elements = document.querySelectorAll("[data-aellux-adaptive]:not([data-aellux-ready])");
+  elements.forEach(element => {
+    const adaptiveType = element.dataset.aelluxAdaptive;
+    setup[adaptiveType](element);
+  });
 }
 
 export async function kill() {
 
 }
 
-const selectors = {};
-
 const setup = {
   "tabs": function (element) {
-    const tabsBar = element.querySelector(selector.tabsBar);
-    const contentArea = element.querySelector(selector.contentArea);
+    // const tabsBar = element.querySelector(selector.tabsBar);
+    // const contentArea = element.querySelector(selector.contentArea);
 
 
-  }, // horizontal/vertical if scroll lock sidebars
+  },
 
   "flow": function (element) {
-
+    //NEXT/PREV
   },
 
   "stack": function (element) {
-
+    //TREE/BACK/BREADCRUMB
   },
 
   "list-content": function (element) {
-
-  }, //Links, list or grid 
+    //Links / MAIN
+  },
 };

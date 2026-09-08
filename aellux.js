@@ -154,9 +154,7 @@ function addDefaultAdaptiveCSS() {
 
     if (typeof Promise === "undefined") return;
     defaultAdaptiveCSSPromise = new Promise((resolve, reject) => {
-        link.onload = function () {
-            requestAnimationFrame(resolve); // Next rendering oportunity
-        };
+        link.onload = resolve;
         link.onerror = resolve;
     });
 }
@@ -191,9 +189,9 @@ function addWeakStyles() {
         "overflow: clip;" +
         "width: 100%;height: 100%;min-width: 0;min-height: 0;" +
         "}" +
-        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > *) {display: none;}" +
-        ":where([data-aellux-adaptive]:not([data-aellux-ready]) > progress[data-aellux-adaptive-progress]){display:initial;}" +
-        ":where([data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress]) {display: none;}";
+
+        "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress[data-aellux-adaptive-progress]) {display: none!important;}" +
+        "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
     document.head.appendChild(style);
 
     if (!document.querySelector('meta[name="viewport"]')) {

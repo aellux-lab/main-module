@@ -110,12 +110,14 @@ function AdaptiveResizeObserver(entries) {
   for (var i = 0; i < entries.length; i++) {
     var entry = entries[i];
     //ARE PARENTS DISPLAYED
-    applyAdaptiveClasses(
-      entry.target,
-      entry.contentRect.width,
-      entry.contentRect.height
-    );
-    entry.target.setAttribute("data-aellux-ready", "");
+    requestAnimationFrame(function () {
+      applyAdaptiveClasses(
+        entry.target,
+        entry.contentRect.width,
+        entry.contentRect.height
+      );
+      entry.target.setAttribute("data-aellux-ready", "");
+    });
   }
 }
 

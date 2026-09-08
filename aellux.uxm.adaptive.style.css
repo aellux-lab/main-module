@@ -5,6 +5,8 @@
 }
 
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab] {
+  all: unset;
+  display: block;
   padding: 10px;
   background: transparent;
   border: none;

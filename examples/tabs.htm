@@ -9,36 +9,37 @@
 </head>
 
 <body>
+  <div data-aellux-fill-viewport>
+    <main data-aellux-adaptive="tabs" style="background-color: rgba(255 0 0 /10%);">
+      <progress data-aellux-adaptive-progress></progress>
 
-  <main data-aellux-adaptive="tabs" style="background-color: rgba(255 0 0 /10%);">
-    <progress data-aellux-adaptive-progress></progress>
+      <nav>
+        <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
+        <a data-aellux-tab="section#settings" href="#">Perfil</a>
+        <div data-aellux-tab="section#settings">Configurações</div>
+        <button data-aellux-tab="section#home">
+          <span>#</span>
+          <span>Home</span>
+        </button>
+      </nav>
 
-    <nav>
-      <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
-      <a data-aellux-tab="section#settings" href="#">Perfil</a>
-      <div data-aellux-tab="section#settings">Configurações</div>
-      <button data-aellux-tab="section#home">
-        <span>#</span>
-        <span>Home</span>
-      </button>
-    </nav>
+      <section id="home">
+        <h1>Home</h1>
+        <p>Conteúdo da página inicial.</p>
+      </section>
 
-    <section id="home">
-      <h1>Home</h1>
-      <p>Conteúdo da página inicial.</p>
-    </section>
+      <section id="profile">
+        <h1>Perfil</h1>
+        <p>Conteúdo do perfil.</p>
+      </section>
 
-    <section id="profile">
-      <h1>Perfil</h1>
-      <p>Conteúdo do perfil.</p>
-    </section>
+      <section id="settings">
+        <h1>Configurações</h1>
+        <p>Conteúdo das configurações.</p>
+      </section>
 
-    <section id="settings">
-      <h1>Configurações</h1>
-      <p>Conteúdo das configurações.</p>
-    </section>
-
-  </main>
+    </main>
+  </div>
 
 </body>
 

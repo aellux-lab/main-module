@@ -137,13 +137,13 @@ function addWeakStyles() {
     style.textContent =
         ":where(body,html) {" +
         "margin:0;" +
-        "height:100vh;" +
-        "height:100dvh;" +
         "font-family:system-ui;" +
         "color-scheme:light dark;" + //depends pref both or 1
         "background-color:Canvas;" +
         "color:CanvasText;" +
         "}" +
+
+        ":where([data-aellux-fill-viewport]) {height:100vh;height:100dvh;width:100vw;width:100dvw;position:absolute;inset:0;overflow:auto;}" +
 
         //ADAPTIVE INITIAL STATE
         ":where([data-aellux-adaptive]) {" +

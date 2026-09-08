@@ -4,9 +4,10 @@
   text-align: left;
 }
 
-[data-aellux-adaptive='tabs'] nav[data-aellux-tab] {
+[data-aellux-adaptive='tabs'] nav [data-aellux-tab] {
   padding: 10px;
-  background-color: transparent;
+  background: transparent;
+  cursor: pointer;
 }
 
 *[data-aellux-adaptive='tabs'].ux-shape-vertical {

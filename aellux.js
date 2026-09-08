@@ -4,7 +4,7 @@
 // Promise, modules, async/await, or other modern-only features.
 
 var Aellux = {
-    defaultAdaptiveCSSReady: false,
+    defaultAdaptiveCSSPromise: null,
     options: {
         themePreferenceAttribute: "data-aellux-theme",
         defaultAdaptiveCSS: false,
@@ -151,6 +151,12 @@ function addDefaultAdaptiveCSS() {
     link.href = aelluxBasePath + aelluxAdaptiveCSS;
     link.setAttribute(attr, "true");
     document.head.appendChild(link);
+
+    if (typeof Promise === "undefined") return;
+    defaultAdaptiveCSSPromise = new Promise((resolve, reject) => {
+        link.onload = resolve;
+        link.onerror = resolve;
+    });
 }
 
 function addWeakStyles() {

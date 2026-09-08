@@ -113,7 +113,9 @@ function AdaptiveResizeObserver(entries) {
       entry.contentRect.width,
       entry.contentRect.height
     );
-    entry.target.setAttribute("data-aellux-ready", "");
+    Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
+      entry.target.setAttribute("data-aellux-ready", "");
+    });
   }
 }
 

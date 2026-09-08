@@ -7,7 +7,9 @@
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab] {
   padding: 10px;
   background: transparent;
+  border: none;
   cursor: pointer;
+  text-align: inherit;
 }
 
 *[data-aellux-adaptive='tabs'].ux-shape-vertical {

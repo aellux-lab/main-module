@@ -154,10 +154,7 @@ function addWeakStyles() {
         "}" +
         ":where([data-aellux-adaptive]:not([data-aellux-ready]) > *) {visibility: hidden;}" +
         ":where([data-aellux-adaptive]:not([data-aellux-ready]) > progress[data-aellux-adaptive-progress]){visibility:visible;}" +
-        ":where([data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress]) {display: none;}" +
-
-        //SPINNER
-        ":where(progress .ux-spinner){width:2rem;height:2rem;border:2px solid;border-top-color:gray;border-radius:2rem;animation:1s infinite aellux-spin}@keyframes aellux-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}";
+        ":where([data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress]) {display: none;}";
     document.head.appendChild(style);
 
     if (!document.querySelector('meta[name="viewport"]')) {

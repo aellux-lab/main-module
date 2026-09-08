@@ -136,8 +136,9 @@ function addWeakStyles() {
     style.setAttribute(attr, "true");
     style.textContent =
         ":where(body,html) {" +
-        "min-height:100vh;" +
-        "min-height:100dvh;" +
+        "margin:0;" +
+        "height:100vh;" +
+        "height:100dvh;" +
         "font-family:system-ui;" +
         "color-scheme:light dark;" + //depends pref both or 1
         "background-color:Canvas;" +

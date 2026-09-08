@@ -7,7 +7,7 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
-    addAdaptiveStyles().then(() => {
+    addDefaultAdaptiveStyles().then(() => {
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
       } else {
@@ -146,11 +146,11 @@ function applyAdaptiveClasses(element, width, height) {
   }
 }
 
-function addAdaptiveStyles() {
+function addDefaultAdaptiveStyles() {
   return new Promise((resolve, reject) => {
     var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
     var attr = "data-aellux-adaptive-style";
-    if (!Aellux.options.adaptiveStyles ||
+    if (!Aellux.options.defaultAdaptiveStyles ||
       typeof document === "undefined" ||
       document.querySelector("[" + attr + "]"))
       return resolve();

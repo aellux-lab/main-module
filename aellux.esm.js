@@ -7,11 +7,13 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
-    } else {
-      Aellux.adaptiveObserveNew();
-    }
+    Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
+      } else {
+        Aellux.adaptiveObserveNew();
+      }
+    });
     setupAllModules().catch(error => {
       console.error(
         "[Aellux] Module initialization failed.",
@@ -113,9 +115,7 @@ function AdaptiveResizeObserver(entries) {
       entry.contentRect.width,
       entry.contentRect.height
     );
-    Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
-      entry.target.setAttribute("data-aellux-ready", "");
-    });
+    entry.target.setAttribute("data-aellux-ready", "");
   }
 }
 

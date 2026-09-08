@@ -154,7 +154,11 @@ function addDefaultAdaptiveCSS() {
 
     if (typeof Promise === "undefined") return;
     defaultAdaptiveCSSPromise = new Promise((resolve, reject) => {
-        link.onload = resolve;
+        link.onload = function () {
+            requestAnimationFrame(function () { // Next rendering oportunity
+                resolve();
+            });
+        };
         link.onerror = resolve;
     });
 }

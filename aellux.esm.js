@@ -7,6 +7,7 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
+    addAdaptiveStyles();
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
     } else { Aellux.adaptiveObserveNew(); }
@@ -45,7 +46,6 @@ Object.assign(Aellux, {
   adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),
   adaptiveObserveNew: function () {
     const adaptives = document.querySelectorAll("[data-aellux-adaptive]:not([data-aellux-ready])");
-    if (adaptives.length) addAdaptiveStyles();
     adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive));
   },
 
@@ -155,5 +155,5 @@ function addAdaptiveStyles() {
   link.rel = "stylesheet";
   link.href = Aellux.aelluxBasePath + aelluxAdaptiveStyle;
   link.setAttribute(attr, "true");
-  document.body.appendChild(link);
+  document.head.appendChild(link);
 }

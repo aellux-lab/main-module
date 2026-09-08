@@ -145,10 +145,13 @@ function addWeakStyles() {
     var style = document.createElement("style");
     style.setAttribute(attr, "true");
     style.textContent =
+        ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
+        ":where(html){color-scheme:light dark;}" + //auto device
+        ":where(html[" + Aellux.options.themePreferenceAttribute + "='dark']){color-scheme:dark;}" + //pref force
+        ":where(html[" + Aellux.options.themePreferenceAttribute + "='light']){color-scheme:light;}" + //pref force
         ":where(body,html) {" +
         "margin:0;" +
         "font-family:system-ui;" +
-        "color-scheme:light dark;" + //depends pref both or 1
         "background-color:Canvas;" +
         "color:CanvasText;" +
         "}" +

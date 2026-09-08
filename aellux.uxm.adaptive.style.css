@@ -1,6 +1,7 @@
 [data-aellux-adaptive='tabs'] nav {
   display: flex;
   flex-flow: column;
+  text-align: left;
 }
 
 [data-aellux-adaptive='tabs'] nav[data-aellux-tab] {
@@ -10,19 +11,17 @@
 
 *[data-aellux-adaptive='tabs'].ux-shape-vertical {
   flex-flow: column;
-  text-align: center;
-}
-
-*[data-aellux-adaptive='tabs'].ux-shape-vertical nav {
-  flex-flow: row;
 }
 
 *[data-aellux-adaptive='tabs'].ux-shape-square {
   flex-flow: column;
+}
+
+*[data-aellux-adaptive='tabs']:not(.ux-shape-horizontal) nav {
+  flex-flow: row;
   text-align: center;
 }
 
 *[data-aellux-adaptive='tabs'].ux-shape-horizontal {
   flex-flow: row;
-  text-align: left;
 }

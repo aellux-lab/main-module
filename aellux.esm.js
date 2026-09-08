@@ -7,10 +7,13 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
-    addAdaptiveStyles();
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
-    } else { Aellux.adaptiveObserveNew(); }
+    addAdaptiveStyles().then(() => {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserveNew, { once: true });
+      } else {
+        Aellux.adaptiveObserveNew();
+      }
+    });
     setupAllModules().catch(error => {
       console.error(
         "[Aellux] Module initialization failed.",
@@ -144,16 +147,20 @@ function applyAdaptiveClasses(element, width, height) {
 }
 
 function addAdaptiveStyles() {
-  var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
-  var attr = "data-aellux-adaptive-style";
-  if (!Aellux.options.adaptiveStyles ||
-    typeof document === "undefined" ||
-    document.querySelector("[" + attr + "]"))
-    return;
+  return new Promise((resolve, reject) => {
+    var aelluxAdaptiveStyle = "aellux.uxm.adaptive.style.css";
+    var attr = "data-aellux-adaptive-style";
+    if (!Aellux.options.adaptiveStyles ||
+      typeof document === "undefined" ||
+      document.querySelector("[" + attr + "]"))
+      return resolve();
 
-  var link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = Aellux.aelluxBasePath + aelluxAdaptiveStyle;
-  link.setAttribute(attr, "true");
-  document.head.appendChild(link);
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = Aellux.aelluxBasePath + aelluxAdaptiveStyle;
+    link.setAttribute(attr, "true");
+    document.head.appendChild(link);
+
+    link.onload(resolve);
+  });
 }

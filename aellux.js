@@ -159,7 +159,7 @@ function addWeakStyles() {
         ":where([data-aellux-adaptive]) {" +
         "position: relative;" +
         "box-sizing: border-box;" +
-        "display: inline-flex;" +
+        "display: flex;" +
         "overflow: clip;" +
         "width: 100%;height: 100%;min-width: 0;min-height: 0;" +
         "}" +

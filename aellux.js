@@ -41,6 +41,10 @@ var aelluxBootstrapSrc =
                 "components" // Comportamentos de componentes de interação pré-fabricados
             ],
             adaptiveParams: {
+                experienceScale: {
+                    near: 1,
+                    far: 1.5
+                },
                 minSizes: {
                     compact: 0,
                     small: 480,
@@ -300,5 +304,19 @@ var aelluxBootstrapSrc =
             }
         }
         return target;
+    }
+
+    function inferDistantEnvironment() {
+        const noHover =
+            matchMedia("(hover: none)").matches;
+
+        const noFinePointer =
+            !matchMedia("(any-pointer: fine)").matches;
+
+        const largeViewport =
+            window.innerWidth >= 960 &&
+            window.innerHeight >= 540;
+
+        return noHover && noFinePointer && largeViewport;
     }
 })();

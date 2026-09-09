@@ -14,11 +14,12 @@ function _createController(container) {
 
   nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
     const panelId = tab.getAttribute("data-aellux-tab");
-    const selected = false;
     tab.id = tab.id || `${nav.id}-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
-    tab.setAttribute("aria-selected", selected);
+    tab.setAttribute("aria-selected", false);
     tab.setAttribute("role", "tab");
+    const panel = container.querySelector(`#${panelId}`);
+    panel.setAttribute("data-aellux-tabpanel", panelId);
     //Se tiver LI de parent role=presentation
   });
 

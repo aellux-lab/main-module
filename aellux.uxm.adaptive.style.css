@@ -7,7 +7,7 @@
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab] {
   all: unset;
   display: block;
-  padding: 10px;
+  padding: 2rem;
   border: none;
   cursor: pointer;
   user-select: none;
@@ -15,7 +15,8 @@
   background: transparent;
 }
 
-[data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false] {
+[data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false],
+[data-aellux-adaptive='tabs'] [data-aellux-tabpanel] {
   background: rgba(0 0 0 /50%);
 }
 

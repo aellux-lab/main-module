@@ -31,14 +31,23 @@ function _createController(container) {
       const target = event.target;
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;
-      controllers.get(container).changeTab(tab, true);
+      const nav = container.querySelector("nav");
+      const prevTab = nav.querySelector("[aria-selected=true]");
+      const controller = controllers.get(container);
+
+      Aellux.wait("state-navigation").then(() => {
+        Aellux.stateNavigation.push(
+          () => controller.changeTab(tab, true),
+          () => controller.changeTab(prevTab, true),
+        )
+      }).catch(() => { });
     },
     changeTab(currentTab, save) {
       const nav = container.querySelector("nav");
       nav.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
         if (!currentTab) { currentTab = tab; }
         const panelId = tab.getAttribute("data-aellux-tab");
-        const selected = tab === currentTab || panelId === currentTab || tab.id === currentTab;
+        const selected = tab === currentTab;
         tab.setAttribute("aria-selected", selected);
         tab.setAttribute("tabindex", selected ? 0 : -1);
         const panel = container.querySelector(`#${panelId}`);
@@ -62,10 +71,11 @@ function _createController(container) {
 }
 
 function savePersistTab(nav, tab) {
-  if (!nav.hasAttribute("data-aellux-persist")) return;
-  const where = nav.getAttribute("data-aellux-persist") || "session";
-  if (where === "local" || where === "session") {
-    Aellux.persist[where].set("current-tab-" + nav.id, tab.id);
+  if (nav.hasAttribute("data-aellux-persist")) {
+    const where = nav.getAttribute("data-aellux-persist") || "session";
+    if (where === "local" || where === "session") {
+      Aellux.persist[where].set("current-tab-" + nav.id, tab.id);
+    }
   }
 }
 

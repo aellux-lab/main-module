@@ -43,7 +43,7 @@ Object.assign(Aellux, {
     if (modulePromises[key])
       return modulePromises[key];
 
-    return loadUXM(moduleName);
+    return Aellux.options.load.indexOf(moduleName) > -1 ? loadUXM(moduleName) : Promise.reject();
   },
 
   adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),

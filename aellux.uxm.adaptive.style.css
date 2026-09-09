@@ -14,6 +14,10 @@
   text-align: inherit;
 }
 
+[data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false] {
+  background: rgba(0 0 0 /10%);
+}
+
 *[data-aellux-adaptive='tabs'].ux-shape-vertical {
   flex-flow: column;
 }

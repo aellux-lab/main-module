@@ -54,7 +54,9 @@ Object.assign(Aellux, {
 
   resolve: function (uxm, alias) {
     return Aellux.options.dependencies[uxm][alias];
-  }
+  },
+
+  layout: createLayoutScheduler(),
 });
 
 async function setupAllModules() {
@@ -85,8 +87,7 @@ function loadUXM(mName) {
   modulePromises[mName] =
     import(`./aellux.uxm.${mName}.js`)
       .then(module => {
-        const realModule =
-          module.default || module;
+        const realModule = module.default || module;
         const key = toCamelCase(mName);
         Aellux[key] = realModule;
         return realModule;
@@ -95,30 +96,19 @@ function loadUXM(mName) {
   return modulePromises[mName];
 }
 
-function addPreconnect(url) {
-  if (document.querySelector(`link[rel="preconnect"][href="${url}"]`))
-    return;
-
-  const link = document.createElement("link");
-  link.rel = "preconnect";
-  link.href = url;
-  link.crossOrigin = "anonymous";
-  document.head.appendChild(link);
-}
-
 function AdaptiveResizeObserver(entries) {
-  for (var i = 0; i < entries.length; i++) {
-    var entry = entries[i];
-    //ARE PARENTS DISPLAYED
-    requestAnimationFrame(function () {
+  Aellux.layout.update(() => {
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      //ARE PARENTS DISPLAYED
       applyAdaptiveClasses(
         entry.target,
         entry.contentRect.width,
         entry.contentRect.height
       );
-      entry.target.setAttribute("data-aellux-ready", "");
-    });
-  }
+    }
+  });
+  Aellux.wait("adaptiveComposition").then((m) => m.update(entries));
 }
 
 function applyAdaptiveClasses(element, width, height) {
@@ -146,4 +136,65 @@ function applyAdaptiveClasses(element, width, height) {
       space >= spaceBreakpoints[size]
     );
   }
+
+  element.setAttribute("data-aellux-ready", "");
+}
+
+function createLayoutScheduler() {
+  var readQueue = [];
+  var updateQueue = [];
+
+  var framePending = false;
+  var phase = "idle";
+
+  function scheduleFrame() {
+    if (framePending || phase !== "idle") return;
+    framePending = true;
+    requestAnimationFrame(flushFrame);
+  }
+
+  function flushFrame() {
+    framePending = false;
+
+    phase = "read";
+    var reads = readQueue.splice(0);
+    for (var i = 0; i < reads.length; i++)
+      runTask(reads[i]);
+
+    Promise.resolve().then(function () {
+      phase = "update";
+      var updates = updateQueue.splice(0);
+      for (var i = 0; i < updates.length; i++)
+        runTask(updates[i]);
+
+      phase = "idle";
+      if (readQueue.length || updateQueue.length) scheduleFrame();
+    });
+  }
+
+  function runTask(task) {
+    try {
+      task.resolve(task.callback());
+    } catch (error) {
+      task.reject(error);
+    }
+  }
+
+  function queueTask(queue, callback) {
+    var promise = new Promise(function (resolve, reject) {
+      queue.push({
+        callback: callback,
+        resolve: resolve,
+        reject: reject
+      });
+    });
+
+    if (phase === "idle") scheduleFrame();
+    return promise;
+  }
+
+  return {
+    read: (callback) => queueTask(readQueue, callback),
+    update: (callback) => queueTask(updateQueue, callback)
+  };
 }

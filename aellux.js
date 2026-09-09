@@ -2,18 +2,24 @@
 // this file and use conservative JavaScript only.
 // It must load either the ESM runtime or the legacy fallback without itself depending on 
 // Promise, modules, async/await, or other modern-only features.
-(() => {
+
+var aelluxBootstrapSrc =
+    typeof document !== "undefined" &&
+        document.currentScript &&
+        document.currentScript.src
+        ? document.currentScript.src
+        : "";
+
+(function () {
     var root =
         typeof globalThis !== "undefined"
             ? globalThis
             : window;
 
     root.Aellux = {
-        defaultAdaptiveCSSPromise: null,
         options: {
             themePreferenceAttribute: "data-aellux-theme",
             defaultAdaptiveCSS: false,
-            preconnect: ["https://cdn.jsdelivr.net"],
             dependencies: {
                 components: {
                     "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
@@ -74,13 +80,6 @@
         supported: false,
         notAvailable: []
     };
-
-    var aelluxBootstrapSrc =
-        typeof document !== "undefined" &&
-            document.currentScript &&
-            document.currentScript.src
-            ? document.currentScript.src
-            : "";
 
     var aelluxBasePath = aelluxBootstrapSrc
         ? aelluxBootstrapSrc.substring(0,
@@ -158,7 +157,7 @@
         document.head.appendChild(link);
 
         if (typeof Promise === "undefined") return;
-        defaultAdaptiveCSSPromise = new Promise((resolve, reject) => {
+        Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {
             link.onload = resolve;
             link.onerror = resolve;
         });

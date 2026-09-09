@@ -1,49 +1,63 @@
-const selector = {};
+const compositionScripts = new Map();
+
+//TABS - FLOW - STACK - LISTCONTENT
 
 export async function init() {
-  return update();
+  const adaptiveScriptName = "aellux.uxm.adaptive-composition.";
+  const entries = document.querySelectorAll("[data-aellux-adaptive]")
+  for (var i = 0; i < entries.length; i++) {
+    const el = entries[i];
+    const adaptiveType = el.dataset.aelluxAdaptive;
+    if (!compositionScripts.has(adaptiveType)) {
+      compositionScripts.set(
+        adaptiveType,
+        await import(Aellux.aelluxBasePath + adaptiveScriptName + adaptiveType + ".js")
+      );
+    }
+  }
 }
 
-export async function update() {
-  const elements = document.querySelectorAll("[data-aellux-adaptive]");
-  elements.forEach(element => {
-    const adaptiveType = element.dataset.aelluxAdaptive;
-    setup[adaptiveType](element);
-  });
+export function update(entries) {
+  for (var i = 0; i < entries.length; i++) {
+    const adaptiveContainer = entries[i].target;
+    const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
+    compositionScripts.get(adaptiveType)?.updateController(adaptiveContainer);
+  }
 }
 
 export async function kill() {
 
 }
 
-const setup = {
-  "tabs": function (element) {
-    const nav = element.querySelector("nav");
+export function inferOrientation(flexBox, selector) {
+  return Aellux.layout.read(() => {
+    const fallback = "horizontal";
+    var style = getComputedStyle(flexBox);
 
-    const tabs = nav.querySelectorAll("[data-aellux-tab]");
-    tabs.forEach(tab => {
-      const selected = false;
-      const panelId = tab.getAttribute("data-aellux-tab");
-      const panel = element.querySelector(`#${panelId}`);
-      tab.setAttribute("aria-selected", selected);
-      panel.classList.toggle("ux-active", selected);
+    if (style.display === "flex" || style.display === "inline-flex") {
+      return style.flexDirection.indexOf("column") === 0
+        ? "vertical"
+        : "horizontal";
+    }
 
-      tab.setAttribute("role", "tab");
-      tab.setAttribute("aria-controls", panelId);
+    if (!selector || selector.length === 0) return fallback;
+    var children = flexBox.querySelectorAll(selector);
+    if (children.length < 2) return fallback;
 
-      //Se tiver LI de parent role=presentation
-    });
-  },
+    var first = children[0].getBoundingClientRect();
+    var second = children[1].getBoundingClientRect();
 
-  "flow": function (element) {
-    //NEXT/PREV
-  },
+    var deltaX = Math.abs(
+      (second.left + second.width / 2) -
+      (first.left + first.width / 2)
+    );
+    var deltaY = Math.abs(
+      (second.top + second.height / 2) -
+      (first.top + first.height / 2)
+    );
 
-  "stack": function (element) {
-    //TREE/BACK/BREADCRUMB
-  },
-
-  "list-content": function (element) {
-    //Links / MAIN
-  },
-};
+    return deltaY > deltaX
+      ? "vertical"
+      : "horizontal";
+  });
+}

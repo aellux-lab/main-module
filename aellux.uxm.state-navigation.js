@@ -10,11 +10,11 @@ export async function kill() {
   window.removeEventListener("popstate", onPopState);
 }
 
-export function push(execute, undo, run) {
+export function push(execute, undo, executed) {
   if ((execute && typeof execute !== "function") ||
     (undo && typeof undo !== "function")) return;
 
-  if (run) execute();
+  if (!executed) execute();
   // Remove toda a cadeia de forward.
   stateHistory.splice(currentIndex + 1);
 

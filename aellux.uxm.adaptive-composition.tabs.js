@@ -15,7 +15,7 @@ function _createController(container) {
   nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
     const panelId = tab.getAttribute("data-aellux-tab");
     const selected = false;
-    tab.id = tab.id || `${navId}-${panelId}`;
+    tab.id = tab.id || `${nav.id}-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", selected);
     tab.setAttribute("role", "tab");

@@ -166,6 +166,12 @@ var aelluxBootstrapSrc =
             return;
 
         var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "style";
+        link.href = aelluxBasePath + aelluxAdaptiveCSS;
+        document.head.appendChild(link);
+
+        var link = document.createElement("link");
         link.rel = "stylesheet";
         link.href = aelluxBasePath + aelluxAdaptiveCSS;
         link.setAttribute(attr, "true");

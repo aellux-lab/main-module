@@ -126,7 +126,7 @@ var aelluxBootstrapSrc =
         defaultPreload.forEach(function (d) {
             if (Aellux.options.load.indexOf(d) !== -1) {
                 var link = document.createElement("link");
-                link.type = "modulepreload";
+                link.rel = "modulepreload";
                 link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
                 document.head.appendChild(link);
             }

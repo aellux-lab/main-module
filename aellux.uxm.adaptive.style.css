@@ -8,10 +8,11 @@
   all: unset;
   display: block;
   padding: 10px;
-  background: transparent;
   border: none;
   cursor: pointer;
-  text-align: inherit;
+  user-select: none;
+  text-align: center;
+  background: transparent;
 }
 
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false] {

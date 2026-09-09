@@ -17,6 +17,7 @@ var aelluxBootstrapSrc =
             : window;
 
     const defaultPreload = [
+        "ajax-content",
         "adaptive-composition",
         "adaptive-composition.tabs"
     ];
@@ -84,7 +85,11 @@ var aelluxBootstrapSrc =
         },
         legacy: false,
         supported: false,
-        notAvailable: []
+        notAvailable: [],
+        persist: {
+            local: buildPersistAccess("localStorage"),
+            session: buildPersistAccess("sessionStorage")
+        }
     };
 
     var aelluxBasePath = aelluxBootstrapSrc
@@ -106,6 +111,15 @@ var aelluxBootstrapSrc =
         if (Aellux.notAvailable.length !== 0)
             return loadLegacyFallback();
 
+        defaultPreload.forEach(function (d) {
+            if (Aellux.options.load.indexOf(d) !== -1) {
+                var link = document.createElement("link");
+                link.rel = "modulepreload";
+                link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
+                document.head.appendChild(link);
+            }
+        });
+
         var script = document.createElement("script");
         script.type = "module";
         script.src = aelluxBasePath + "aellux.esm.js";
@@ -122,15 +136,6 @@ var aelluxBootstrapSrc =
             loadLegacyFallback();
         };
         document.head.appendChild(script);
-
-        defaultPreload.forEach(function (d) {
-            if (Aellux.options.load.indexOf(d) !== -1) {
-                var link = document.createElement("link");
-                link.rel = "modulepreload";
-                link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
-                document.head.appendChild(link);
-            }
-        });
     }
 
     function loadLegacyFallback() {
@@ -176,7 +181,7 @@ var aelluxBootstrapSrc =
         link.href = aelluxBasePath + aelluxAdaptiveCSS;
         link.setAttribute(attr, "true");
         document.addEventListener("DOMContentLoaded", function (e) {
-            document.body.appendChild(link);
+            document.head.appendChild(link);
         });
 
         if (typeof Promise === "undefined") return;
@@ -227,6 +232,36 @@ var aelluxBootstrapSrc =
             meta.content = "width=device-width, initial-scale=1";
             document.head.appendChild(meta);
         }
+    }
+
+    function buildPersistAccess(name) {
+        const defaultKey = "AelluxPersist";
+
+        try {
+            var target = window[name] || null;
+            if (!target ||
+                typeof target.setItem !== "function" ||
+                typeof target.getItem !== "function") {
+                throw new Error("Storage unavailable");
+            }
+        } catch (error) {
+            var target = {
+                setItem(key, value) { this[key] = value; },
+                getItem(key) { return this[key] ?? null; }
+            };
+        }
+
+        function getData() { return new URLSearchParams(target.getItem(defaultKey) || ""); }
+        return {
+            get: function (key, fallback) {
+                return getData().get(key) || fallback;
+            },
+            set: function (key, value) {
+                const data = getData();
+                data.set(key, value);
+                return target.setItem(defaultKey, data.toString());
+            }
+        };
     }
 
     function mergeOptions(target, source) {

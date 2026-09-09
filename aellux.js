@@ -169,7 +169,7 @@ var aelluxBootstrapSrc =
         link.rel = "stylesheet";
         link.href = aelluxBasePath + aelluxAdaptiveCSS;
         link.setAttribute(attr, "true");
-        document.head.appendChild(link);
+        document.body.appendChild(link);
 
         if (typeof Promise === "undefined") return;
         Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {

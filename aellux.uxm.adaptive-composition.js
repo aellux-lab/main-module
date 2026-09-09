@@ -21,7 +21,9 @@ export function update(entries) {
   for (var i = 0; i < entries.length; i++) {
     const adaptiveContainer = entries[i].target;
     const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
-    compositionScripts.get(adaptiveType)?.updateController(adaptiveContainer);
+    Aellux.wait(`adaptive-composition.${adaptiveType}`).then(m =>
+      m.updateController(adaptiveContainer)
+    );
   }
 }
 

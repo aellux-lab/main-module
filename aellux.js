@@ -16,6 +16,11 @@ var aelluxBootstrapSrc =
             ? globalThis
             : window;
 
+    const defaultPreload = [
+        "adaptive-composition",
+        "adaptive-composition.tabs"
+    ];
+
     root.Aellux = {
         options: {
             themePreferenceAttribute: "data-aellux-theme",
@@ -29,7 +34,8 @@ var aelluxBootstrapSrc =
             load: [
                 "preferences", // Preferencias de usuário togglers
                 "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-                "adaptive-composition", // Composição adaptativa ao espaço/forma
+                "adaptive-composition", // Composição adaptativa ao espaço/forma,
+                "adaptive-composition.tabs",
                 "ajax-content", // Conteúdo assíncrono substituído
                 "components" // Comportamentos de componentes de interação pré-fabricados
             ],
@@ -116,6 +122,15 @@ var aelluxBootstrapSrc =
             loadLegacyFallback();
         };
         document.head.appendChild(script);
+
+        defaultPreload.forEach(function (d) {
+            if (Aellux.options.load.indexOf(d) !== -1) {
+                var link = document.createElement("link");
+                link.type = "modulepreload";
+                link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
+                document.head.appendChild(link);
+            }
+        });
     }
 
     function loadLegacyFallback() {

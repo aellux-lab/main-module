@@ -43,7 +43,7 @@ function _createController(container) {
         const panel = container.querySelector(`#${panelId}`);
         panel?.classList.toggle("ux-active", selected);
       });
-      if (save) savePersist(nav, currentTab);
+      if (save) savePersistTab(nav, currentTab);
     },
     async updateCallback() {
       const nav = container.querySelector("nav");
@@ -55,20 +55,20 @@ function _createController(container) {
   container.addEventListener("click", controller.onclick);
   nav.addEventListener("keydown", controller.onkeydown);
 
-  controller.changeTab(loadPersist(nav), false);
+  controller.changeTab(loadPersistTab(nav), false);
 
   return controller;
 }
 
-function savePersist(nav, tab) {
+function savePersistTab(nav, tab) {
   if (!nav.hasAttribute("data-aellux-persist")) return;
   const where = nav.getAttribute("data-aellux-persist") || "session";
   if (where === "local" || where === "session") {
-    Aellux.persist[where].set("current-tab-" + nav.id, currentTab.id);
+    Aellux.persist[where].set("current-tab-" + nav.id, tab.id);
   }
 }
 
-function loadPersist(nav) {
+function loadPersistTab(nav) {
   var current = null;
   if (nav.hasAttribute("data-aellux-persist")) {
     const where = nav.getAttribute("data-aellux-persist") || "session";

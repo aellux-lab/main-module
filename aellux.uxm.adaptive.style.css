@@ -16,7 +16,7 @@
 }
 
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false],
-[data-aellux-adaptive='tabs'] [data-aellux-tabpanel] {
+[data-aellux-adaptive='tabs'] [data-aellux-tabpanel]:not(.ux-active) {
   background: rgba(0 0 0 /50%);
 }
 

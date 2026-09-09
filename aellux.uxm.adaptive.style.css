@@ -7,7 +7,7 @@
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab] {
   all: unset;
   display: block;
-  padding: 0.5rem;
+  padding: 1rem;
   border: none;
   cursor: pointer;
   user-select: none;

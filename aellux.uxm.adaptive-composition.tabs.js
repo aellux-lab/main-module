@@ -54,7 +54,8 @@ function _createController(container) {
 
   container.addEventListener("click", controller.onclick);
   nav.addEventListener("keydown", controller.onkeydown);
-  loadPersist(nav);
+
+  controller.changeTab(loadPersist(nav), false);
 
   return controller;
 }
@@ -75,5 +76,5 @@ function loadPersist(nav) {
       current = Aellux.persist[where].get("current-tab-" + nav.id, null);
     }
   }
-  changeTab(current);
+  return current;
 }

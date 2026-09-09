@@ -15,7 +15,11 @@
 }
 
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=false] {
-  background: rgba(0 0 0 /10%);
+  background: rgba(0 0 0 /50%);
+}
+
+[data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=true] {
+  text-decoration: underline;
 }
 
 *[data-aellux-adaptive='tabs'].ux-shape-vertical {

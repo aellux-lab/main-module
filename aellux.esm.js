@@ -40,8 +40,8 @@ Object.assign(Aellux, {
     if (key in Aellux)
       return Promise.resolve(Aellux[key]);
 
-    if (modulePromises[moduleName])
-      return modulePromises[moduleName];
+    if (modulePromises[key])
+      return modulePromises[key];
 
     return loadUXM(moduleName);
   },
@@ -81,19 +81,20 @@ function toCamelCase(name) {
 }
 
 function loadUXM(mName) {
-  if (modulePromises[mName])
-    return modulePromises[mName];
+  const key = toCamelCase(mName);
 
-  modulePromises[mName] =
+  if (modulePromises[key])
+    return modulePromises[key];
+
+  modulePromises[key] =
     import(`./aellux.uxm.${mName}.js`)
       .then(module => {
         const realModule = module.default || module;
-        const key = toCamelCase(mName);
         Aellux[key] = realModule;
         return realModule;
       });
 
-  return modulePromises[mName];
+  return modulePromises[key];
 }
 
 function AdaptiveResizeObserver(entries) {
@@ -108,7 +109,7 @@ function AdaptiveResizeObserver(entries) {
       );
     }
   });
-  Aellux.wait("adaptiveComposition").then((m) => m.update(entries));
+  Aellux.wait("adaptive-composition").then((m) => m.update(entries));
 }
 
 function applyAdaptiveClasses(element, width, height) {

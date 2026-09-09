@@ -10,12 +10,12 @@ export function updateController(adaptiveContainer) {
 
 function _createController(container) {
   let nav = container.querySelector("nav");
-  nav.id = nav.id ?? "tabs";
+  nav.id = nav.id || "tabs";
 
   nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
     const panelId = tab.getAttribute("data-aellux-tab");
     const selected = false;
-    tab.id = tab.id ?? `${navId}-${panelId}`;
+    tab.id = tab.id || `${navId}-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", selected);
     tab.setAttribute("role", "tab");

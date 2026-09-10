@@ -5,15 +5,15 @@ export function updateController(adaptiveContainer) {
     const adaptiveController = _createController(adaptiveContainer);
     controllers.set(adaptiveContainer, adaptiveController);
 
-    container.addEventListener("keydown", adaptiveController.onkeydown);
-    container.addEventListener("click", adaptiveController.onclick);
-    adaptiveController.changeTab(loadPersistTab(nav), false);
+    adaptiveContainer.addEventListener("keydown", adaptiveController.onkeydown);
+    adaptiveContainer.addEventListener("click", adaptiveController.onclick);
+    adaptiveController.changeTab(loadPersistTab(adaptiveContainer), false);
   }
   controllers.get(adaptiveContainer).updateCallback();
 }
 
 function _createController(container) {
-  let nav = container.querySelector("nav");
+  const nav = container.querySelector("nav");
   nav.id = nav.id || "tabs";
 
   nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
@@ -78,7 +78,8 @@ function savePersistTab(nav, tab) {
   }
 }
 
-function loadPersistTab(nav) {
+function loadPersistTab(container) {
+  const nav = container.querySelector("nav");
   var current = null;
   if (nav.hasAttribute("data-aellux-persist")) {
     const where = nav.getAttribute("data-aellux-persist") || "session";

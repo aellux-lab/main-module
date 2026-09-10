@@ -20,6 +20,10 @@
   background: rgba(0 0 0 /50%);
 }
 
+[data-aellux-adaptive='tabs'] [data-aellux-tabpanel]:not(.ux-active) {
+  display: none;
+}
+
 [data-aellux-adaptive='tabs'] nav [data-aellux-tab][aria-selected=true] {
   text-decoration: underline;
 }

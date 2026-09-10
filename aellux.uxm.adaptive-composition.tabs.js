@@ -18,7 +18,7 @@ function _createController(container) {
 
   nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
     const panelId = tab.getAttribute("data-aellux-tab");
-    tab.id = tab.id || `${nav.id}-${panelId}`;
+    tab.id = tab.id || `${nav.id}-tab-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", false);
     tab.setAttribute("role", "tab");
@@ -27,7 +27,7 @@ function _createController(container) {
     //Se tiver LI de parent role=presentation
   });
 
-  const controller = {
+  return {
     currentSelectedTab: null,
     onkeydown(event) {
 
@@ -36,18 +36,16 @@ function _createController(container) {
       const target = event.target;
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;
-      const controller = controllers.get(container);
 
       Aellux.wait("state-navigation").then(() => {
         Aellux.stateNavigation.push(
-          () => controller.changeTab(tab, true),
-          () => controller.changeTab(controller.currentSelectedTab, true),
+          () => this.changeTab(tab, true),
+          () => this.changeTab(this.currentSelectedTab, true),
         )
       }).catch(() => { });
     },
     changeTab(currentTab, save) {
       const nav = container.querySelector("nav");
-      const controller = controllers.get(container);
       nav.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
         if (!currentTab) { currentTab = tab; }
         const panelId = tab.getAttribute("data-aellux-tab");
@@ -58,7 +56,7 @@ function _createController(container) {
         panel?.classList.toggle("ux-active", selected);
       });
       if (save) savePersistTab(nav, currentTab);
-      controller.currentSelectedTab = currentTab;
+      this.currentSelectedTab = currentTab;
     },
     async updateCallback() {
       const nav = container.querySelector("nav");
@@ -66,7 +64,6 @@ function _createController(container) {
       nav.setAttribute("aria-orientation", orientation);
     }
   };
-  return controller;
 }
 
 function savePersistTab(nav, tab) {

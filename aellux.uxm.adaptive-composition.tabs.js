@@ -32,21 +32,20 @@ function _createController(container) {
     onkeydown(event) {
 
     },
-    onclick: function (event) {
+    onclick(event) {
       const target = event.target;
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;
 
-      this.changeTab(tab, true);
-
+      const controller = controllers.get(container);
       Aellux.wait("state-navigation").then(() => {
         Aellux.stateNavigation.push(
-          () => this.changeTab(tab, true),
-          () => this.changeTab(this.currentSelectedTab, true),
+          () => controller.changeTab(tab, true),
+          () => controller.changeTab(controller.currentSelectedTab, true),
         )
       }).catch((error) => { console.error(error); });
     },
-    changeTab: function (currentTab, save) {
+    changeTab(currentTab, save) {
       const nav = container.querySelector("nav");
       nav.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
         if (!currentTab) { currentTab = tab; }
@@ -58,7 +57,8 @@ function _createController(container) {
         panel?.classList.toggle("ux-active", selected);
       });
       if (save) savePersistTab(nav, currentTab);
-      this.currentSelectedTab = currentTab;
+      const controller = controllers.get(container);
+      controller.currentSelectedTab = currentTab;
     },
     async updateCallback() {
       const nav = container.querySelector("nav");

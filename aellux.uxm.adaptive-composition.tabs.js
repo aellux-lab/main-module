@@ -46,7 +46,7 @@ function _createController(container) {
         )
       }).catch((error) => { console.error(error); });
     },
-    changeTab(currentTab, save) {
+    changeTab: function (currentTab, save) {
       const nav = container.querySelector("nav");
       nav.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
         if (!currentTab) { currentTab = tab; }

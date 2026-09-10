@@ -37,12 +37,14 @@ function _createController(container) {
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;
 
+      this.changeTab(tab, true);
+
       Aellux.wait("state-navigation").then(() => {
         Aellux.stateNavigation.push(
           () => this.changeTab(tab, true),
           () => this.changeTab(this.currentSelectedTab, true),
         )
-      }).catch(() => { });
+      }).catch((error) => { console.error(error); });
     },
     changeTab(currentTab, save) {
       const nav = container.querySelector("nav");

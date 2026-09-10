@@ -49,7 +49,11 @@ Object.assign(Aellux, {
   adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),
   adaptiveObserverUpdate: function () {
     const adaptives = document.querySelectorAll("[data-aellux-adaptive]");
-    adaptives.forEach(adaptive => Aellux.adaptiveObserver.observe(adaptive)); //Safe to call again
+    adaptives.forEach(adaptiveContainer => {
+      if (!adaptiveContainer.hasAttribute("aria-busy"))
+        adaptiveContainer.setAttribute("aria-busy", true);
+      Aellux.adaptiveObserver.observe(adaptiveContainer)
+    }); //Safe to call again
   },
 
   resolve: function (uxm, alias) {

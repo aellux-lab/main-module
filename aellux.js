@@ -91,8 +91,8 @@ var aelluxBootstrapSrc =
         supported: false,
         notAvailable: [],
         persist: {
-            local: buildPersistAccess("localStorage"),
-            session: buildPersistAccess("sessionStorage")
+            local: buildPersistMemory("localStorage"),
+            session: buildPersistMemory("sessionStorage")
         }
     };
 
@@ -238,7 +238,7 @@ var aelluxBootstrapSrc =
         }
     }
 
-    function buildPersistAccess(name) {
+    function buildPersistMemory(name) {
         const defaultKey = "AelluxPersist";
 
         try {

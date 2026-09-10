@@ -1,4 +1,5 @@
 const compositionScripts = new Map();
+let pageWasHidden = false;
 
 //TABS - FLOW - STACK - LISTCONTENT
 
@@ -15,6 +16,24 @@ export async function init() {
       );
     }
   }
+
+  window.addEventListener("pagehide", function () {
+    pageWasHidden = true;
+  });
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted && pageWasHidden) {
+      // página voltou via BFCache
+      // reconstruir state-navigation a partir do estado inicial
+      pageWasHidden = false;
+      document.querySelectorAll("[data-aellux-adaptive]")
+        .forEach(adaptiveContainer => {
+          const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
+          Aellux.wait(`adaptive-composition.${adaptiveType}`).then(m =>
+            m.updateController(adaptiveContainer)
+          );
+        })
+    }
+  });
 }
 
 export function update(entries) {

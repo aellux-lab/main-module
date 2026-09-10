@@ -4,6 +4,10 @@ export function updateController(adaptiveContainer) {
   if (!controllers.has(adaptiveContainer)) {
     const adaptiveController = _createController(adaptiveContainer);
     controllers.set(adaptiveContainer, adaptiveController);
+
+    container.addEventListener("keydown", adaptiveController.onkeydown);
+    container.addEventListener("click", adaptiveController.onclick);
+    adaptiveController.changeTab(loadPersistTab(nav), false);
   }
   controllers.get(adaptiveContainer).updateCallback();
 }
@@ -62,12 +66,6 @@ function _createController(container) {
       nav.setAttribute("aria-orientation", orientation);
     }
   };
-
-  container.addEventListener("click", controller.onclick);
-  nav.addEventListener("keydown", controller.onkeydown);
-
-  controller.changeTab(loadPersistTab(nav), false);
-
   return controller;
 }
 

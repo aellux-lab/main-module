@@ -32,7 +32,7 @@ function _createController(container) {
     onkeydown(event) {
 
     },
-    onclick(event) {
+    onclick: function (event) {
       const target = event.target;
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;

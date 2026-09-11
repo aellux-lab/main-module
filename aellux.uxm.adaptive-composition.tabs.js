@@ -7,6 +7,7 @@ export function update(container) {
 
     container.addEventListener("keydown", controller.onkeydown);
     container.addEventListener("click", controller.onclick);
+
     if (!controller.currentSelectedTab) {
       controller.changeTab(loadPersistTab(container), false);
     }

@@ -15,7 +15,8 @@ export async function init() {
   onHashChange();
   history.replaceState({
     aelluxState: true,
-    snapshot: { ...globalSnapshot }
+    snapshot: { ...globalSnapshot },
+    removeSnapshot: { ...globalRemoveSnapshot }
   }, "");
 
   window.addEventListener("popstate", onPopState);

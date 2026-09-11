@@ -15,10 +15,12 @@ export async function init() {
 }
 
 export function update(entries = null) {
+  console.log("UPDATE COMPOSITION");
   callAdaptiveModules("updateController", entries);
 }
 
 export function snapshotRestore(detail) {
+  console.log("SNAP RESTORE COMPOSITION");
   callAdaptiveModules("snapshotRestoreController", null, detail);
 }
 

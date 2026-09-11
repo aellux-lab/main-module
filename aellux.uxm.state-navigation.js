@@ -8,6 +8,7 @@ let baseTitle = "";
 let useHash = true;
 
 export function init() {
+  console.log("STATE NAVIGATION INIT");
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 
@@ -63,13 +64,11 @@ function change(key, value, title, silent = false) {
   globalSnapshot[key] = value;
   updateSnapshotData(snapshotToString(globalSnapshot));
 
-  const callback = history[silent ? "replaceState" : "pushState"]
-  callback({
-    aelluxState: true,
-    snapshot: { ...globalSnapshot }
-  },
-    "",
-    useHash ? `#${globalSnapshotString}` : undefined);
+  const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
+  const url = useHash ? `#${globalSnapshotString}` : undefined;
+
+  if (silent) history.replaceState(satate, "", url);
+  else history.pushState(state, "", url);
 
   dispatchSnapshotEvent("SnapshotChange");
 }

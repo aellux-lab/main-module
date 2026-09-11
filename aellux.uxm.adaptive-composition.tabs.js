@@ -1,7 +1,7 @@
 const controllers = new WeakMap();
 
 export function updateController(container) {
-  console.log("UPDATE CONTROLLER");
+  console.log("UPDATE TABS");
 
   if (!controllers.has(container)) {
     const controller = _createController(container);
@@ -18,6 +18,7 @@ export function updateController(container) {
 }
 
 export function snapshotRestoreController(container, detail) {
+  console.log("SNAP RESTORE TABS");
   const controller = controllers.get(container);
   if (!controller) return;
   if (!detail || detail.snapshot) return;

@@ -72,9 +72,7 @@ async function setupAllModules() {
 }
 
 function dispatchReady() {
-  var event = document.createEvent("Event");
-  event.initEvent("AelluxReady", false, false);
-  document.dispatchEvent(event);
+  Aellux.dispatch("Ready");
 }
 
 function toCamelCase(name) {

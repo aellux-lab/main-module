@@ -118,7 +118,7 @@ function loadPersistTab(container) {
   if (tabGroup.hasAttribute("data-aellux-persist")) {
     const where = tabGroup.getAttribute("data-aellux-persist") || "session";
     if (where === "local" || where === "session") {
-      current = Aellux.persist[where].get("current-tab-" + tabGroup.id, null);
+      current = Aellux.persist[where].get("current-tab-" + tabGroup.id, false);
     }
   }
   return current;

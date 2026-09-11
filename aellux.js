@@ -3,14 +3,14 @@
 // It must load either the ESM runtime or the legacy fallback without itself depending on 
 // Promise, modules, async/await, or other modern-only features.
 
-var aelluxBootstrapSrc =
-    typeof document !== "undefined" &&
-        document.currentScript &&
-        document.currentScript.src
-        ? document.currentScript.src
-        : "";
-
 (function () {
+    var aelluxBootstrapSrc =
+        typeof document !== "undefined" &&
+            document.currentScript &&
+            document.currentScript.src
+            ? document.currentScript.src
+            : "";
+
     var root =
         typeof globalThis !== "undefined"
             ? globalThis
@@ -90,7 +90,6 @@ var aelluxBootstrapSrc =
         legacy: false,
         supported: false,
         notAvailable: [],
-        snapshot: {},
         persist: {
             local: buildPersistMemory("localStorage"),
             session: buildPersistMemory("sessionStorage")

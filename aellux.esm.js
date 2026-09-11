@@ -9,18 +9,23 @@ Object.assign(Aellux, {
   initModule: function () {
     Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", Aellux.adaptiveObserverUpdate, { once: true });
+        document.addEventListener(
+          "DOMContentLoaded",
+          Aellux.adaptiveObserverUpdate,
+          { once: true }
+        );
       } else {
         Aellux.adaptiveObserverUpdate();
       }
     });
 
-    setupAllModules().catch(error => {
-      console.error(
-        "[Aellux] Module initialization failed.",
-        error
-      );
-    });
+    setupAllModules()
+      .catch(error => {
+        console.error(
+          "[Aellux] Module initialization failed.",
+          error
+        );
+      });
   },
 
   kill: function () {

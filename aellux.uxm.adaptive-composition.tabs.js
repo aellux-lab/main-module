@@ -17,11 +17,11 @@ export function update(container) {
 }
 
 export function snapshotRestore(container, detail) {
-  const { snapshot } = detail;
+  console.log("TABS RESTORE");
   const tabGroup = container.querySelector("nav");
-  if (tabGroup.id in snapshot) {
-    const tabId = snapshot[tabGroup.id];
-    const tab = tabGroup.querySelector(`#${tabId}[data-aellux-tab]`);
+  if (tabGroup.id in detail.snapshot) {
+    const tabId = detail.snapshot[tabGroup.id];
+    const tab = tabGroup.querySelector(`#${tabId}`);
     const controller = controllers.get(container);
     controller.changeTab(tab, true);
   }

@@ -25,9 +25,9 @@ export async function init() {
   //Restore snapshot listener
   Aellux.on("SnapshotRestore", function (event) {
     Aellux.options.load.forEach(mName => {
-      Aellux.wait(mName).then(module => {
-        if (typeof module.snapshotRestore === "function")
-          module.snapshotRestore(event.detail);
+      Aellux.wait(mName).then(uxm => {
+        if (typeof uxm.snapshotRestore === "function")
+          uxm.snapshotRestore(event.detail);
       });
     });
   });

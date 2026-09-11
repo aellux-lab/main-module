@@ -90,6 +90,7 @@ var aelluxBootstrapSrc =
         legacy: false,
         supported: false,
         notAvailable: [],
+        snapshot: {},
         persist: {
             local: buildPersistMemory("localStorage"),
             session: buildPersistMemory("sessionStorage")

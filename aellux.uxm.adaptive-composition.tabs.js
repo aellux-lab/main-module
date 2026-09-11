@@ -1,6 +1,8 @@
 const controllers = new WeakMap();
 
 export function updateController(container) {
+  console.log("UPDATE CONTROLLER");
+
   if (!controllers.has(container)) {
     const controller = _createController(container);
     controllers.set(container, controller);
@@ -8,22 +10,25 @@ export function updateController(container) {
     container.addEventListener("keydown", controller.onkeydown);
     container.addEventListener("click", controller.onclick);
 
-    if (!controller.currentSelectedTab) {
-      controller.changeTab(loadPersistTab(container), false);
-    }
+    controller.changeTab(loadPersistTab(container), false);
+    snapshotNormalization(container);
   }
 
   controllers.get(container).updateCallback();
 }
 
 export function snapshotRestoreController(container, detail) {
+  const controller = controllers.get(container);
+  if (!controller) return;
+  if (!detail || detail.snapshot) return;
+
+  let tab = null;
   const tabGroup = container.querySelector("nav");
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];
-    const tab = tabGroup.querySelector(`#${tabId}`);
-    const controller = controllers.get(container);
-    controller.changeTab(tab, true);
+    tab = tabGroup.querySelector(`#${tabId}`);
   }
+  controller.changeTab(tab, true);
 }
 
 export function killController(container) {
@@ -48,6 +53,7 @@ function _createController(container) {
   });
 
   return {
+    tabGroupId: tabGroup.id,
     currentSelectedTab: null,
     onkeydown(event) {
 
@@ -69,8 +75,10 @@ function _createController(container) {
         const tabGroup = container.querySelector("nav");
         tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
           if (!currentTab) { currentTab = tab; }
+          const selected = tab === currentTab || tab.id === currentTab;
+          if (selected && currentTab !== tab) currentTab = tab;
+
           const panelId = tab.getAttribute("data-aellux-tab");
-          const selected = tab === currentTab;
           tab.setAttribute("aria-selected", selected);
           tab.setAttribute("tabindex", selected ? 0 : -1);
           const panel = container.querySelector(`#${panelId}`);
@@ -100,6 +108,7 @@ function savePersistTab(tabGroup, tab) {
 function loadPersistTab(container) {
   const tabGroup = container.querySelector("nav");
   var current = null;
+
   if (tabGroup.hasAttribute("data-aellux-persist")) {
     const where = tabGroup.getAttribute("data-aellux-persist") || "session";
     if (where === "local" || where === "session") {
@@ -107,4 +116,20 @@ function loadPersistTab(container) {
     }
   }
   return current;
+}
+
+function snapshotNormalization(container) {
+  if (!Aellux.snapshot) return;
+
+  const adaptiveController = controllers.get(container);
+  const tabGroupId = adaptiveController.tabGroupId;
+  const tab = adaptiveController.currentSelectedTab;
+  if (tabGroupId in Aellux.snapshot) { //SNAPSHOT EXIST?
+    if (!tab || Aellux.snapshot[tabGroupId] !== tab.id) //SNAPSHOT DIFFERS?
+      adaptiveController.changeTab(Aellux.snapshot[tabGroupId], true); //SNAPSHOT WINS
+  } else if (tab) { //NO SNAPSHOT DATA? UPDATE SILENTLY
+    Aellux.wait("state-navigation").then(() => {
+      Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
+    });
+  }
 }

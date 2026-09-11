@@ -7,18 +7,7 @@ let baseTitle = "";
 
 let useHash = true;
 
-export async function init() {
-  useHash = Aellux.options.useHash ?? useHash;
-
-  baseTitle = document.title;
-
-  onHashChange();
-  history.replaceState({
-    aelluxState: true,
-    snapshot: { ...globalSnapshot },
-    removeSnapshot: { ...globalRemoveSnapshot }
-  }, "");
-
+export function init() {
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 
@@ -31,6 +20,14 @@ export async function init() {
       });
     });
   });
+
+  useHash = Aellux.options.useHash ?? useHash;
+  baseTitle = document.title;
+  onHashChange();
+  history.replaceState({
+    aelluxState: true,
+    snapshot: { ...globalSnapshot }
+  }, "");
 }
 
 export async function kill() {
@@ -39,7 +36,7 @@ export async function kill() {
 }
 
 export function tabOpen(tabGroupId, tabId, title) {
-  return pushState(tabGroupId, tabId, title);
+  return change(tabGroupId, tabId, title);
 }
 
 export function urlState(url, options) {
@@ -54,12 +51,20 @@ export function formUpdate(formId, event, value, options) {
 
 }
 
-export function pushState(key, value, title = null) {
+export function normalize(key, value, title = null, silent) {
+  return change(key, value, title, silent);
+}
+
+function change(key, value, title, silent = false) {
+  if (globalSnapshot.title === title &&
+    globalSnapshot[key] === value) return;
+
   globalSnapshot.title = title;
   globalSnapshot[key] = value;
   updateSnapshotData(snapshotToString(globalSnapshot));
 
-  history.pushState({
+  const callback = history[silent ? "replaceState" : "pushState"]
+  callback({
     aelluxState: true,
     snapshot: { ...globalSnapshot }
   },
@@ -99,6 +104,7 @@ function dispatchSnapshotEvent(name) {
     },
     bubbles: true
   };
+  Object.assign(Aellux.snapshot, globalSnapshot);
   Aellux.dispatch(name, options);
 }
 

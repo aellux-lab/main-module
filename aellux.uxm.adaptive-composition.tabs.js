@@ -1,6 +1,6 @@
 const controllers = new WeakMap();
 
-export function update(container) {
+export function updateController(container) {
   if (!controllers.has(container)) {
     const controller = _createController(container);
     controllers.set(container, controller);
@@ -16,7 +16,7 @@ export function update(container) {
   controllers.get(container).updateCallback();
 }
 
-export function snapshotRestore(container, detail) {
+export function snapshotRestoreController(container, detail) {
   const tabGroup = container.querySelector("nav");
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];
@@ -26,7 +26,7 @@ export function snapshotRestore(container, detail) {
   }
 }
 
-export function kill(container) {
+export function killController(container) {
   const adaptiveController = controllers.get(container);
   container.addEventListener("keydown", adaptiveController.onkeydown);
   container.addEventListener("click", adaptiveController.onclick);

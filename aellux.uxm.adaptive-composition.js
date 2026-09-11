@@ -15,11 +15,11 @@ export async function init() {
 }
 
 export function update(entries = null) {
-  callAdaptiveModules("update", entries);
+  callAdaptiveModules("updateController", entries);
 }
 
 export function snapshotRestore(detail) {
-  callAdaptiveModules("snapshotRestore", null, detail);
+  callAdaptiveModules("snapshotRestoreController", null, detail);
 }
 
 export async function kill() {

@@ -38,6 +38,7 @@ function _createController(container) {
       if (!tab) return;
 
       const controller = controllers.get(container);
+      controller.changeTab(tab, true);
       Aellux.wait("state-navigation").then(() => {
         Aellux.stateNavigation.tabOpen(nav.id, tab.id, tab.innerText);
       });

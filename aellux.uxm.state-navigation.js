@@ -46,7 +46,7 @@ export function formUpdate(formId, event, value, options) {
 function pushState(key, value, title = null) {
   globalSnapshot.title = title;
   globalSnapshot[key] = value;
-  globalSnapshotString = snapshotToSring(globalSnapshot);
+  globalSnapshotString = snapshotToString(globalSnapshot);
 
   history.pushState({
     aelluxState: true,

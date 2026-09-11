@@ -11,16 +11,16 @@ export function updateController(container) {
     container.addEventListener("click", controller.onclick);
 
     controller.changeTab(loadPersistTab(container), false);
-    Aellux.wait("state-navigation").then(() => {
-      snapshotNormalization(container);
-    });
+    // Aellux.wait("state-navigation").then(() => {
+    //   snapshotNormalization(container);
+    // });
   }
 
   controllers.get(container).updateCallback();
 }
 
 export function snapshotRestoreController(container, detail) {
-  console.log("SNAP RESTORE TABS");
+  console.log("SNAP~RESTORE TABS");
   const controller = controllers.get(container);
   if (!controller) return;
   if (!detail || detail.snapshot) return;
@@ -30,11 +30,9 @@ export function snapshotRestoreController(container, detail) {
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];
     tab = tabGroup.querySelector(`#${tabId}`);
-
-    if (tab.getAttribute("aria-selected") === "true") // Prevent select what is already
-      return;
   }
-  controller.changeTab(tab, true);
+  if (!tab || tab.getAttribute("aria-selected") === "false") // Prevent select what is already
+    controller.changeTab(tab, true);
 }
 
 export function killController(container) {

@@ -1,45 +1,121 @@
-const stateHistory = [];
-let currentIndex = -1;
+const globalSnapshot = {};
+const globalRemoveSnapshot = {};
+
+let globalSnapshotString = "";
+let skipHashChange = null;
+let baseTitle = "";
+
+let useHash = true;
 
 export async function init() {
-  history.replaceState({ aelluxState: true, index: -1 }, "");
+  useHash = Aellux.options.useHash ?? useHash;
+
+  baseTitle = document.title;
+
+  onHashChange();
+  history.replaceState({
+    aelluxState: true,
+    snapshot: { ...globalSnapshot }
+  }, "");
+
   window.addEventListener("popstate", onPopState);
+  window.addEventListener("hashchange", onHashChange);
 }
 
 export async function kill() {
   window.removeEventListener("popstate", onPopState);
+  window.removeEventListener("hashchange", onHashChange);
 }
 
-export function push(execute, undo, executed) {
-  if ((execute && typeof execute !== "function") ||
-    (undo && typeof undo !== "function")) return;
+export function tabOpen(tabGroupId, tabId, title) {
+  return pushState(tabGroupId, tabId, title);
+}
 
-  if (!executed) execute();
-  // Remove toda a cadeia de forward.
-  stateHistory.splice(currentIndex + 1);
+export function urlState(url, options) {
 
-  stateHistory.push({ execute, undo });
-  currentIndex = stateHistory.length - 1;
+}
+
+export function flowStep(flowId, step, options) {
+
+}
+
+export function formUpdate(formId, event, value, options) {
+
+}
+
+function pushState(key, value, title = null) {
+  globalSnapshot.title = title;
+  globalSnapshot[key] = value;
+  globalSnapshotString = snapshotToSring(globalSnapshot);
 
   history.pushState({
     aelluxState: true,
-    index: currentIndex
-  }, "");
+    snapshot: { ...globalSnapshot }
+  },
+    "",
+    useHash ? `#${globalSnapshotString}` : undefined);
+}
+
+function updateSnapshotData(string) {
+  globalSnapshotString = string;
+
+  for (const key in globalRemoveSnapshot) { delete globalRemoveSnapshot[key]; } //CLEAR
+  Object.assign(globalRemoveSnapshot, globalSnapshot); //OLD
+
+  for (const key in globalSnapshot) { delete globalSnapshot[key]; } //CLEAR
+  (new URLSearchParams(string)).forEach((value, key) => globalSnapshot[key] = value); //NEW
+
+  for (const key in globalRemoveSnapshot) { //FILTER REMOVED 
+    if (key in globalSnapshot) { delete globalRemoveSnapshot[key]; }
+  }
+}
+
+function snapshotToString(snapshot) {
+  return (new URLSearchParams(snapshot || {})).toString();
+}
+
+function dispatchEventRestore() {
+  document.title = globalSnapshot.title ?
+    `${globalSnapshot.title} - ${baseTitle}` :
+    baseTitle;
+
+  window.dispatchEvent(
+    new CustomEvent(
+      "AelluxStateRestore",
+      {
+        detail: {
+          snapshot: globalSnapshot,
+          removeSnapshot: globalRemoveSnapshot
+        }
+      }
+    )
+  );
+}
+
+function onHashChange() {
+  if (!useHash) return;
+  if (skipHashChange === window.location.hash) { skipHashChange = null; return; }
+  if (window.location.hash.length < 2) return;
+  updateSnapshotData(window.location.hash.substring(1));
+  dispatchEventRestore();
 }
 
 function onPopState(event) {
   const browserState = event.state;
   if (!browserState || !browserState.aelluxState) return;
 
-  const targetIndex = browserState.index;
-
-  if (targetIndex < currentIndex) {
-    for (let i = currentIndex; i > targetIndex; i--)
-      stateHistory[i].undo();
-  } else if (targetIndex > currentIndex) {
-    for (let i = currentIndex + 1; i <= targetIndex; i++)
-      stateHistory[i].execute();
+  if (browserState.snapshot) {
+    updateSnapshotData(snapshotToString(browserState.snapshot));
+    dispatchEventRestore();
+  } else if (useHash) {
+    updateSnapshotData(window.location.hash.substring(1));
+    dispatchEventRestore();
   }
 
-  currentIndex = targetIndex;
+  if (!useHash) return;
+  skipHashChange = window.location.hash;
+  setTimeout(function () {
+    if (skipHashChange === window.location.hash)
+      skipHashChange = null;
+  }, 0);
 }

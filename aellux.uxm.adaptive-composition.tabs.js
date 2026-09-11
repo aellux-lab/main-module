@@ -11,9 +11,9 @@ export function updateController(container) {
     container.addEventListener("click", controller.onclick);
 
     controller.changeTab(loadPersistTab(container), false);
-    // Aellux.wait("state-navigation").then(() => {
-    //   snapshotNormalization(container);
-    // });
+    Aellux.wait("state-navigation").then(() => {
+      snapshotNormalization(container);
+    });
   }
 
   controllers.get(container).updateCallback();
@@ -22,8 +22,9 @@ export function updateController(container) {
 export function snapshotRestoreController(container, detail) {
   console.log("SNAP~RESTORE TABS");
   const controller = controllers.get(container);
+
   if (!controller) return;
-  if (!detail || detail.snapshot) return;
+  if (!detail || !detail.snapshot) return;
 
   let tab = null;
   const tabGroup = container.querySelector("nav");
@@ -126,10 +127,11 @@ function snapshotNormalization(container) {
   const adaptiveController = controllers.get(container);
   const tabGroupId = adaptiveController.tabGroupId;
   const tab = adaptiveController.currentSelectedTab;
-  if (tabGroupId in Aellux.snapshot) { //SNAPSHOT EXIST?
-    if (!tab || Aellux.snapshot[tabGroupId] !== tab.id) //SNAPSHOT DIFFERS?
-      adaptiveController.changeTab(Aellux.snapshot[tabGroupId], true); //SNAPSHOT WINS
-  } else if (tab) { //NO SNAPSHOT DATA? UPDATE SILENTLY
-    Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
-  }
+
+  if (!tab ||
+    (tabGroupId in Aellux.snapshot && Aellux.snapshot[tabGroupId] === tab.id))
+    return; //SNAPSHOT ALIGNED
+
+  //SNAPSHOT WRONG? UPDATE SILENTLY
+  Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
 }

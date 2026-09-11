@@ -30,7 +30,7 @@ Object.assign(Aellux, {
 
   on: function (event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
   off: function (event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
-  dispatch: function (event, options) { document.dispatchEvent(new CustomEvent(`Aellux${event}`, options)); },
+  dispatch: function (event, options) { console.log(`dispatch: Aellux${event}`, options); document.dispatchEvent(new CustomEvent(`Aellux${event}`, options)); },
 
   wait: function (moduleName) {
     const key = toCamelCase(moduleName);

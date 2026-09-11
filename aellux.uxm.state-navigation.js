@@ -66,7 +66,7 @@ export function pushState(key, value, title = null) {
     "",
     useHash ? `#${globalSnapshotString}` : undefined);
 
-  dispatchSnapshotEvent("AelluxSnapshotChange");
+  dispatchSnapshotEvent("SnapshotChange");
 }
 
 function updateSnapshotData(string) {
@@ -103,7 +103,7 @@ function dispatchSnapshotEvent(name) {
 }
 
 function dispatchEventRestore() {
-  return dispatchSnapshotEvent("AelluxSnapshotRestore");
+  return dispatchSnapshotEvent("SnapshotRestore");
 }
 
 function onHashChange() {

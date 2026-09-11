@@ -17,7 +17,6 @@ export function update(container) {
 }
 
 export function snapshotRestore(container, detail) {
-  console.log("TABS RESTORE");
   const tabGroup = container.querySelector("nav");
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];

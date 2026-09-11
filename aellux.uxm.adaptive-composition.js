@@ -19,7 +19,6 @@ export function update(entries = null) {
 }
 
 export function snapshotRestore(detail) {
-  console.log("COMPOSITION RESTORE");
   callAdaptiveModules("snapshotRestore", null, detail);
 }
 

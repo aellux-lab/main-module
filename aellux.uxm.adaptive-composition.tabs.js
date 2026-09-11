@@ -7,7 +7,9 @@ export function update(container) {
 
     container.addEventListener("keydown", controller.onkeydown);
     container.addEventListener("click", controller.onclick);
-    controller.changeTab(loadPersistTab(container), false);
+    if (!controller.currentSelectedTab) {
+      controller.changeTab(loadPersistTab(container), false);
+    }
   }
 
   controllers.get(container).updateCallback();
@@ -62,18 +64,20 @@ function _createController(container) {
       });
     },
     changeTab(currentTab, save) {
-      const tabGroup = container.querySelector("nav");
-      tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
-        if (!currentTab) { currentTab = tab; }
-        const panelId = tab.getAttribute("data-aellux-tab");
-        const selected = tab === currentTab;
-        tab.setAttribute("aria-selected", selected);
-        tab.setAttribute("tabindex", selected ? 0 : -1);
-        const panel = container.querySelector(`#${panelId}`);
-        panel?.classList.toggle("ux-active", selected);
-      });
-      if (save) savePersistTab(tabGroup, currentTab);
       const controller = controllers.get(container);
+      if (controller.currentSelectedTab !== currentTab) {
+        const tabGroup = container.querySelector("nav");
+        tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
+          if (!currentTab) { currentTab = tab; }
+          const panelId = tab.getAttribute("data-aellux-tab");
+          const selected = tab === currentTab;
+          tab.setAttribute("aria-selected", selected);
+          tab.setAttribute("tabindex", selected ? 0 : -1);
+          const panel = container.querySelector(`#${panelId}`);
+          panel?.classList.toggle("ux-active", selected);
+        });
+      }
+      if (save) savePersistTab(tabGroup, currentTab);
       controller.currentSelectedTab = currentTab;
     },
     async updateCallback() {

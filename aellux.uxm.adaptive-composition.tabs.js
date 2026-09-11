@@ -32,7 +32,8 @@ export function snapshotRestoreController(container, detail) {
     const tabId = detail.snapshot[tabGroup.id];
     tab = tabGroup.querySelector(`#${tabId}`);
   }
-  if (!tab || tab.getAttribute("aria-selected") === "false") // Prevent select what is already
+  if (!tab) return;
+  if (tab.getAttribute("aria-selected") === "false") // Prevent select what is already
     controller.changeTab(tab, true);
 }
 

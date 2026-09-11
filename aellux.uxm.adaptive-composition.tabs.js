@@ -11,7 +11,9 @@ export function updateController(container) {
     container.addEventListener("click", controller.onclick);
 
     controller.changeTab(loadPersistTab(container), false);
-    snapshotNormalization(container);
+    Aellux.wait("state-navigation").then(() => {
+      snapshotNormalization(container);
+    });
   }
 
   controllers.get(container).updateCallback();
@@ -28,6 +30,9 @@ export function snapshotRestoreController(container, detail) {
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];
     tab = tabGroup.querySelector(`#${tabId}`);
+
+    if (tab.getAttribute("aria-selected") === "true") // Prevent select what is already
+      return;
   }
   controller.changeTab(tab, true);
 }
@@ -120,8 +125,6 @@ function loadPersistTab(container) {
 }
 
 function snapshotNormalization(container) {
-  if (!Aellux.snapshot) return;
-
   const adaptiveController = controllers.get(container);
   const tabGroupId = adaptiveController.tabGroupId;
   const tab = adaptiveController.currentSelectedTab;
@@ -129,8 +132,6 @@ function snapshotNormalization(container) {
     if (!tab || Aellux.snapshot[tabGroupId] !== tab.id) //SNAPSHOT DIFFERS?
       adaptiveController.changeTab(Aellux.snapshot[tabGroupId], true); //SNAPSHOT WINS
   } else if (tab) { //NO SNAPSHOT DATA? UPDATE SILENTLY
-    Aellux.wait("state-navigation").then(() => {
-      Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
-    });
+    Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
   }
 }

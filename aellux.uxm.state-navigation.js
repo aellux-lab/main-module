@@ -67,7 +67,7 @@ function change(key, value, title, silent = false) {
   const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
   const url = useHash ? `#${globalSnapshotString}` : undefined;
 
-  if (silent) history.replaceState(satate, "", url);
+  if (silent) history.replaceState(state, "", url);
   else history.pushState(state, "", url);
 
   dispatchSnapshotEvent("SnapshotChange");

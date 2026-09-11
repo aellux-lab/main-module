@@ -79,7 +79,7 @@ function _createController(container) {
       if (controller.currentSelectedTab !== currentTab) {
         const tabGroup = container.querySelector("nav");
         tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
-          if (!currentTab) { currentTab = tab; }
+          if (currentTab === false) { currentTab = tab; }
           const selected = tab === currentTab || tab.id === currentTab;
           if (selected && currentTab !== tab) currentTab = tab;
 
@@ -112,7 +112,7 @@ function savePersistTab(tabGroup, tab) {
 
 function loadPersistTab(container) {
   const tabGroup = container.querySelector("nav");
-  var current = null;
+  var current = false;
 
   if (tabGroup.hasAttribute("data-aellux-persist")) {
     const where = tabGroup.getAttribute("data-aellux-persist") || "session";

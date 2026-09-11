@@ -14,6 +14,7 @@ Object.assign(Aellux, {
         Aellux.adaptiveObserverUpdate();
       }
     });
+
     setupAllModules().catch(error => {
       console.error(
         "[Aellux] Module initialization failed.",
@@ -27,13 +28,9 @@ Object.assign(Aellux, {
     Aellux.adaptiveObserver.disconnect();
   },
 
-  on: function (event, handler, options) {
-    document.addEventListener(`Aellux${event}`, handler, options);
-  },
-
-  off: function (event, handler, options) {
-    document.removeEventListener(`Aellux${event}`, handler, options);
-  },
+  on: function (event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
+  off: function (event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
+  dispatch: function (event, options) { document.dispatchEvent(new CustomEvent(`Aellux${event}`, options)); },
 
   wait: function (moduleName) {
     const key = toCamelCase(moduleName);

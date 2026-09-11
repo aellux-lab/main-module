@@ -1,24 +1,47 @@
 const controllers = new WeakMap();
 
-export function updateController(adaptiveContainer) {
-  if (!controllers.has(adaptiveContainer)) {
-    const adaptiveController = _createController(adaptiveContainer);
-    controllers.set(adaptiveContainer, adaptiveController);
+export async function init(container) {
+  if (controllers.has(container)) return;
+  const controller = _createController(container);
+  controllers.set(container, controller);
 
-    adaptiveContainer.addEventListener("keydown", adaptiveController.onkeydown);
-    adaptiveContainer.addEventListener("click", adaptiveController.onclick);
-    adaptiveController.changeTab(loadPersistTab(adaptiveContainer), false);
+  container.addEventListener("keydown", controller.onkeydown);
+  container.addEventListener("click", controller.onclick);
+  controller.changeTab(loadPersistTab(container), false);
+
+  return true;
+}
+
+export function update(container) {
+  if (!controllers.has(container)) { init(container); }
+
+  controllers.get(container).updateCallback();
+}
+
+export function snapshotRestore(container, detail) {
+  const { snapshot } = detail;
+  const tabGroup = container.querySelector("nav");
+  if (tabGroup.id in snapshot) {
+    const tabId = snapshot[tabGroup.id];
+    const tab = tabGroup.querySelector(`#${tabId}[data-aellux-tab]`);
+    const controller = controllers.get(container);
+    controller.changeTab(tab, true);
   }
-  controllers.get(adaptiveContainer).updateCallback();
+}
+
+export function kill(container) {
+  const adaptiveController = controllers.get(container);
+  container.addEventListener("keydown", adaptiveController.onkeydown);
+  container.addEventListener("click", adaptiveController.onclick);
 }
 
 function _createController(container) {
-  const nav = container.querySelector("nav");
-  nav.id = nav.id || "tabs";
+  const tabGroup = container.querySelector("nav");
+  tabGroup.id = tabGroup.id || "tabs";
 
-  nav.querySelectorAll("[data-aellux-tab]").forEach(tab => {
+  tabGroup.querySelectorAll("[data-aellux-tab]").forEach(tab => {
     const panelId = tab.getAttribute("data-aellux-tab");
-    tab.id = tab.id || `${nav.id}-tab-${panelId}`;
+    tab.id = tab.id || `${tabGroup.id}-tab-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", false);
     tab.setAttribute("role", "tab");
@@ -40,12 +63,12 @@ function _createController(container) {
       const controller = controllers.get(container);
       controller.changeTab(tab, true);
       Aellux.wait("state-navigation").then(() => {
-        Aellux.stateNavigation.tabOpen(nav.id, tab.id, tab.innerText);
+        Aellux.stateNavigation.tabOpen(tabGroup.id, tab.id, tab.innerText);
       });
     },
     changeTab(currentTab, save) {
-      const nav = container.querySelector("nav");
-      nav.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
+      const tabGroup = container.querySelector("nav");
+      tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
         if (!currentTab) { currentTab = tab; }
         const panelId = tab.getAttribute("data-aellux-tab");
         const selected = tab === currentTab;
@@ -54,34 +77,34 @@ function _createController(container) {
         const panel = container.querySelector(`#${panelId}`);
         panel?.classList.toggle("ux-active", selected);
       });
-      if (save) savePersistTab(nav, currentTab);
+      if (save) savePersistTab(tabGroup, currentTab);
       const controller = controllers.get(container);
       controller.currentSelectedTab = currentTab;
     },
     async updateCallback() {
-      const nav = container.querySelector("nav");
-      const orientation = await Aellux.adaptiveComposition.inferOrientation(nav);
-      nav.setAttribute("aria-orientation", orientation);
+      const tabGroup = container.querySelector("nav");
+      const orientation = await Aellux.adaptiveComposition.inferOrientation(tabGroup);
+      tabGroup.setAttribute("aria-orientation", orientation);
     }
   };
 }
 
-function savePersistTab(nav, tab) {
-  if (nav.hasAttribute("data-aellux-persist")) {
-    const where = nav.getAttribute("data-aellux-persist") || "session";
+function savePersistTab(tabGroup, tab) {
+  if (tabGroup.hasAttribute("data-aellux-persist")) {
+    const where = tabGroup.getAttribute("data-aellux-persist") || "session";
     if (where === "local" || where === "session") {
-      Aellux.persist[where].set("current-tab-" + nav.id, tab.id);
+      Aellux.persist[where].set("current-tab-" + tabGroup.id, tab.id);
     }
   }
 }
 
 function loadPersistTab(container) {
-  const nav = container.querySelector("nav");
+  const tabGroup = container.querySelector("nav");
   var current = null;
-  if (nav.hasAttribute("data-aellux-persist")) {
-    const where = nav.getAttribute("data-aellux-persist") || "session";
+  if (tabGroup.hasAttribute("data-aellux-persist")) {
+    const where = tabGroup.getAttribute("data-aellux-persist") || "session";
     if (where === "local" || where === "session") {
-      current = Aellux.persist[where].get("current-tab-" + nav.id, null);
+      current = Aellux.persist[where].get("current-tab-" + tabGroup.id, null);
     }
   }
   return current;

@@ -20,6 +20,16 @@ export async function init() {
 
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
+
+  //Restore snapshot listener
+  Aellux.on("SnapshotRestore", function (event) {
+    Aellux.options.load.forEach(mName => {
+      Aellux.wait(mName).then(module => {
+        if (typeof module.snapsnotRestore === "function")
+          module.snapsnotRestore(event.detail);
+      });
+    });
+  });
 }
 
 export async function kill() {
@@ -43,10 +53,10 @@ export function formUpdate(formId, event, value, options) {
 
 }
 
-function pushState(key, value, title = null) {
+export function pushState(key, value, title = null) {
   globalSnapshot.title = title;
   globalSnapshot[key] = value;
-  globalSnapshotString = snapshotToString(globalSnapshot);
+  updateSnapshotData(snapshotToString(globalSnapshot));
 
   history.pushState({
     aelluxState: true,
@@ -54,6 +64,8 @@ function pushState(key, value, title = null) {
   },
     "",
     useHash ? `#${globalSnapshotString}` : undefined);
+
+  dispatchSnapshotEvent("AelluxSnapshotChange");
 }
 
 function updateSnapshotData(string) {
@@ -74,22 +86,23 @@ function snapshotToString(snapshot) {
   return (new URLSearchParams(snapshot || {})).toString();
 }
 
-function dispatchEventRestore() {
+function dispatchSnapshotEvent(name) {
   document.title = globalSnapshot.title ?
     `${globalSnapshot.title} - ${baseTitle}` :
     baseTitle;
 
-  window.dispatchEvent(
-    new CustomEvent(
-      "AelluxStateRestore",
-      {
-        detail: {
-          snapshot: globalSnapshot,
-          removeSnapshot: globalRemoveSnapshot
-        }
-      }
-    )
-  );
+  const options = {
+    detail: {
+      snapshot: globalSnapshot,
+      removeSnapshot: globalRemoveSnapshot
+    },
+    bubbles: true
+  };
+  Aellux.dispatch(name, options);
+}
+
+function dispatchEventRestore() {
+  return dispatchSnapshotEvent("AelluxSnapshotRestore");
 }
 
 function onHashChange() {

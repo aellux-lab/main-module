@@ -7,43 +7,35 @@ export async function init() {
   const adaptiveScriptName = "aellux.uxm.adaptive-composition.";
   const entries = document.querySelectorAll("[data-aellux-adaptive]")
   for (var i = 0; i < entries.length; i++) {
-    const el = entries[i];
-    const adaptiveType = el.dataset.aelluxAdaptive;
+    const container = entries[i];
+    const adaptiveType = container.dataset.aelluxAdaptive;
     if (!compositionScripts.has(adaptiveType)) {
       compositionScripts.set(
         adaptiveType,
         await import(Aellux.aelluxBasePath + adaptiveScriptName + adaptiveType + ".js")
       );
     }
+    const script = compositionScripts.get(adaptiveType);
+    if (typeof script.init === "function")
+      await script.init(container);
   }
 
-  window.addEventListener("pagehide", function () {
-    pageWasHidden = true;
-  });
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted && pageWasHidden) {
-      // página voltou via BFCache
-      // reconstruir state-navigation a partir do estado inicial
+  //BFCache
+  window.addEventListener("pagehide", () => pageWasHidden = true);
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted && pageWasHidden) {// página voltou via BFCache
       pageWasHidden = false;
-      document.querySelectorAll("[data-aellux-adaptive]")
-        .forEach(adaptiveContainer => {
-          const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
-          Aellux.wait(`adaptive-composition.${adaptiveType}`).then(m =>
-            m.updateController(adaptiveContainer)
-          );
-        })
+      update();
     }
   });
 }
 
-export function update(entries) {
-  for (var i = 0; i < entries.length; i++) {
-    const adaptiveContainer = entries[i].target;
-    const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
-    Aellux.wait(`adaptive-composition.${adaptiveType}`).then(m =>
-      m.updateController(adaptiveContainer)
-    );
-  }
+export function update(entries = null) {
+  callAdaptiveModules("update", entries);
+}
+
+export function snapshotRestore(detail) {
+  callAdaptiveModules("snapshotRestore", null, detail);
 }
 
 export async function kill() {
@@ -81,4 +73,18 @@ export function inferOrientation(flexBox, selector) {
       ? "vertical"
       : "horizontal";
   });
+}
+
+function callAdaptiveModules(method, entries = null, ...args) {
+  if (!entries) entries = document.querySelectorAll("[data-aellux-adaptive]");
+  entries.forEach(entry => {
+    const adaptiveContainer = entry.target ?? entry;
+    const adaptiveType = adaptiveContainer.dataset.aelluxAdaptive;
+    Aellux.wait(`adaptive-composition.${adaptiveType}`).then(
+      adaptiveModule => {
+        if (typeof adaptiveModule[method] === "function")
+          adaptiveModule[method](adaptiveContainer, ...args)
+      }
+    );
+  })
 }

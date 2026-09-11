@@ -1,19 +1,14 @@
 const controllers = new WeakMap();
 
-export async function init(container) {
-  if (controllers.has(container)) return;
-  const controller = _createController(container);
-  controllers.set(container, controller);
-
-  container.addEventListener("keydown", controller.onkeydown);
-  container.addEventListener("click", controller.onclick);
-  controller.changeTab(loadPersistTab(container), false);
-
-  return true;
-}
-
 export function update(container) {
-  if (!controllers.has(container)) { init(container); }
+  if (!controllers.has(container)) {
+    const controller = _createController(container);
+    controllers.set(container, controller);
+
+    container.addEventListener("keydown", controller.onkeydown);
+    container.addEventListener("click", controller.onclick);
+    controller.changeTab(loadPersistTab(container), false);
+  }
 
   controllers.get(container).updateCallback();
 }

@@ -4,22 +4,6 @@ let pageWasHidden = false;
 //TABS - FLOW - STACK - LISTCONTENT
 
 export async function init() {
-  const adaptiveScriptName = "aellux.uxm.adaptive-composition.";
-  const entries = document.querySelectorAll("[data-aellux-adaptive]")
-  for (var i = 0; i < entries.length; i++) {
-    const container = entries[i];
-    const adaptiveType = container.dataset.aelluxAdaptive;
-    if (!compositionScripts.has(adaptiveType)) {
-      compositionScripts.set(
-        adaptiveType,
-        await import(Aellux.aelluxBasePath + adaptiveScriptName + adaptiveType + ".js")
-      );
-    }
-    const script = compositionScripts.get(adaptiveType);
-    if (typeof script.init === "function")
-      await script.init(container);
-  }
-
   //BFCache
   window.addEventListener("pagehide", () => pageWasHidden = true);
   window.addEventListener("pageshow", (event) => {

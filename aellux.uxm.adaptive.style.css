@@ -1,13 +1,13 @@
 [data-aellux-tab-group] {
   display: flex;
-  flex-flow: row;
-  text-align: center;
+  flex-flow: column;
+  text-align: left;
 }
 
 .ux-shape-vertical [data-aellux-tab-group],
 .ux-shape-square [data-aellux-tab-group] {
-  flex-flow: column;
-  text-align: left;
+  flex-flow: row;
+  text-align: center;
 }
 
 [data-aellux-tab] {

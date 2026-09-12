@@ -115,11 +115,6 @@
             }
         });
 
-        var link = document.createElement("link");
-        link.rel = "modulepreload";
-        link.href = aelluxBasePath + "aellux.esm.js";
-        document.head.appendChild(link);
-
         var script = document.createElement("script");
         script.type = "module";
         script.src = aelluxBasePath + "aellux.esm.js";

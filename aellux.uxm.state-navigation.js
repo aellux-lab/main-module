@@ -12,6 +12,8 @@ export function init() {
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 
+  Aellux.snapshot = {};
+
   //Restore snapshot listener
   Aellux.on("SnapshotRestore", function (event) {
     Aellux.options.load.forEach(mName => {

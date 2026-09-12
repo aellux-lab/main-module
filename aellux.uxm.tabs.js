@@ -140,7 +140,7 @@ function snapshotNormalization(tabGroup) {
   const tabGroupId = adaptiveController.tabGroupId;
   const tab = adaptiveController.currentSelectedTab;
 
-  if (!tab ||
+  if (!tab || !Aellux.snapshot ||
     (tabGroupId in Aellux.snapshot && Aellux.snapshot[tabGroupId] === tab.id))
     return; //SNAPSHOT ALIGNED
 

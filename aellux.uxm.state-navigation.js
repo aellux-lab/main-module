@@ -54,7 +54,7 @@ async function change(key, value, title, silent = false) {
   if (globalSnapshot.title === title &&
     globalSnapshot[key] === value) return;
 
-  await Aellux.layout.read(() => {
+  Aellux.layout.update(() => {
     globalSnapshot.title = title;
     globalSnapshot[key] = value;
     updateSnapshotData(snapshotToString(globalSnapshot));

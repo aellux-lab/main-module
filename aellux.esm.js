@@ -48,7 +48,7 @@ function observerCallback(entries, event) {
   //Definir um intervalo em MS para rodar apenas a alteração mais recente
   for (var i = 0; i < entries.length; i++) {
     var entry = entries[i];
-    Aellux.dispatchFrom(entry, `${event}Observer`, { detail: entry });
+    Aellux.dispatchFrom(entry.target, `${event}Observer`, { detail: entry });
   }
 }
 

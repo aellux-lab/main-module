@@ -63,8 +63,7 @@ function killController(container) {
   container.addEventListener("click", adaptiveController.onclick);
 }
 
-function _createController(container) {
-  const tabGroup = container.querySelector("nav");
+function _createController(tabGroup) {
   tabGroup.id = tabGroup.id || "tabs";
 
   tabGroup.querySelectorAll("[data-aellux-tab]").forEach(tab => {
@@ -98,7 +97,6 @@ function _createController(container) {
     changeTab(currentTab, save) {
       const controller = controllers.get(container);
       if (controller.currentSelectedTab !== currentTab) {
-        const tabGroup = container.querySelector("nav");
         tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
           if (currentTab === false) { currentTab = tab; }
           const selected = tab === currentTab || tab.id === currentTab;
@@ -126,8 +124,7 @@ function savePersistTab(tabGroup, tab) {
   }
 }
 
-function loadPersistTab(container) {
-  const tabGroup = container.querySelector("nav");
+function loadPersistTab(tabGroup) {
   var current = false;
 
   if (tabGroup.hasAttribute("data-aellux-persist")) {

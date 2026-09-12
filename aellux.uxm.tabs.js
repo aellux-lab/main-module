@@ -26,28 +26,27 @@ export async function kill() {
 
 }
 
-function updateController(container) {
-  if (!controllers.has(container)) {
-    const controller = _createController(container);
-    controllers.set(container, controller);
+function updateController(tabGroup) {
+  if (!controllers.has(tabGroup)) {
+    const controller = _createController(tabGroup);
+    controllers.set(tabGroup, controller);
 
-    container.addEventListener("keydown", controller.onkeydown);
-    container.addEventListener("click", controller.onclick);
+    tabGroup.addEventListener("keydown", controller.onkeydown);
+    tabGroup.addEventListener("click", controller.onclick);
 
-    controller.changeTab(loadPersistTab(container), false);
-    Aellux.wait("state-navigation").then(() => { snapshotNormalization(container); });
+    controller.changeTab(loadPersistTab(tabGroup), false);
+    Aellux.wait("state-navigation").then(() => { snapshotNormalization(tabGroup); });
   }
 }
 
-function snapshotRestoreController(container, detail) {
+function snapshotRestoreController(tabGroup, detail) {
   console.log("SNAP~RESTORE TABS");
-  const controller = controllers.get(container);
+  const controller = controllers.get(tabGroup);
 
   if (!controller) return;
   if (!detail || !detail.snapshot) return;
 
   let tab = null;
-  const tabGroup = container.querySelector("nav");
   if (tabGroup.id in detail.snapshot) {
     const tabId = detail.snapshot[tabGroup.id];
     tab = tabGroup.querySelector(`#${tabId}`);
@@ -57,10 +56,10 @@ function snapshotRestoreController(container, detail) {
     controller.changeTab(tab, true);
 }
 
-function killController(container) {
-  const adaptiveController = controllers.get(container);
-  container.addEventListener("keydown", adaptiveController.onkeydown);
-  container.addEventListener("click", adaptiveController.onclick);
+function killController(tabGroup) {
+  const adaptiveController = controllers.get(tabGroup);
+  tabGroup.addEventListener("keydown", adaptiveController.onkeydown);
+  tabGroup.addEventListener("click", adaptiveController.onclick);
 }
 
 function _createController(tabGroup) {
@@ -72,7 +71,7 @@ function _createController(tabGroup) {
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", false);
     tab.setAttribute("role", "tab");
-    const panel = container.querySelector(`#${panelId}`);
+    const panel = document.querySelector(`#${panelId}`);
     panel.setAttribute("data-aellux-tabpanel", panelId);
     //Se tiver LI de parent role=presentation
   });
@@ -88,14 +87,14 @@ function _createController(tabGroup) {
       const tab = target.closest("[data-aellux-tab]");
       if (!tab) return;
 
-      const controller = controllers.get(container);
+      const controller = controllers.get(tabGroup);
       controller.changeTab(tab, true);
       Aellux.wait("state-navigation").then(() => {
         Aellux.stateNavigation.tabOpen(tabGroup.id, tab.id, tab.innerText);
       });
     },
     changeTab(currentTab, save) {
-      const controller = controllers.get(container);
+      const controller = controllers.get(tabGroup);
       if (controller.currentSelectedTab !== currentTab) {
         tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
           if (currentTab === false) { currentTab = tab; }
@@ -105,7 +104,7 @@ function _createController(tabGroup) {
           const panelId = tab.getAttribute("data-aellux-tab");
           tab.setAttribute("aria-selected", selected);
           tab.setAttribute("tabindex", selected ? 0 : -1);
-          const panel = container.querySelector(`#${panelId}`);
+          const panel = document.querySelector(`#${panelId}`);
           panel?.classList.toggle("ux-active", selected);
         });
       }
@@ -136,8 +135,8 @@ function loadPersistTab(tabGroup) {
   return current;
 }
 
-function snapshotNormalization(container) {
-  const adaptiveController = controllers.get(container);
+function snapshotNormalization(tabGroup) {
+  const adaptiveController = controllers.get(tabGroup);
   const tabGroupId = adaptiveController.tabGroupId;
   const tab = adaptiveController.currentSelectedTab;
 

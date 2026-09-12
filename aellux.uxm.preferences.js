@@ -1,6 +1,3 @@
-// THEME / VIBRATION / CONTRAST / FONT SIZE
-
-
 /*
     color scheme
     → light / dark / auto(device)

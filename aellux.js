@@ -30,6 +30,9 @@
                 components: {
                     "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
                     "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
+                },
+                scrollbox: {
+                    "better-scroll": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm"
                 }
             },
             load: [
@@ -37,6 +40,7 @@
                 "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
                 "adaptive", // Composição adaptativa ao espaço/forma,
                 "tabs",
+                "scrollbox",
                 "ajax-content", // Conteúdo assíncrono substituído
                 "components" // Comportamentos de componentes de interação pré-fabricados
             ],

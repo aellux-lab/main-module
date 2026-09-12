@@ -6,11 +6,12 @@
   <title>Aellux Adaptive Tabs</title>
   <script src="../aellux.js" type="text/javascript"></script>
   <script>
+    var start = Date.now();
+
     Aellux.init({
       defaultAdaptiveCSS: true
     });
 
-    var start = Date.now();
     document.addEventListener("AelluxAwake", function () {
       var time = Date.now() - start;
       console.log("[Aellux] Awake in " + (time / 1000) + "ms")

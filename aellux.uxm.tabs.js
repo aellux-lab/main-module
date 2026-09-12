@@ -1,4 +1,5 @@
 const controllers = new WeakMap();
+let pageWasHidden = false;
 
 //TODO: optional title change when tab selected (when role=navigation / nav tag?)
 

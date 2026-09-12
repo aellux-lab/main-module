@@ -1,6 +1,3 @@
-const compositionScripts = new Map();
-let pageWasHidden = false;
-
 export async function init() {
   Aellux.wait("defaultAdaptiveCSSPromise")
     .then(() => {

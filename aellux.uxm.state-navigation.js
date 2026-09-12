@@ -14,14 +14,7 @@ export function init() {
   Aellux.snapshot = {};
 
   //Restore snapshot listener
-  Aellux.on("SnapshotRestore", function (event) {
-    Aellux.options.load.forEach(mName => {
-      Aellux.wait(mName).then(uxm => {
-        if (typeof uxm.snapshotRestore === "function")
-          uxm.snapshotRestore(event.detail);
-      });
-    });
-  });
+  Aellux.on("SnapshotRestore", onSnapshotRestore);
 
   useHash = Aellux.options.useHash ?? useHash;
   baseTitle = document.title;
@@ -57,21 +50,32 @@ export function normalize(key, value, title = null, silent) {
   return change(key, value, title, silent);
 }
 
-function change(key, value, title, silent = false) {
+async function change(key, value, title, silent = false) {
   if (globalSnapshot.title === title &&
     globalSnapshot[key] === value) return;
 
-  globalSnapshot.title = title;
-  globalSnapshot[key] = value;
-  updateSnapshotData(snapshotToString(globalSnapshot));
+  await Aellux.layout.read(() => {
+    globalSnapshot.title = title;
+    globalSnapshot[key] = value;
+    updateSnapshotData(snapshotToString(globalSnapshot));
 
-  const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
-  const url = useHash ? `#${globalSnapshotString}` : undefined;
+    const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
+    const url = useHash ? `#${globalSnapshotString}` : undefined;
 
-  if (silent) history.replaceState(state, "", url);
-  else history.pushState(state, "", url);
+    if (silent) history.replaceState(state, "", url);
+    else history.pushState(state, "", url);
 
-  dispatchSnapshotEvent("SnapshotChange");
+    dispatchSnapshotEvent("SnapshotChange");
+  });
+}
+
+function onSnapshotRestore(event) {
+  Aellux.options.load.forEach(mName => {
+    Aellux.wait(mName).then(uxm => {
+      if (typeof uxm.snapshotRestore === "function")
+        uxm.snapshotRestore(event.detail);
+    });
+  });
 }
 
 function updateSnapshotData(string) {

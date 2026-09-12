@@ -65,7 +65,7 @@ export async function init() {
     applyPreferences(preferences);
   });
 
-  localPreferences = loadPreferences();
+  //localPreferences = loadPreferences();
 }
 
 export function update() {

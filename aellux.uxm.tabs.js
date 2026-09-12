@@ -1,8 +1,32 @@
 const controllers = new WeakMap();
 
-export function updateController(container) {
-  console.log("UPDATE TABS");
+export async function init() {
+  //BFCache
+  window.addEventListener("pagehide", () => pageWasHidden = true);
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted && pageWasHidden) {// página voltou via BFCache
+      pageWasHidden = false;
+      update();
+    }
+  });
+  update();
+}
 
+export function update() {
+  const tabGroups = document.querySelectorAll("[data-aellux-tab-group]");
+  tabGroups.forEach(tabGroupContainer => {
+    updateController(tabGroupContainer);
+  }); //Safe to call again
+}
+
+export function snapshotRestore(detail) {
+}
+
+export async function kill() {
+
+}
+
+function updateController(container) {
   if (!controllers.has(container)) {
     const controller = _createController(container);
     controllers.set(container, controller);
@@ -11,15 +35,11 @@ export function updateController(container) {
     container.addEventListener("click", controller.onclick);
 
     controller.changeTab(loadPersistTab(container), false);
-    Aellux.wait("state-navigation").then(() => {
-      snapshotNormalization(container);
-    });
+    Aellux.wait("state-navigation").then(() => { snapshotNormalization(container); });
   }
-
-  controllers.get(container).updateCallback();
 }
 
-export function snapshotRestoreController(container, detail) {
+function snapshotRestoreController(container, detail) {
   console.log("SNAP~RESTORE TABS");
   const controller = controllers.get(container);
 
@@ -37,7 +57,7 @@ export function snapshotRestoreController(container, detail) {
     controller.changeTab(tab, true);
 }
 
-export function killController(container) {
+function killController(container) {
   const adaptiveController = controllers.get(container);
   container.addEventListener("keydown", adaptiveController.onkeydown);
   container.addEventListener("click", adaptiveController.onclick);
@@ -93,11 +113,6 @@ function _createController(container) {
       }
       if (save) savePersistTab(tabGroup, currentTab);
       controller.currentSelectedTab = currentTab;
-    },
-    async updateCallback() {
-      const tabGroup = container.querySelector("nav");
-      const orientation = await Aellux.adaptiveComposition.inferOrientation(tabGroup);
-      tabGroup.setAttribute("aria-orientation", orientation);
     }
   };
 }

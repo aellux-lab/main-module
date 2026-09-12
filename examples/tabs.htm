@@ -8,7 +8,17 @@
   <script>
     Aellux.init({
       defaultAdaptiveCSS: true
-    }); 
+    });
+
+    var start = Date.now();
+    document.addEventListener("AelluxAwake", function () {
+      var time = Date.now() - start;
+      console.log("[Aellux] Awake in " + (time / 1000) + "ms")
+    });
+    document.addEventListener("AelluxReady", function () {
+      var time = Date.now() - start;
+      console.log("[Aellux] Ready in " + (time / 1000) + "ms")
+    });
   </script>
 </head>
 

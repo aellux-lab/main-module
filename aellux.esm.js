@@ -7,19 +7,7 @@ const modulePromises = {};
 
 Object.assign(Aellux, {
   initModule: function () {
-    Aellux.wait("defaultAdaptiveCSSPromise").then(() => {
-      if (document.readyState === "loading") {
-        document.addEventListener(
-          "DOMContentLoaded",
-          Aellux.adaptiveObserverUpdate,
-          { once: true }
-        );
-      } else {
-        Aellux.adaptiveObserverUpdate();
-      }
-    });
-
-    setupAllModules()
+    return setupAllModules()
       .catch(error => {
         console.error(
           "[Aellux] Module initialization failed.",
@@ -28,42 +16,41 @@ Object.assign(Aellux, {
       });
   },
 
-  kill: function () {
-    //document.removeEventListener("AelluxUpdateDOM", setupAllModules);
-    Aellux.adaptiveObserver.disconnect();
-  },
+  kill: function () { },
 
-  on: function (event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
-  off: function (event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
-  dispatch: function (event, options) { console.log(`dispatch: Aellux${event}`, options); document.dispatchEvent(new CustomEvent(`Aellux${event}`, options)); },
+  on(event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
+  off(event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
+  dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
+  dispatchFrom(from, event, options) {
+    console.log(`dispatch: Aellux${event}`, options);
+    from.dispatchEvent(new CustomEvent(`Aellux${event}`, options));
+  },
 
   wait: function (moduleName) {
     const key = toCamelCase(moduleName);
-    if (key in Aellux)
-      return Promise.resolve(Aellux[key]);
-
-    if (modulePromises[key])
-      return modulePromises[key];
-
-    return Aellux.options.load.indexOf(moduleName) > -1 ? loadUXM(moduleName) : Promise.reject();
+    if (key in Aellux) { return Promise.resolve(Aellux[key]); }
+    if (modulePromises[key]) { return modulePromises[key]; }
+    if (Aellux.options.load.indexOf(moduleName) > -1) { return loadUXM(moduleName); }
+    return Promise.reject()
   },
 
-  adaptiveObserver: new ResizeObserver(AdaptiveResizeObserver),
-  adaptiveObserverUpdate: function () {
-    const adaptives = document.querySelectorAll("[data-aellux-adaptive]");
-    adaptives.forEach(adaptiveContainer => {
-      if (!adaptiveContainer.hasAttribute("aria-busy"))
-        adaptiveContainer.setAttribute("aria-busy", true);
-      Aellux.adaptiveObserver.observe(adaptiveContainer)
-    }); //Safe to call again
-  },
-
-  resolve: function (uxm, alias) {
-    return Aellux.options.dependencies[uxm][alias];
-  },
+  resizeObserver: new ResizeObserver(resizeObserverCallback),
+  mutationObserver: new MutationObserver(mutationObserverCallback),
+  intersectionObserver: new IntersectionObserver(mutationObserverCallback),
 
   layout: createLayoutScheduler(),
 });
+
+function intersectionObserverCallback(entries) { observerCallback(entries, "Intersection"); }
+function mutationObserverCallback(entries) { observerCallback(entries, "Mutation"); }
+function resizeObserverCallback(entries) { observerCallback(entries, "Resize"); }
+function observerCallback(entries, event) {
+  //Definir um intervalo em MS para rodar apenas a alteração mais recente
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    Aellux.dispatchFrom(entry, `${event}Observer`, { detail: entry });
+  }
+}
 
 async function setupAllModules() {
   const allModules = [];
@@ -73,10 +60,6 @@ async function setupAllModules() {
         return module.init();
     })));
   await Promise.all(allModules);
-  dispatchReady();
-}
-
-function dispatchReady() {
   Aellux.dispatch("Ready");
 }
 
@@ -99,50 +82,6 @@ function loadUXM(mName) {
       });
 
   return modulePromises[key];
-}
-
-function AdaptiveResizeObserver(entries) {
-  Aellux.layout.update(() => {
-    for (var i = 0; i < entries.length; i++) {
-      var entry = entries[i];
-      //ARE PARENTS DISPLAYED
-      applyAdaptiveClasses(
-        entry.target,
-        entry.contentRect.width,
-        entry.contentRect.height
-      );
-    }
-  });
-  Aellux.wait("adaptive-composition").then((m) => m.update(entries));
-}
-
-function applyAdaptiveClasses(element, width, height) {
-  const params = Aellux.options.adaptiveParams;
-  //RATIO SHAPE
-  const ratioBreakpoints = params.ratioShapes;
-  const ratio = height > 0 ? width / height : 0;
-
-  element.classList.toggle("ux-shape-vertical", ratio < ratioBreakpoints.vertical);
-  element.classList.toggle("ux-shape-horizontal", ratio > ratioBreakpoints.horizontal);
-  element.classList.toggle("ux-shape-square",
-    ratio >= ratioBreakpoints.vertical &&
-    ratio <= ratioBreakpoints.horizontal
-  );
-
-  //SPACE SIZE
-  const sizes = Object.keys(params.minSizes);
-  const spaceBreakpoints = params.minSizes;
-  const space = Math.sqrt(width * height);
-
-  for (var i = 0; i < sizes.length; i++) {
-    var size = sizes[i];
-    element.classList.toggle(
-      "ux-fits-" + size,
-      space >= spaceBreakpoints[size]
-    );
-  }
-
-  element.setAttribute("data-aellux-ready", "");
 }
 
 function createLayoutScheduler() {

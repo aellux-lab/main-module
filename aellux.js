@@ -17,9 +17,9 @@
             : window;
 
     const defaultPreload = [
-        "ajax-content",
-        "adaptive-composition",
-        "adaptive-composition.tabs"
+        //"ajax-content",
+        "adaptive",
+        //"tabs"
     ];
 
     root.Aellux = {
@@ -35,8 +35,8 @@
             load: [
                 "preferences", // Preferencias de usuário togglers
                 "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-                "adaptive-composition", // Composição adaptativa ao espaço/forma,
-                "adaptive-composition.tabs",
+                "adaptive", // Composição adaptativa ao espaço/forma,
+                "tabs",
                 "ajax-content", // Conteúdo assíncrono substituído
                 "components" // Comportamentos de componentes de interação pré-fabricados
             ],
@@ -76,16 +76,6 @@
             addDefaultAdaptiveCSS();
             addWeakStyles();
             loadAellux();
-
-            var start = Date.now();
-            document.addEventListener("AelluxAwake", function () {
-                var time = Date.now() - start;
-                console.log("[Aellux] Awake in " + (time / 1000) + "ms")
-            });
-            document.addEventListener("AelluxReady", function () {
-                var time = Date.now() - start;
-                console.log("[Aellux] Ready in " + (time / 1000) + "ms")
-            });
         },
         legacy: false,
         supported: false,
@@ -115,8 +105,8 @@
         if (Aellux.notAvailable.length !== 0)
             return loadLegacyFallback();
 
-        defaultPreload.forEach(function (d) {
-            if (Aellux.options.load.indexOf(d) !== -1) {
+        Aellux.options.load.forEach(function (d) { //PRELOAD ALL
+            if (true || Aellux.options.load.indexOf(d) !== -1) {
                 var link = document.createElement("link");
                 link.rel = "modulepreload";
                 link.href = aelluxBasePath + "aellux.uxm." + d + ".js";

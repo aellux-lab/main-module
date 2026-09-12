@@ -20,6 +20,10 @@ export function update() {
 }
 
 export function snapshotRestore(detail) {
+  const tabGroups = document.querySelectorAll("[data-aellux-tab-group]");
+  tabGroups.forEach(tabGroupContainer => {
+    snapshotRestoreController(tabGroupContainer, detail);
+  }); //Safe to call again
 }
 
 export async function kill() {

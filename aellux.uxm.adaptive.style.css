@@ -4,6 +4,11 @@
   text-align: left;
 }
 
+*:not(.ux-shape-horizontal) [data-aellux-tab-group] {
+  flex-flow: row;
+  text-align: center;
+}
+
 [data-aellux-tab] {
   all: unset;
   display: block;
@@ -36,11 +41,6 @@
   flex-flow: column;
 }
 
-*:not(.ux-shape-horizontal) [data-aellux-tab-group] {
-  flex-flow: row;
-  text-align: center;
-}
-
-*.ux-shape-horizontal [data-aellux-tab-group] {
+.ux-shape-horizontal {
   flex-flow: row;
 }

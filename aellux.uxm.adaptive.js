@@ -39,18 +39,18 @@ function adaptiveObserverUpdate() {
 
 function onResizeObserver(event) {
   const entry = event.detail;
-  const element = entry.target;
   const width = entry.contentRect.width;
   const height = entry.contentRect.height;
+  const adaptiveContainer = entry.target;
 
   const params = Aellux.options.adaptiveParams;
   //RATIO SHAPE
   const ratioBreakpoints = params.ratioShapes;
   const ratio = height > 0 ? width / height : 0;
 
-  element.classList.toggle("ux-shape-vertical", ratio < ratioBreakpoints.vertical);
-  element.classList.toggle("ux-shape-horizontal", ratio > ratioBreakpoints.horizontal);
-  element.classList.toggle("ux-shape-square",
+  adaptiveContainer.classList.toggle("ux-shape-vertical", ratio < ratioBreakpoints.vertical);
+  adaptiveContainer.classList.toggle("ux-shape-horizontal", ratio > ratioBreakpoints.horizontal);
+  adaptiveContainer.classList.toggle("ux-shape-square",
     ratio >= ratioBreakpoints.vertical &&
     ratio <= ratioBreakpoints.horizontal
   );
@@ -62,7 +62,7 @@ function onResizeObserver(event) {
 
   for (var i = 0; i < sizes.length; i++) {
     var size = sizes[i];
-    element.classList.toggle(
+    adaptiveContainer.classList.toggle(
       "ux-fits-" + size,
       space >= spaceBreakpoints[size]
     );
@@ -70,7 +70,9 @@ function onResizeObserver(event) {
 
   //const orientation = inferOrientation(element);
 
-  element.setAttribute("data-aellux-ready", "");
+  adaptiveContainer.setAttribute("data-aellux-ready", "");
+
+  Aellux.dispatchFrom(adaptiveContainer, "AdaptiveUpdate", { detail: null });
 }
 
 function inferOrientation(flexBox, selector = "*") {

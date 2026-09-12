@@ -1,5 +1,7 @@
 const controllers = new WeakMap();
 
+//TODO: optional title change when tab selected (when role=navigation / nav tag?)
+
 export async function init() {
   //BFCache
   window.addEventListener("pagehide", () => pageWasHidden = true);
@@ -40,6 +42,7 @@ function updateController(tabGroup) {
 
     controller.changeTab(loadPersistTab(tabGroup), false);
     Aellux.wait("state-navigation").then(() => { snapshotNormalization(tabGroup); });
+    Aellux.dispatchFrom(tabGroup, "TabsReady", { detail: null });
   }
 }
 
@@ -111,6 +114,7 @@ function _createController(tabGroup) {
           const panel = document.querySelector(`#${panelId}`);
           panel?.classList.toggle("ux-active", selected);
         });
+        Aellux.dispatchFrom(currentTab, "TabsChangeTab", { detail: controller });
       }
       if (save) savePersistTab(tabGroup, currentTab);
       controller.currentSelectedTab = currentTab;

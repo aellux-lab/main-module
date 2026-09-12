@@ -8,7 +8,6 @@ let baseTitle = "";
 let useHash = true;
 
 export function init() {
-  console.log("STATE NAVIGATION INIT");
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 

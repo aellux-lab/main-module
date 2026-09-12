@@ -82,7 +82,8 @@
         notAvailable: [],
         persist: {
             local: buildPersistMemory("localStorage"),
-            session: buildPersistMemory("sessionStorage")
+            session: buildPersistMemory("sessionStorage"),
+            preferences: buildPersistMemory("localStorage", "AelluxPreferences")
         }
     };
 
@@ -113,6 +114,11 @@
                 document.head.appendChild(link);
             }
         });
+
+        var link = document.createElement("link");
+        link.rel = "modulepreload";
+        link.href = aelluxBasePath + "aellux.esm.js";
+        document.head.appendChild(link);
 
         var script = document.createElement("script");
         script.type = "module";
@@ -205,16 +211,8 @@
             "color:CanvasText;" +
             "}" +
 
-            ":where([data-aellux-fill-viewport]) {height:100vh;height:100dvh;width:100vw;width:100dvw;position:fixed;inset:0;overflow:auto;}" +
-
-            //ADAPTIVE INITIAL STATE
-            ":where([data-aellux-adaptive]) {" +
-            "position: relative;" +
-            "box-sizing: border-box;" +
-            "display: flex;" +
-            "overflow: clip;" +
-            "width: 100%;height: 100%;min-width: 0;min-height: 0;" +
-            "}" +
+            ":where([data-aellux-fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
+            ":where([data-aellux-fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
 
             "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress[data-aellux-adaptive-progress]) {display: none!important;}" +
             "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
@@ -228,8 +226,8 @@
         }
     }
 
-    function buildPersistMemory(name) {
-        const defaultKey = "AelluxPersist";
+    function buildPersistMemory(name, identifier) {
+        const defaultIdentifier = identifier ?? "AelluxPersist";
 
         try {
             var target = window[name] || null;
@@ -245,15 +243,21 @@
             };
         }
 
-        function getData() { return new URLSearchParams(target.getItem(defaultKey) || ""); }
+        function getData() { return new URLSearchParams(target.getItem(defaultIdentifier) || ""); }
         return {
-            get: function (key, fallback) {
+            get(key, fallback) {
                 return getData().get(key) || fallback;
             },
-            set: function (key, value) {
+            set(key, value) {
                 const data = getData();
                 data.set(key, value);
-                return target.setItem(defaultKey, data.toString());
+                return target.setItem(defaultIdentifier, data.toString());
+            },
+            setObject(object) {
+                return target.setItem(defaultIdentifier, (new URLSearchParams(object)).toString());
+            },
+            getObject() {
+                return getData();
             }
         };
     }

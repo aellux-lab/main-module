@@ -45,3 +45,7 @@
 .ux-shape-horizontal {
   flex-flow: row;
 }
+
+[data-aellux-adaptive] {
+  display: flex;
+}

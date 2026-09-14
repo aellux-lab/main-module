@@ -315,8 +315,8 @@
         return target.setItem(defaultIdentifier, data.toString());
       },
       setObject(object) {
-        const data = new URLSearchParams();
-        Object.keys(object).forEach(key => data.set(key, object[key]));
+        const data = getData();
+        Object.entries(object).forEach(([key, value]) => data.set(key, value));
         return target.setItem(defaultIdentifier, data.toString());
       },
       getObject() {

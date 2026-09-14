@@ -31,7 +31,7 @@ function adaptiveObserverUpdate() {
   adaptives.forEach(adaptiveContainer => {
     if (!adaptiveContainer.hasAttribute("aria-busy"))
       adaptiveContainer.setAttribute("aria-busy", true);
-    Aellux.resizeObserver.observe(adaptiveContainer)
+    Aellux.observe(adaptiveContainer, "resize");
     adaptiveContainer.addEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
   }); //Safe to call again
 }

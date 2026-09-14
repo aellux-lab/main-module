@@ -17,9 +17,9 @@ Object.assign(Aellux, {
   },
 
   kill: function () {
-    Aellux.resizeObserver.disconnect();
-    Aellux.mutationObserver.disconnect();
-    Aellux.intersectionObserver.disconnect();
+    Aellux.observers.resize.disconnect();
+    Aellux.observers.mutation.disconnect();
+    Aellux.observers.intersection.disconnect();
   },
 
   on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
@@ -30,7 +30,7 @@ Object.assign(Aellux, {
     from.dispatchEvent(new CustomEvent(Aellux.eventName(event), options));
   },
 
-  wait: function (moduleName) {
+  wait(moduleName) {
     const key = toCamelCase(moduleName);
     if (key in Aellux) { return Promise.resolve(Aellux[key]); }
     if (modulePromises[key]) { return modulePromises[key]; }
@@ -38,9 +38,15 @@ Object.assign(Aellux, {
     return Promise.reject()
   },
 
-  resizeObserver: new ResizeObserver(resizeObserverCallback),
-  mutationObserver: new MutationObserver(mutationObserverCallback),
-  intersectionObserver: new IntersectionObserver(mutationObserverCallback),
+  observe(element, type) {
+    Aellux.observers[type].observe(element);
+  },
+
+  observers: {
+    resize: new ResizeObserver(resizeObserverCallback),
+    mutation: new MutationObserver(mutationObserverCallback),
+    intersection: new IntersectionObserver(mutationObserverCallback)
+  },
 
   waitLayout: createLayoutScheduler(),
 });

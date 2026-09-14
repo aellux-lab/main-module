@@ -37,12 +37,13 @@ export async function init() {
 }
 
 export function update() {
-  Object.assign(computedPreferences, defaultPreferences, userPreferences);
+  Object.assign(computedPreferences, defaultPreferences);
+  Object.assign(computedPreferences, userPreferences);
 
   Aellux.preferencesAttributesHTML(computedPreferences);
 
   //Configure toggle buttons & events
-  preferenceContainersUpdate(computedPreferences);
+  preferenceContainersUpdate();
 }
 
 export function kill() {
@@ -65,13 +66,12 @@ function saveUserPreferences() {
   Aellux.persist.preferences.setObject(userPreferences);
 }
 
-function loadUserPreferences(preferences = null) {
+function loadUserPreferences() {
   const loaded = Aellux.persist.preferences.getObject();
   Object.assign(userPreferences, loaded);
 }
 
-function preferenceContainersUpdate(computedPreferences) {
-  const preferencesOptions = Aellux.options.preferencesOptions;
+function preferenceContainersUpdate() {
   document.querySelectorAll(`[data-aellux-preference]`)
     .forEach(container => {
       const ready = container.getAttribute("data-aellux-ready");
@@ -79,10 +79,9 @@ function preferenceContainersUpdate(computedPreferences) {
 
       const preference = container.getAttribute("data-aellux-preference");
       const elements = container.querySelectorAll("[data-aellux-toggle]");
-      const key = Aellux.toCamelCase(preference);
       elements.forEach(element => {
         const value = element.getAttribute("data-aellux-toggle");
-        element.classList.toggle("ux-active", value === computedPreferences[key]);
+        element.classList.toggle("ux-active", value === get(preference));
       });
     });
 }

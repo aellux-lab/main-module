@@ -319,7 +319,7 @@
       },
       getObject() {
         const data = getData();
-        const object = Object.create(null);
+        const object = {};
         data.forEach(([key, value]) => object[key] = value);
         return object;
       }

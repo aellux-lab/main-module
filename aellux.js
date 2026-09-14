@@ -315,7 +315,9 @@
         return target.setItem(defaultIdentifier, data.toString());
       },
       setObject(object) {
-        return target.setItem(defaultIdentifier, (new URLSearchParams(object)).toString());
+        const data = new URLSearchParams();
+        Object.keys(object).forEach(key => data.set(key, object[key]));
+        return target.setItem(defaultIdentifier, data.toString());
       },
       getObject() {
         const data = getData();

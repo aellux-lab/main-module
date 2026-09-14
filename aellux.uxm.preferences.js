@@ -71,7 +71,7 @@ function preferenceContainersUpdate() {
 
 function setupPreferenceContainer(container) {
   container.addEventListener("click", onContainerClick);
-  container.setAttribute("[data-aellux-ready]");
+  container.setAttribute("[data-aellux-ready]", "");
 }
 
 function onContainerClick(event) {

@@ -275,7 +275,7 @@
     preferences = preferences ?? Aellux.persist.preferences.getObject();
     Object.entries(allQueries).forEach(([param, queries]) => {
       Object.entries(queries).forEach(([value, query]) => {
-        if (!preferences || !preferences[param]) {
+        if (!preferences || !preferences[param] || preferences[param] === "auto") {
           if (!query.matches) return;
         } else if (preferences[param] !== value) return;
         const hyphenized = Aellux.fromCamelCase(param);

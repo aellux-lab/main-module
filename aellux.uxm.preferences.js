@@ -14,6 +14,10 @@ export async function init() {
     .forEach(([param, options]) => userPreferences[param] = options[0]);
 
   loadUserPreferences();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    update();
+  }, { once: true });
 }
 
 export function update() {

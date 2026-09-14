@@ -1,5 +1,5 @@
 const userPreferences = Object.create(null);
-
+const defaultPreferences = Object.create(null);
 
 export async function init() {
   window.addEventListener("storage", function (event) {
@@ -10,27 +10,48 @@ export async function init() {
     update();
   });
 
+  //Watch device changes
+  const allQueries = Aellux.options.preferencesMediaQueries;
+  Object.values(allQueries).forEach((queries) =>
+    Object.values(queries).forEach((query) =>
+      query.addEventListener("change", update)
+    )
+  );
+
   //Default values
   Object.entries(Aellux.options.preferencesOptions)
-    .forEach(([param, options]) => userPreferences[param] = options[0]);
+    .forEach(([param, options]) =>
+      defaultPreferences[param] = options[0]
+    );
 
   loadUserPreferences();
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', update, { once: true });
+    document.addEventListener(
+      'DOMContentLoaded',
+      update,
+      { once: true }
+    );
   } else {
     update();
   }
 }
 
 export function update() {
-  Object.entries(userPreferences)
+  let computedPreferences = { ...defaultPreferences, ...userPreferences };
+
+  //Html tag attributes
+  Object.entries(computedPreferences)
     .forEach(([param, value]) => {
       const key = Aellux.fromCamelCase(param);
-      document.documentElement.setAttribute(`data-aellux-${key}`, value);
+      if (value === "auto") { value = getAuto(key); }
+
+      if (value == null) { document.documentElement.removeAttribute(`data-aellux-${key}`); }
+      else { document.documentElement.setAttribute(`data-aellux-${key}`, value); }
     });
+
   //Configure toggle buttons & events
-  preferenceContainersUpdate();
+  preferenceContainersUpdate(computedPreferences);
 }
 
 export function kill() {
@@ -49,6 +70,14 @@ export function set(preference, value) {
   saveUserPreferences();
 }
 
+function getAuto(param) {
+  const queries = Aellux.options.preferencesMediaQueries[param];
+  for (const q of Object.keys(queries)) {
+    if (queries[q].matches) return q;
+  }
+  return null;
+}
+
 function saveUserPreferences() {
   Aellux.persist.preferences.setObject(userPreferences);
 }
@@ -58,7 +87,7 @@ function loadUserPreferences(preferences = null) {
   Object.assign(userPreferences, loaded);
 }
 
-function preferenceContainersUpdate() {
+function preferenceContainersUpdate(computedPreferences) {
   const preferencesOptions = Aellux.options.preferencesOptions;
   document.querySelectorAll(`[data-aellux-preference]`)
     .forEach(container => {
@@ -70,7 +99,7 @@ function preferenceContainersUpdate() {
       const key = Aellux.toCamelCase(preference);
       elements.forEach(element => {
         const value = element.getAttribute("data-aellux-toggle");
-        element.classList.toggle("ux-active", value === userPreferences[key]);
+        element.classList.toggle("ux-active", value === computedPreferences[key]);
       });
     });
 }

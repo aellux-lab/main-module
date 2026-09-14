@@ -4,342 +4,362 @@
 // Promise, modules, async/await, or other modern-only features.
 
 (function () {
-    var aelluxBootstrapSrc =
-        typeof document !== "undefined" &&
-            document.currentScript &&
-            document.currentScript.src
-            ? document.currentScript.src
-            : "";
+  var aelluxBootstrapSrc =
+    typeof document !== "undefined" &&
+      document.currentScript &&
+      document.currentScript.src
+      ? document.currentScript.src
+      : "";
 
-    var root =
-        typeof globalThis !== "undefined"
-            ? globalThis
-            : window;
+  var root =
+    typeof globalThis !== "undefined"
+      ? globalThis
+      : window;
 
-    const defaultPreload = [
-        //"ajax-content",
-        "adaptive",
-        //"tabs"
-    ];
+  const defaultPreload = [
+    //"ajax-content",
+    "adaptive",
+    //"tabs"
+  ];
 
-    root.Aellux = {
-        options: {
-            themePreferenceAttribute: null,
-            defaultAdaptiveCSS: false,
-            dependencies: {
-                components: {
-                    "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
-                    "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
-                },
-                scrollbox: {
-                    "@better-scrol": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
-                    "@better-scroll/slide": "https://cdn.jsdelivr.net/npm/@better-scroll/slide@2.5.1/dist/slide.min.js",
-                    "@better-scroll/scroll-bar": "https://cdn.jsdelivr.net/npm/@better-scroll/scroll-bar@2.5.1/dist/scroll-bar.min.js",
-                    "@better-scroll/mouse-wheel": "https://cdn.jsdelivr.net/npm/@better-scroll/mouse-wheel@2.5.1/+esm"
-                }
-            },
-            load: [
-                "preferences", // Preferencias de usuário togglers
-                "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-                "adaptive", // Composição adaptativa ao espaço/forma,
-                "tabs",
-                "feedback",
-                "scrollbox",
-                "ajax-content", // Conteúdo assíncrono substituído
-                "components" // Comportamentos de componentes de interação pré-fabricados
-            ],
-            preferencesOptions: {
-                theme: ["auto", "light", "dark"],
-                contrast: ["auto", "high", "low"],
-                motion: ["auto", "reduced"],
-                transparency: ["auto", "reduced"],
-                textScale: [1, 1.5, 0.8],
-                interfaceScale: [1, 1.5, 0.8],
-                extendedTiming: ["off", "on"],
-                largeTargets: ["off", "on"],
-                haptics: ["on", "off"],
-                sound: ["off", "on", "low"],
-            },
-            adaptiveParams: {
-                experienceScale: {
-                    near: 1,
-                    far: 1.5
-                },
-                minSizes: {
-                    compact: 0,
-                    small: 480,
-                    medium: 768,
-                    large: 1024,
-                    wide: 1280,
-                    ultrawide: 1600
-                },
-                ratioShapes: {
-                    vertical: 0.8,
-                    //>square<
-                    horizontal: 1.25
-                }
-            }
+  root.Aellux = {
+    options: {
+      defaultAdaptiveCSS: false,
+      dependencies: {
+        components: {
+          "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
+          "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
         },
-        init(options) {
-            if (typeof document === "undefined") {
-                console.log("[Aellux] Browser not supported.");
-                return;
-            }
-
-            if (document.querySelector("[data-aellux-legacy]") ||
-                document.querySelector("[data-aellux-esm]")) return;
-
-            mergeOptions(Aellux.options, options || {});
-            Aellux.aelluxBasePath = aelluxBasePath;
-            Aellux.notAvailable = [];
-
-            addDefaultAdaptiveCSS();
-            addWeakStyles();
-            loadAellux();
-        },
-        legacy: false,
-        supported: false,
-        notAvailable: [],
-        toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); },
-        fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); },
-        persist: {
-            local: buildPersistMemory("localStorage"),
-            session: buildPersistMemory("sessionStorage"),
-            preferences: buildPersistMemory("localStorage", "AelluxPreferences")
+        scrollbox: {
+          "@better-scrol": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
+          "@better-scroll/slide": "https://cdn.jsdelivr.net/npm/@better-scroll/slide@2.5.1/dist/slide.min.js",
+          "@better-scroll/scroll-bar": "https://cdn.jsdelivr.net/npm/@better-scroll/scroll-bar@2.5.1/dist/scroll-bar.min.js",
+          "@better-scroll/mouse-wheel": "https://cdn.jsdelivr.net/npm/@better-scroll/mouse-wheel@2.5.1/+esm"
         }
-    };
+      },
+      load: [
+        "preferences", // Preferencias de usuário togglers
+        "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
+        "adaptive", // Composição adaptativa ao espaço/forma,
+        "tabs",
+        "feedback",
+        "scrollbox",
+        "ajax-content", // Conteúdo assíncrono substituído
+        "components" // Comportamentos de componentes de interação pré-fabricados
+      ],
+      preferencesOptions: {
+        colorScheme: ["auto", "light", "dark"],
+        contrast: ["auto", "no-preference", "more", "less"],
+        reducedMotion: ["auto", "no-preference", "reduced"],
+        reducedTransparency: ["auto", "no-preference", "reduced"],
+        forcedColors: ["auto", "no-preference", "active"],
+        textScale: [1, 1.5, 0.8],
+        interfaceScale: [1, 1.5, 0.8],
+        extendedTiming: ["off", "on"],
+        largeTargets: ["off", "on"],
+        haptics: ["on", "off"],
+        sound: ["off", "on", "low"],
+      },
+      preferencesMediaQueries: {
+        colorScheme: {
+          "light": window.matchMedia("(prefers-color-scheme: light)"),
+          "dark": window.matchMedia("(prefers-color-scheme: dark)")
+        },
+        reducedMotion: {
+          "reduced": window.matchMedia("(prefers-reduced-motion: reduced)"),
+          "no-preference": window.matchMedia("(prefers-reduced-motion: no-preference)")
+        },
+        reducedTransparency: {
+          "reduced": window.matchMedia("(prefers-reduced-transparency: reduced)"),
+          "no-preference": window.matchMedia("(prefers-reduced-transparency: no-preference)")
+        },
+        forcedColors: {
+          "active": window.matchMedia("(forced-colors: active)"),
+          "no-preference": window.matchMedia("(forced-colors: no-preference)")
+        },
+        contrast: {
+          "more": window.matchMedia("(prefers-contrast: more)"),
+          "less": window.matchMedia("(prefers-contrast: less)"),
+          "no-preference": window.matchMedia("(prefers-contrast: no-preference)")
+        },
+      },
+      adaptiveParams: {
+        experienceScale: {
+          near: 1,
+          far: 1.5
+        },
+        minSizes: {
+          compact: 0,
+          small: 480,
+          medium: 768,
+          large: 1024,
+          wide: 1280,
+          ultrawide: 1600
+        },
+        ratioShapes: {
+          vertical: 0.8,
+          //>square<
+          horizontal: 1.25
+        }
+      }
+    },
+    init(options) {
+      if (typeof document === "undefined") {
+        console.log("[Aellux] Browser not supported.");
+        return;
+      }
 
-    var aelluxBasePath = aelluxBootstrapSrc
-        ? aelluxBootstrapSrc.substring(0,
-            aelluxBootstrapSrc.lastIndexOf("/") + 1)
-        : "";
+      if (document.querySelector("[data-aellux-legacy]") ||
+        document.querySelector("[data-aellux-esm]")) return;
 
-    function dispatchAwake() {
-        var event = document.createEvent("Event");
-        event.initEvent("AelluxAwake", false, false);
-        document.dispatchEvent(event);
+      mergeOptions(Aellux.options, options || {});
+      Aellux.aelluxBasePath = aelluxBasePath;
+      Aellux.notAvailable = [];
+
+      addDefaultAdaptiveCSS();
+      addWeakStyles();
+      loadAellux();
+    },
+    legacy: false,
+    supported: false,
+    notAvailable: [],
+    toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); },
+    fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); },
+    persist: {
+      local: buildPersistMemory("localStorage"),
+      session: buildPersistMemory("sessionStorage"),
+      preferences: buildPersistMemory("localStorage", "AelluxPreferences")
     }
+  };
 
-    function loadAellux() {
-        var attr = "data-aellux-esm";
-        if (typeof Promise === "undefined") { Aellux.notAvailable.push("Promise"); }
-        if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
+  var aelluxBasePath = aelluxBootstrapSrc
+    ? aelluxBootstrapSrc.substring(0,
+      aelluxBootstrapSrc.lastIndexOf("/") + 1)
+    : "";
 
-        if (Aellux.notAvailable.length !== 0)
-            return loadLegacyFallback();
+  function dispatchAwake() {
+    var event = document.createEvent("Event");
+    event.initEvent("AelluxAwake", false, false);
+    document.dispatchEvent(event);
+  }
 
-        Aellux.options.load.forEach(function (d) { //PRELOAD ALL
-            if (true || Aellux.options.load.indexOf(d) !== -1) {
-                var link = document.createElement("link");
-                link.rel = "modulepreload";
-                link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
-                document.head.appendChild(link);
-            }
-        });
+  function loadAellux() {
+    var attr = "data-aellux-esm";
+    if (typeof Promise === "undefined") { Aellux.notAvailable.push("Promise"); }
+    if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
 
-        var script = document.createElement("script");
-        script.type = "module";
-        script.src = aelluxBasePath + "aellux.esm.js";
-        script.setAttribute(attr, "true");
-        script.onload = function () {
-            Aellux.legacy = false;
-            Aellux.supported = true;
-            Aellux.initModule();
-            dispatchAwake();
-        };
-        script.onerror = function () {
-            script.parentNode.removeChild(script);
-            console.log("[Aellux] Modern runtime not supported. Fallback to legacy.");
-            loadLegacyFallback();
-        };
-        document.head.appendChild(script);
-    }
+    if (Aellux.notAvailable.length !== 0)
+      return loadLegacyFallback();
 
-    function loadLegacyFallback() {
-        var attr = "data-aellux-legacy";
-        if (typeof document === "undefined" ||
-            document.querySelector("[" + attr + "]"))
-            return;
-
-        if (Aellux.notAvailable.length !== 0)
-            console.log("[Aellux] " + Aellux.notAvailable.join(", ") + " not available in browser.");
-
-        Aellux.legacy = true;
-        Aellux.supported = false;
-
-        var script = document.createElement("script");
-        script.src = aelluxBasePath + "aellux.legacy.js";
-        script.setAttribute(attr, "true");
-        script.onload = function () {
-            dispatchAwake();
-        };
-        script.onerror = function () {
-            console.error("[Aellux] Legacy fallback could not be loaded.");
-        };
-        document.head.appendChild(script);
-    }
-
-    function addDefaultAdaptiveCSS() {
-        var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
-        var attr = "data-aellux-adaptive-style";
-        if (!Aellux.options.defaultAdaptiveCSS ||
-            typeof document === "undefined" ||
-            document.querySelector("[" + attr + "]"))
-            return;
-
+    Aellux.options.load.forEach(function (d) { //PRELOAD ALL
+      if (true || Aellux.options.load.indexOf(d) !== -1) {
         var link = document.createElement("link");
-        link.rel = "preload";
-        link.as = "style";
-        link.href = aelluxBasePath + aelluxAdaptiveCSS;
+        link.rel = "modulepreload";
+        link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
         document.head.appendChild(link);
+      }
+    });
 
-        var link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = aelluxBasePath + aelluxAdaptiveCSS;
-        link.setAttribute(attr, "true");
-        document.addEventListener("DOMContentLoaded", function (e) {
-            document.head.appendChild(link);
-        });
+    var script = document.createElement("script");
+    script.type = "module";
+    script.src = aelluxBasePath + "aellux.esm.js";
+    script.setAttribute(attr, "true");
+    script.onload = function () {
+      Aellux.legacy = false;
+      Aellux.supported = true;
+      Aellux.initModule();
+      dispatchAwake();
+    };
+    script.onerror = function () {
+      script.parentNode.removeChild(script);
+      console.log("[Aellux] Modern runtime not supported. Fallback to legacy.");
+      loadLegacyFallback();
+    };
+    document.head.appendChild(script);
+  }
 
-        if (typeof Promise === "undefined") return;
-        Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {
-            link.onload = resolve;
-            link.onerror = resolve;
-        });
+  function loadLegacyFallback() {
+    var attr = "data-aellux-legacy";
+    if (typeof document === "undefined" ||
+      document.querySelector("[" + attr + "]"))
+      return;
+
+    if (Aellux.notAvailable.length !== 0)
+      console.log("[Aellux] " + Aellux.notAvailable.join(", ") + " not available in browser.");
+
+    Aellux.legacy = true;
+    Aellux.supported = false;
+
+    var script = document.createElement("script");
+    script.src = aelluxBasePath + "aellux.legacy.js";
+    script.setAttribute(attr, "true");
+    script.onload = function () {
+      dispatchAwake();
+    };
+    script.onerror = function () {
+      console.error("[Aellux] Legacy fallback could not be loaded.");
+    };
+    document.head.appendChild(script);
+  }
+
+  function addDefaultAdaptiveCSS() {
+    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
+    var attr = "data-aellux-adaptive-style";
+    if (!Aellux.options.defaultAdaptiveCSS ||
+      typeof document === "undefined" ||
+      document.querySelector("[" + attr + "]"))
+      return;
+
+    var link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "style";
+    link.href = aelluxBasePath + aelluxAdaptiveCSS;
+    document.head.appendChild(link);
+
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = aelluxBasePath + aelluxAdaptiveCSS;
+    link.setAttribute(attr, "true");
+    document.addEventListener("DOMContentLoaded", function (e) {
+      document.head.appendChild(link);
+    });
+
+    if (typeof Promise === "undefined") return;
+    Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {
+      link.onload = resolve;
+      link.onerror = resolve;
+    });
+  }
+
+  function addWeakStyles() {
+    var attr = "data-aellux-weak-style";
+    if (typeof document === "undefined" ||
+      document.querySelector("[" + attr + "]"))
+      return;
+
+    //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
+    let colorScheme = Aellux.persist.preferences.get("color-scheme");
+    if (!colorScheme || colorScheme === "auto")
+      colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.setAttribute("data-aellux-color-scheme", colorScheme);
+
+    var style = document.createElement("style");
+    style.setAttribute(attr, "true");
+    style.textContent =
+      ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
+      ":where(html){color-scheme:light dark;}" +
+      ":where(html[data-aellux-theme='dark']){color-scheme:dark;}" + //pref force
+      ":where(html[data-aellux-theme='light']){color-scheme:light;}" + //pref force
+      ":where(body,html) {" +
+      "margin:0;" +
+      "font-family:system-ui;" +
+      "background-color:Canvas;" +
+      "color:CanvasText;" +
+      "}" +
+
+      ":where([data-aellux-fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
+      ":where([data-aellux-fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
+
+      "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress) {display: none!important;}" +
+      "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
+    document.head.appendChild(style);
+
+    if (!document.querySelector('meta[name="viewport"]')) {
+      var meta = document.createElement("meta");
+      meta.name = "viewport";
+      meta.content = "width=device-width, initial-scale=1";
+      document.head.appendChild(meta);
+    }
+  }
+
+  function buildPersistMemory(name, identifier) {
+    const defaultIdentifier = identifier ?? "AelluxPersist";
+
+    try {
+      var target = window[name] || null;
+      if (!target ||
+        typeof target.setItem !== "function" ||
+        typeof target.getItem !== "function") {
+        throw new Error("Storage unavailable");
+      }
+    } catch (error) {
+      var target = {
+        setItem(key, value) { this[key] = value; },
+        getItem(key) { return this[key] ?? null; }
+      };
     }
 
-    function addWeakStyles() {
-        var attr = "data-aellux-weak-style";
-        if (typeof document === "undefined" ||
-            document.querySelector("[" + attr + "]"))
-            return;
+    function getData() { return new URLSearchParams(target.getItem(defaultIdentifier) || ""); }
+    return {
+      get(key, fallback) {
+        return getData().get(key) || fallback;
+      },
+      set(key, value) {
+        const data = getData();
+        data.set(key, value);
+        return target.setItem(defaultIdentifier, data.toString());
+      },
+      setObject(object) {
+        return target.setItem(defaultIdentifier, (new URLSearchParams(object)).toString());
+      },
+      getObject() {
+        const data = getData();
+        const object = Object.create(null);
+        data.forEach(([key, value]) => object[key] = value);
+        return object;
+      }
+    };
+  }
 
-        //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
-        let theme = Aellux.persist.preferences.get("theme");
-        if (!theme || theme === "auto")
-            theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  function mergeOptions(target, source) {
+    if (!source)
+      return target;
 
-        document.documentElement.setAttribute("data-aellux-theme", theme);
-        if (Aellux.options.themePreferenceAttribute)
-            document.documentElement.setAttribute(
-                Aellux.options.themePreferenceAttribute,
-                theme
-            );
+    for (var key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key))
+        continue;
+      if (
+        key === "__proto__" ||
+        key === "constructor" ||
+        key === "prototype"
+      )
+        continue;
+      var sourceValue = source[key];
+      var targetValue = target[key];
 
-        var style = document.createElement("style");
-        style.setAttribute(attr, "true");
-        style.textContent =
-            ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
-            ":where(html){color-scheme:light dark;}" +
-            ":where(html[data-aellux-theme='dark']){color-scheme:dark;}" + //pref force
-            ":where(html[data-aellux-theme='light']){color-scheme:light;}" + //pref force
-            ":where(body,html) {" +
-            "margin:0;" +
-            "font-family:system-ui;" +
-            "background-color:Canvas;" +
-            "color:CanvasText;" +
-            "}" +
+      if (
+        sourceValue &&
+        typeof sourceValue === "object" &&
+        !Array.isArray(sourceValue)
+      ) {
 
-            ":where([data-aellux-fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
-            ":where([data-aellux-fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
-
-            "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress) {display: none!important;}" +
-            "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
-        document.head.appendChild(style);
-
-        if (!document.querySelector('meta[name="viewport"]')) {
-            var meta = document.createElement("meta");
-            meta.name = "viewport";
-            meta.content = "width=device-width, initial-scale=1";
-            document.head.appendChild(meta);
+        if (
+          !targetValue ||
+          typeof targetValue !== "object" ||
+          Array.isArray(targetValue)
+        ) {
+          targetValue = {};
+          target[key] = targetValue;
         }
+        mergeOptions(targetValue, sourceValue);
+      } else {
+        target[key] = sourceValue;
+      }
     }
+    return target;
+  }
 
-    function buildPersistMemory(name, identifier) {
-        const defaultIdentifier = identifier ?? "AelluxPersist";
+  function inferDistantEnvironment() {
+    const noHover =
+      matchMedia("(hover: none)").matches;
 
-        try {
-            var target = window[name] || null;
-            if (!target ||
-                typeof target.setItem !== "function" ||
-                typeof target.getItem !== "function") {
-                throw new Error("Storage unavailable");
-            }
-        } catch (error) {
-            var target = {
-                setItem(key, value) { this[key] = value; },
-                getItem(key) { return this[key] ?? null; }
-            };
-        }
+    const noFinePointer =
+      !matchMedia("(any-pointer: fine)").matches;
 
-        function getData() { return new URLSearchParams(target.getItem(defaultIdentifier) || ""); }
-        return {
-            get(key, fallback) {
-                return getData().get(key) || fallback;
-            },
-            set(key, value) {
-                const data = getData();
-                data.set(key, value);
-                return target.setItem(defaultIdentifier, data.toString());
-            },
-            setObject(object) {
-                return target.setItem(defaultIdentifier, (new URLSearchParams(object)).toString());
-            },
-            getObject() {
-                return getData();
-            }
-        };
-    }
+    const largeViewport =
+      window.innerWidth >= 960 &&
+      window.innerHeight >= 540;
 
-    function mergeOptions(target, source) {
-        if (!source)
-            return target;
-
-        for (var key in source) {
-            if (!Object.prototype.hasOwnProperty.call(source, key))
-                continue;
-            if (
-                key === "__proto__" ||
-                key === "constructor" ||
-                key === "prototype"
-            )
-                continue;
-            var sourceValue = source[key];
-            var targetValue = target[key];
-
-            if (
-                sourceValue &&
-                typeof sourceValue === "object" &&
-                !Array.isArray(sourceValue)
-            ) {
-
-                if (
-                    !targetValue ||
-                    typeof targetValue !== "object" ||
-                    Array.isArray(targetValue)
-                ) {
-                    targetValue = {};
-                    target[key] = targetValue;
-                }
-                mergeOptions(targetValue, sourceValue);
-            } else {
-                target[key] = sourceValue;
-            }
-        }
-        return target;
-    }
-
-    function inferDistantEnvironment() {
-        const noHover =
-            matchMedia("(hover: none)").matches;
-
-        const noFinePointer =
-            !matchMedia("(any-pointer: fine)").matches;
-
-        const largeViewport =
-            window.innerWidth >= 960 &&
-            window.innerHeight >= 540;
-
-        return noHover && noFinePointer && largeViewport;
-    }
+    return noHover && noFinePointer && largeViewport;
+  }
 })();

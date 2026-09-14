@@ -260,7 +260,7 @@
       "color:CanvasText;" +
       "}" +
 
-      ":where(" + p + "fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
+      ":where([" + p + "fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
       ":where([" + p + "fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
 
       "[" + p + "adaptive]:not([" + p + "ready]) > *:not(progress) {display: none!important;}" +

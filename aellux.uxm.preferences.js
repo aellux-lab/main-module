@@ -2,12 +2,18 @@ const userPreferences = Object.create(null);
 const defaultPreferences = Object.create(null);
 const computedPreferences = Object.create(null);
 
+const attr = {
+  preference: Aellux.attr("preference"),
+  option: Aellux.attr("option"),
+  label: Aellux.attr("label"),
+  ready: Aellux.attr("ready"),
+}
+
 export async function init() {
   window.addEventListener("storage", function (event) {
     if (event.key !== "AelluxPreferences") return;
     const newPreferences = new URLSearchParams(event.newValue || "");
     newPreferences.forEach((value, key) => userPreferences[key] = value);
-    saveUserPreferences();
     update();
   });
 
@@ -43,6 +49,8 @@ export function update() {
 
   //Configure toggle buttons & events
   preferenceContainersUpdate();
+
+  Aellux.dispatch("PreferencesChange");
 }
 
 export function kill() {
@@ -50,12 +58,12 @@ export function kill() {
 }
 
 export function get(preference) {
-  const key = Aellux.toCamelCase(preference);
+  const key = toCamelCase(preference);
   return computedPreferences[key];
 }
 
 export function set(preference, value) {
-  const key = Aellux.toCamelCase(preference);
+  const key = toCamelCase(preference);
   if (userPreferences[key] === value) return;
   userPreferences[key] = value;
   saveUserPreferences();
@@ -66,21 +74,20 @@ function saveUserPreferences() {
 }
 
 function loadUserPreferences() {
-  const loaded = Aellux.persist.preferences.getObject();
-  Object.assign(userPreferences, loaded);
+  Object.assign(userPreferences, Aellux.persist.preferences.getObject());
 }
 
 function preferenceContainersUpdate() {
-  document.querySelectorAll(`[data-aellux-preference]`)
+  document.querySelectorAll(`[${attr.preference}]`)
     .forEach(container => {
-      const ready = container.getAttribute("data-aellux-ready");
+      const ready = container.getAttribute(attr.ready);
       if (!ready) { setupPreferenceContainer(container); }
 
-      const preference = container.getAttribute("data-aellux-preference");
-      const elements = container.querySelectorAll("[data-aellux-option]");
-      const selectedLabel = container.querySelector("[data-aellux-label]");
+      const preference = container.getAttribute(attr.preference);
+      const elements = container.querySelectorAll(`[${attr.option}]`);
+      const selectedLabel = container.querySelector(`[${attr.label}]`);
       elements.forEach(element => {
-        const value = element.getAttribute("data-aellux-option");
+        const value = element.getAttribute(attr.option);
         const selected = value === get(preference);
         element.classList.toggle("ux-active", selected);
         if (selectedLabel && selected) {
@@ -93,22 +100,25 @@ function preferenceContainersUpdate() {
 
 function setupPreferenceContainer(container) {
   container.addEventListener("click", onContainerClick);
-  container.setAttribute("[data-aellux-ready]", "");
+  container.setAttribute(attr.ready, "");
 }
 
 function onContainerClick(event) {
   const container = event.currentTarget;
-  const optionButton = event.target?.closest("[data-aellux-option]") ?? null;
+  const optionButton = event.target?.closest(attr.option) ?? null;
   const buttonNext = event.target?.closest("[data-aellux-next]") ?? null;
   const buttonPrev = event.target?.closest("[data-aellux-prev]") ?? null;
   if (optionButton) {
-    const preference = container.getAttribute("data-aellux-preference");
-    const value = optionButton.getAttribute("data-aellux-option");
+    const preference = container.getAttribute(attr.preference);
+    const value = optionButton.getAttribute(attr.option);
     set(preference, value);
     update();
   } else if (buttonNext || buttonPrev) {
-    const preference = container.getAttribute("data-aellux-preference");
+    const preference = container.getAttribute(attr.preference);
     const change = buttonNext ? 1 : -1;
     //TODO LIST OPTIONS
   }
 }
+
+function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
+function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };

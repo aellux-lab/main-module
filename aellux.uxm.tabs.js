@@ -1,6 +1,13 @@
 const controllers = new WeakMap();
 let pageWasHidden = false;
 
+const attr = {
+  tabGroup: Aellux.attr("tab-group"),
+  tabPanel: Aellux.attr("tab-panel"),
+  tab: Aellux.attr("tab"),
+  ready: Aellux.attr("ready"),
+}
+
 //TODO: optional title change when tab selected (when role=navigation / nav tag?)
 
 export async function init() {
@@ -16,14 +23,14 @@ export async function init() {
 }
 
 export function update() {
-  const tabGroups = document.querySelectorAll("[data-aellux-tab-group]");
+  const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
   tabGroups.forEach(tabGroupContainer => {
     updateController(tabGroupContainer);
   }); //Safe to call again
 }
 
 export function snapshotRestore(detail) {
-  const tabGroups = document.querySelectorAll("[data-aellux-tab-group]");
+  const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
   tabGroups.forEach(tabGroupContainer => {
     snapshotRestoreController(tabGroupContainer, detail);
   }); //Safe to call again
@@ -48,7 +55,6 @@ function updateController(tabGroup) {
 }
 
 function snapshotRestoreController(tabGroup, detail) {
-  console.log("SNAP~RESTORE TABS");
   const controller = controllers.get(tabGroup);
 
   if (!controller) return;
@@ -73,14 +79,14 @@ function killController(tabGroup) {
 function _createController(tabGroup) {
   tabGroup.id = tabGroup.id || "tabs";
 
-  tabGroup.querySelectorAll("[data-aellux-tab]").forEach(tab => {
-    const panelId = tab.getAttribute("data-aellux-tab");
+  tabGroup.querySelectorAll(`[${attr.tab}]`).forEach(tab => {
+    const panelId = tab.getAttribute(attr.tab);
     tab.id = tab.id || `${tabGroup.id}-tab-${panelId}`;
     tab.setAttribute("aria-controls", panelId);
     tab.setAttribute("aria-selected", false);
     tab.setAttribute("role", "tab");
     const panel = document.querySelector(`#${panelId}`);
-    panel.setAttribute("data-aellux-tabpanel", panelId);
+    panel.setAttribute(attr.tabPanel, panelId);
     //Se tiver LI de parent role=presentation
   });
 
@@ -92,7 +98,7 @@ function _createController(tabGroup) {
     },
     onclick(event) {
       const target = event.target;
-      const tab = target.closest("[data-aellux-tab]");
+      const tab = target.closest(`[${attr.tab}]`);
       if (!tab) return;
 
       const controller = controllers.get(tabGroup);
@@ -104,12 +110,12 @@ function _createController(tabGroup) {
     changeTab(currentTab, save) {
       const controller = controllers.get(tabGroup);
       if (controller.currentSelectedTab !== currentTab) {
-        tabGroup.querySelectorAll("[data-aellux-tab]").forEach((tab) => {
+        tabGroup.querySelectorAll(`[${attr.tab}]`).forEach((tab) => {
           if (currentTab === false) { currentTab = tab; }
           const selected = tab === currentTab || tab.id === currentTab;
           if (selected && currentTab !== tab) currentTab = tab;
 
-          const panelId = tab.getAttribute("data-aellux-tab");
+          const panelId = tab.getAttribute(attr.tab);
           tab.setAttribute("aria-selected", selected);
           tab.setAttribute("tabindex", selected ? 0 : -1);
           const panel = document.querySelector(`#${panelId}`);

@@ -25,12 +25,12 @@ export async function kill() {
 }
 
 function adaptiveObserverUpdate() {
-  const adaptives = document.querySelectorAll("[data-aellux-adaptive]");
+  const adaptives = document.querySelectorAll(`[${Aellux.attr("adaptive")}]`);
   adaptives.forEach(adaptiveContainer => {
     if (!adaptiveContainer.hasAttribute("aria-busy"))
       adaptiveContainer.setAttribute("aria-busy", true);
     Aellux.resizeObserver.observe(adaptiveContainer)
-    adaptiveContainer.addEventListener("AelluxResizeObserver", onResizeObserver);
+    adaptiveContainer.addEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
   }); //Safe to call again
 }
 
@@ -67,7 +67,7 @@ function onResizeObserver(event) {
 
   //const orientation = inferOrientation(element);
 
-  adaptiveContainer.setAttribute("data-aellux-ready", "");
+  adaptiveContainer.setAttribute(Aellux.attr("ready"), "");
 
   Aellux.dispatchFrom(adaptiveContainer, "AdaptiveUpdate", { detail: null });
 }

@@ -4,26 +4,13 @@
 // Promise, modules, async/await, or other modern-only features.
 
 (function () {
-  var aelluxBootstrapSrc =
-    typeof document !== "undefined" &&
-      document.currentScript &&
-      document.currentScript.src
-      ? document.currentScript.src
-      : "";
+  var CONSTANTS = Object.freeze({
+    AELLUX_EVENT_NAME_PREFFIX: "Aellux",
+    AELLUX_UXM_SCRIPT_PREFFIX: "uxm",
+    AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX: "aellux",
+    AELLUX_MINIFIED_SCRIPT_SUFFIX: "min",
 
-  var root =
-    typeof globalThis !== "undefined"
-      ? globalThis
-      : window;
-
-  const defaultPreload = [
-    //"ajax-content",
-    "adaptive",
-    //"tabs"
-  ];
-
-  root.Aellux = {
-    options: {
+    AELLUX_DEFAULT_INITIALIZATION_OPTIONS: {
       defaultAdaptiveCSS: false,
       dependencies: {
         components: {
@@ -102,15 +89,36 @@
           horizontal: 1.25
         }
       }
-    },
+    }
+  });
+
+  var aelluxBootstrapSrc =
+    typeof document !== "undefined" &&
+      document.currentScript &&
+      document.currentScript.src
+      ? document.currentScript.src
+      : "";
+
+  var aelluxBasePath = aelluxBootstrapSrc
+    ? aelluxBootstrapSrc.substring(0,
+      aelluxBootstrapSrc.lastIndexOf("/") + 1)
+    : "";
+
+  var root =
+    typeof globalThis !== "undefined"
+      ? globalThis
+      : window;
+
+  root.Aellux = {
+    options: CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS,
     init(options) {
       if (typeof document === "undefined") {
         console.log("[Aellux] Browser not supported.");
         return;
       }
 
-      if (document.querySelector("[data-aellux-legacy]") ||
-        document.querySelector("[data-aellux-esm]")) return;
+      if (document.querySelector(Aellux.attr("legacy")) ||
+        document.querySelector(Aellux.attr("esm"))) return;
 
       mergeOptions(Aellux.options, options || {});
       Aellux.aelluxBasePath = aelluxBasePath;
@@ -124,8 +132,9 @@
     legacy: false,
     supported: false,
     notAvailable: [],
-    toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); },
-    fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); },
+    attr(name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
+    uxmFilename(name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + ".js"; },
+    eventName(name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + name; },
     persist: {
       local: buildPersistMemory("localStorage"),
       session: buildPersistMemory("sessionStorage"),
@@ -133,30 +142,25 @@
     }
   };
 
-  var aelluxBasePath = aelluxBootstrapSrc
-    ? aelluxBootstrapSrc.substring(0,
-      aelluxBootstrapSrc.lastIndexOf("/") + 1)
-    : "";
-
   function dispatchAwake() {
     var event = document.createEvent("Event");
-    event.initEvent("AelluxAwake", false, false);
+    event.initEvent(Aellux.eventName("Awake"), false, false);
     document.dispatchEvent(event);
   }
 
   function loadAellux() {
-    var attr = "data-aellux-esm";
+    var attr = Aellux.attr("esm");
     if (typeof Promise === "undefined") { Aellux.notAvailable.push("Promise"); }
     if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
 
     if (Aellux.notAvailable.length !== 0)
       return loadLegacyFallback();
 
-    Aellux.options.load.forEach(function (d) { //PRELOAD ALL
-      if (true || Aellux.options.load.indexOf(d) !== -1) {
+    Aellux.options.load.forEach(function (uxmName) { //PRELOAD ALL
+      if (true || Aellux.options.load.indexOf(uxmName) !== -1) {
         var link = document.createElement("link");
         link.rel = "modulepreload";
-        link.href = aelluxBasePath + "aellux.uxm." + d + ".js";
+        link.href = aelluxBasePath + Aellux.uxmFilename(uxmName);
         document.head.appendChild(link);
       }
     });
@@ -180,7 +184,7 @@
   }
 
   function loadLegacyFallback() {
-    var attr = "data-aellux-legacy";
+    var attr = Aellux.attr("legacy");
     if (typeof document === "undefined" ||
       document.querySelector("[" + attr + "]"))
       return;
@@ -205,7 +209,7 @@
 
   function addDefaultAdaptiveCSS() {
     var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
-    var attr = "data-aellux-adaptive-style";
+    var attr = Aellux.attr("adaptive-style");
     if (!Aellux.options.defaultAdaptiveCSS ||
       typeof document === "undefined" ||
       document.querySelector("[" + attr + "]"))
@@ -233,7 +237,7 @@
   }
 
   function addWeakStyles() {
-    var attr = "data-aellux-weak-style";
+    var attr = Aellux.attr("weak-style");
     if (typeof document === "undefined" ||
       document.querySelector("[" + attr + "]"))
       return;
@@ -241,13 +245,14 @@
     //SET HTML TO PERSISTED PREFERENCES
     updatePreferencesAttributesHTML();
 
+    var p = Aellux.attr("");
     var style = document.createElement("style");
     style.setAttribute(attr, "true");
     style.textContent =
       ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
       ":where(html){color-scheme:light dark;}" +
-      ":where(html[data-aellux-color-scheme='dark']){color-scheme:dark;}" + //pref force
-      ":where(html[data-aellux-color-scheme='light']){color-scheme:light;}" + //pref force
+      ":where(html[" + p + "color-scheme='dark']){color-scheme:dark;}" + //pref force
+      ":where(html[" + p + "color-scheme='light']){color-scheme:light;}" + //pref force
       ":where(body,html) {" +
       "margin:0;" +
       "font-family:system-ui;" +
@@ -255,11 +260,11 @@
       "color:CanvasText;" +
       "}" +
 
-      ":where([data-aellux-fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
-      ":where([data-aellux-fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
+      ":where(" + p + "fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
+      ":where([" + p + "fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
 
-      "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress) {display: none!important;}" +
-      "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
+      "[" + p + "adaptive]:not([" + p + "ready]) > *:not(progress) {display: none!important;}" +
+      "[" + p + "adaptive][" + p + "ready] > progress[" + p + "adaptive-progress] {display: none!important;}";
     document.head.appendChild(style);
 
     if (!document.querySelector('meta[name="viewport"]')) {
@@ -271,22 +276,21 @@
   }
 
   function updatePreferencesAttributesHTML(preferences = null) {
-    const allQueries = Aellux.options.preferencesMediaQueries;
+    var allQueries = Aellux.options.preferencesMediaQueries;
     preferences = preferences ?? Aellux.persist.preferences.getObject();
     Object.entries(allQueries).forEach(([param, queries]) => {
       Object.entries(queries).forEach(([value, query]) => {
         if (!preferences || !preferences[param] || preferences[param] === "auto") {
           if (!query.matches) return;
         } else if (preferences[param] !== value) return;
-        const hyphenized = Aellux.fromCamelCase(param);
-        const attributeName = `data-aellux-${hyphenized}`;
-        document.documentElement.setAttribute(attributeName, value);
+        var hyphenized = fromCamelCase(param);
+        document.documentElement.setAttribute(Aellux.attr(hyphenized), value);
       })
     });
   }
 
   function buildPersistMemory(name, identifier) {
-    const defaultIdentifier = identifier ?? "AelluxPersist";
+    var defaultIdentifier = identifier ?? "AelluxPersist";
 
     try {
       var target = window[name] || null;
@@ -308,18 +312,18 @@
         return getData().get(key) || fallback;
       },
       set(key, value) {
-        const data = getData();
+        var data = getData();
         data.set(key, value);
         return target.setItem(defaultIdentifier, data.toString());
       },
       setObject(object) {
-        const data = getData();
+        var data = getData();
         Object.entries(object).forEach(([key, value]) => data.set(key, value));
         return target.setItem(defaultIdentifier, data.toString());
       },
       getObject() {
-        const data = getData();
-        const object = {};
+        var data = getData();
+        var object = {};
         data.forEach((value, key) => object[key] = value);
         return object;
       }
@@ -364,14 +368,17 @@
     return target;
   }
 
+  function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
+  function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };
+
   function inferDistantEnvironment() {
-    const noHover =
+    var noHover =
       matchMedia("(hover: none)").matches;
 
-    const noFinePointer =
+    var noFinePointer =
       !matchMedia("(any-pointer: fine)").matches;
 
-    const largeViewport =
+    var largeViewport =
       window.innerWidth >= 960 &&
       window.innerHeight >= 540;
 

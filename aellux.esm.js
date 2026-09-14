@@ -22,16 +22,16 @@ Object.assign(Aellux, {
     Aellux.intersectionObserver.disconnect();
   },
 
-  on(event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
-  off(event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
+  on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
+  off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
   dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
   dispatchFrom(from, event, options) {
     console.log(`dispatch: Aellux${event}`, options);
-    from.dispatchEvent(new CustomEvent(`Aellux${event}`, options));
+    from.dispatchEvent(new CustomEvent(Aellux.eventName(event), options));
   },
 
   wait: function (moduleName) {
-    const key = Aellux.toCamelCase(moduleName);
+    const key = toCamelCase(moduleName);
     if (key in Aellux) { return Promise.resolve(Aellux[key]); }
     if (modulePromises[key]) { return modulePromises[key]; }
     if (Aellux.options.load.indexOf(moduleName) > -1) { return loadUXM(moduleName); }
@@ -70,13 +70,13 @@ async function setupAllModules() {
 }
 
 function loadUXM(mName) {
-  const key = Aellux.toCamelCase(mName);
+  const key = toCamelCase(mName);
 
   if (modulePromises[key])
     return modulePromises[key];
 
   modulePromises[key] =
-    import(`./aellux.uxm.${mName}.js`)
+    import(`${Aellux.aelluxBasePath}${Aellux.uxmFilename(mName)}`)
       .then(module => {
         const realModule = module.default || module;
         Aellux[key] = realModule;
@@ -144,3 +144,6 @@ function createLayoutScheduler() {
     update: (callback) => queueTask(updateQueue, callback)
   };
 }
+
+function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
+function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };

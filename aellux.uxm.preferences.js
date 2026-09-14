@@ -10,8 +10,8 @@ export async function init() {
   });
 
   //Default values
-  Aellux.options.preferencesOptions
-    .forEach((param, options) => userPreferences[param] = options[0])
+  Object.entries(Aellux.options.preferencesOptions)
+    .forEach(([param, options]) => userPreferences[param] = options[0]);
 
   loadUserPreferences();
 }

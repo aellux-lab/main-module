@@ -322,7 +322,7 @@
       getObject() {
         const data = getData();
         const object = {};
-        data.forEach((key, value) => object[key] = value);
+        data.forEach((value, key) => object[key] = value);
         return object;
       }
     };

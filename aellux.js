@@ -32,7 +32,10 @@
                     "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
                 },
                 scrollbox: {
-                    "better-scroll": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm"
+                    "@better-scrol": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
+                    "@better-scroll/slide": "https://cdn.jsdelivr.net/npm/@better-scroll/slide@2.5.1/dist/slide.min.js",
+                    "@better-scroll/scroll-bar": "https://cdn.jsdelivr.net/npm/@better-scroll/scroll-bar@2.5.1/dist/scroll-bar.min.js",
+                    "@better-scroll/mouse-wheel": "https://cdn.jsdelivr.net/npm/@better-scroll/mouse-wheel@2.5.1/+esm"
                 }
             },
             load: [
@@ -40,10 +43,23 @@
                 "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
                 "adaptive", // Composição adaptativa ao espaço/forma,
                 "tabs",
+                "feedback",
                 "scrollbox",
                 "ajax-content", // Conteúdo assíncrono substituído
                 "components" // Comportamentos de componentes de interação pré-fabricados
             ],
+            preferencesOptions: {
+                theme: ["auto", "light", "dark"],
+                contrast: ["auto", "high", "low"],
+                motion: ["auto", "reduced"],
+                transparency: ["auto", "reduced"],
+                textScale: [1, 1.5, 0.8],
+                interfaceScale: [1, 1.5, 0.8],
+                extendedTiming: ["off", "on"],
+                largeTargets: ["off", "on"],
+                haptics: ["on", "off"],
+                sound: ["off", "on", "low"],
+            },
             adaptiveParams: {
                 experienceScale: {
                     near: 1,
@@ -64,7 +80,7 @@
                 }
             }
         },
-        init: function (options) {
+        init(options) {
             if (typeof document === "undefined") {
                 console.log("[Aellux] Browser not supported.");
                 return;
@@ -84,6 +100,7 @@
         legacy: false,
         supported: false,
         notAvailable: [],
+        toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); },
         persist: {
             local: buildPersistMemory("localStorage"),
             session: buildPersistMemory("sessionStorage"),
@@ -196,6 +213,15 @@
             document.querySelector("[" + attr + "]"))
             return;
 
+        //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
+        const theme = Aellux.persist.preferences.get("theme");
+        if (theme && theme !== "auto") {
+            document.setAttribute(
+                Aellux.options.themePreferenceAttribute,
+                theme
+            );
+        }
+
         var style = document.createElement("style");
         style.setAttribute(attr, "true");
         style.textContent =
@@ -213,7 +239,7 @@
             ":where([data-aellux-fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
             ":where([data-aellux-fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +
 
-            "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress[data-aellux-adaptive-progress]) {display: none!important;}" +
+            "[data-aellux-adaptive]:not([data-aellux-ready]) > *:not(progress) {display: none!important;}" +
             "[data-aellux-adaptive][data-aellux-ready] > progress[data-aellux-adaptive-progress] {display: none!important;}";
         document.head.appendChild(style);
 

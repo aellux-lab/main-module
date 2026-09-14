@@ -1,17 +1,14 @@
-const globalSnapshot = {};
+export const globalSnapshot = {};
 const globalRemoveSnapshot = {};
 
 let globalSnapshotString = "";
 let skipHashChange = null;
 let baseTitle = "";
-
 let useHash = true;
 
 export function init() {
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
-
-  Aellux.snapshot = {};
 
   //Restore snapshot listener
   Aellux.on("SnapshotRestore", onSnapshotRestore);
@@ -54,21 +51,17 @@ async function change(key, value, title, silent = false) {
   if (globalSnapshot.title === title &&
     globalSnapshot[key] === value) return;
 
-  Aellux.layout.update(() => {
-    Aellux.layout.read(() => {
-      globalSnapshot.title = title;
-      globalSnapshot[key] = value;
-      updateSnapshotData(snapshotToString(globalSnapshot));
+  globalSnapshot.title = title;
+  globalSnapshot[key] = value;
+  updateSnapshotData(snapshotToString(globalSnapshot));
 
-      const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
-      const url = useHash ? `#${globalSnapshotString}` : undefined;
+  const state = { aelluxState: true, snapshot: { ...globalSnapshot } };
+  const url = useHash ? `#${globalSnapshotString}` : undefined;
 
-      if (silent) history.replaceState(state, "", url);
-      else history.pushState(state, "", url);
+  if (silent) history.replaceState(state, "", url);
+  else history.pushState(state, "", url);
 
-      dispatchSnapshotEvent("SnapshotChange");
-    });
-  });
+  dispatchSnapshotEvent("SnapshotChange");
 }
 
 function onSnapshotRestore(event) {

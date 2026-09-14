@@ -1,82 +1,93 @@
-/*
-    color scheme
-    → light / dark / auto(device)
-
-    contrast
-    → default / more / less / (device)
-
-    motion
-    → default / reduced
-
-    transparency
-    → default / reduced
-
-    text scale
-    → default / large / custom
-
-    interface scale
-    → default / large / extra-large
-
-    sound
-    → on / reduced / off
-
-    haptics
-    → on / off
-
-    @media (prefers-color-scheme: dark) { }
-    @media (prefers-contrast: more) { }
-    @media (prefers-reduced-motion: reduce) { }
-    @media (forced-colors: active) { }
-    @media (prefers-reduced-transparency: reduce) { }
- */
-
-const userPreferences = {
-  theme: "system",
-  contrast: "system",
-  motion: "system",
-  transparency: "system",
-
-  textScale: 1,
-  interfaceScale: 1,
-
-  largeTargets: false,
-  extendedTiming: false,
-
-  sound: true,
-  haptics: true
-};
+const userPreferences = Object.create(null);
 
 export async function init() {
-  //BFCache
-  window.addEventListener("pagehide", () => pageWasHidden = true);
-  window.addEventListener("pageshow", (event) => {
-    if (event.persisted && pageWasHidden) {// página voltou via BFCache
-      pageWasHidden = false;
-      update();
-    }
-  });
-
   window.addEventListener("storage", function (event) {
     if (event.key !== "AelluxPreferences") return;
-    const preferences = new URLSearchParams(event.newValue || "");
-    applyPreferences(preferences);
+    const newPreferences = new URLSearchParams(event.newValue || "");
+    newPreferences.forEach((value, key) => userPreferences[key] = value);
+    saveUserPreferences();
+    update();
   });
 
-  //localPreferences = loadPreferences();
+  //Default values
+  Aellux.options.preferencesOptions
+    .forEach((param, options) => userPreferences[param] = options[0])
+
+  loadUserPreferences();
 }
 
 export function update() {
   //Configure toggle buttons & events
+  preferenceContainersUpdate();
 }
 
 export function kill() {
 
 }
 
-function savePreferences() {
+export function get(preference) {
+  const key = Aellux.toCamelCase(preference);
+  return userPreferences[key];
+}
+
+export function set(preference, value) {
+  const key = Aellux.toCamelCase(preference);
+  if (userPreferences[key] === value) return;
+  userPreferences[key] = value;
+  saveUserPreferences();
+}
+
+function saveUserPreferences() {
   Aellux.persist.preferences.setObject(userPreferences);
 }
 
-function loadPreferences(preferences = null) {
-  Object.assign(userPreferences, preferences ?? Aellux.persist.preferences.getObject());
+function loadUserPreferences(preferences = null) {
+  const loaded = Aellux.persist.preferences.getObject();
+  Object.assign(userPreferences, loaded);
 }
+
+function preferenceContainersUpdate() {
+  const preferencesOptions = Aellux.options.preferencesOptions;
+  document.querySelectorAll(`[data-aellux-preference]`)
+    .forEach(container => {
+      const ready = container.getAttribute("data-aellux-ready");
+      if (!ready) { setupPreferenceContainer(container); }
+
+      const preference = container.getAttribute("data-aellux-preference");
+      const elements = container.querySelectorAll("[data-aellux-toggle]");
+      const key = Aellux.toCamelCase(preference);
+      elements.forEach(element => {
+        const value = element.getAttribute("data-aellux-toggle");
+        element.classList.toggle("ux-active", value === userPreferences[key]);
+      });
+    });
+}
+
+function setupPreferenceContainer(container) {
+  container.addEventListener("click", onContainerClick);
+  container.setAttribute("[data-aellux-ready]");
+}
+
+function onContainerClick(event) {
+  const container = event.currentTarget;
+  const toggler = event.target?.closest("[data-aellux-toggle]") ?? null;
+  const buttonNext = event.target?.closest("[data-aellux-next]") ?? null;
+  const buttonPrev = event.target?.closest("[data-aellux-prev]") ?? null;
+  if (toggler) {
+    const preference = container.getAttribute("data-aellux-preference");
+    const value = toggler.getAttribute("data-aellux-toggle");
+    set(preference, value);
+  } else if (buttonNext || buttonPrev) {
+    const preference = container.getAttribute("data-aellux-preference");
+    const change = buttonNext ? 1 : -1;
+    //TODO LIST OPTIONS
+  }
+}
+
+/*
+    @media (prefers-color-scheme: dark) { }
+    @media (prefers-contrast: more) { }
+    @media (prefers-reduced-motion: reduce) { }
+    @media (forced-colors: active) { }
+    @media (prefers-reduced-transparency: reduce) { }
+ */

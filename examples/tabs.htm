@@ -19,6 +19,10 @@
     document.addEventListener("AelluxReady", function () {
       var time = Date.now() - start;
       console.log("[Aellux] Ready in " + (time / 1000) + "ms")
+
+      Aellux.scrollbox.templates["custom"] = {
+
+      };
     });
   </script>
 </head>
@@ -30,17 +34,22 @@
 
       <nav data-aellux-persist data-aellux-tab-group>
         <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
-        <a data-aellux-tab="profile">Perfil</a>
-        <div data-aellux-tab="settings">Configurações</div>
         <button data-aellux-tab="home">
           <span>#</span>
           <span>Home</span>
         </button>
+        <a data-aellux-tab="profile">Perfil</a>
+        <div data-aellux-tab="settings">Configurações</div>
       </nav>
 
       <section id="home">
         <h1>Home</h1>
         <p>Conteúdo da página inicial.</p>
+        <div data-aellux-preference="theme">
+          <button data-aellux-toggle="dark">Dark</button>
+          <button data-aellux-toggle="light">Light</button>
+          <button data-aellux-toggle="auto">auto</button>
+        </div>
       </section>
 
       <section id="profile">

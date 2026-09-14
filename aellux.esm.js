@@ -16,7 +16,11 @@ Object.assign(Aellux, {
       });
   },
 
-  kill: function () { },
+  kill: function () {
+    Aellux.resizeObserver.disconnect();
+    Aellux.mutationObserver.disconnect();
+    Aellux.intersectionObserver.disconnect();
+  },
 
   on(event, handler, options) { document.addEventListener(`Aellux${event}`, handler, options); },
   off(event, handler, options) { document.removeEventListener(`Aellux${event}`, handler, options); },
@@ -27,12 +31,14 @@ Object.assign(Aellux, {
   },
 
   wait: function (moduleName) {
-    const key = toCamelCase(moduleName);
+    const key = Aellux.toCamelCase(moduleName);
     if (key in Aellux) { return Promise.resolve(Aellux[key]); }
     if (modulePromises[key]) { return modulePromises[key]; }
     if (Aellux.options.load.indexOf(moduleName) > -1) { return loadUXM(moduleName); }
     return Promise.reject()
   },
+
+  snapshot: () => Aellux.stateNavigation.globalSnapshot || {},
 
   resizeObserver: new ResizeObserver(resizeObserverCallback),
   mutationObserver: new MutationObserver(mutationObserverCallback),
@@ -63,12 +69,8 @@ async function setupAllModules() {
   Aellux.dispatch("Ready");
 }
 
-function toCamelCase(name) {
-  return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-}
-
 function loadUXM(mName) {
-  const key = toCamelCase(mName);
+  const key = Aellux.toCamelCase(mName);
 
   if (modulePromises[key])
     return modulePromises[key];

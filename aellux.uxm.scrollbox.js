@@ -1,7 +1,8 @@
 let BScroll;
+export const templates = Object.create(null);
 
 export async function init() {
-  BScroll = await import(Aellux.options.dependencies["scrollbox"]["better-scroll"]);
+  BScroll = await import(Aellux.options.dependencies.scrollbox.betterScroll);
   // Executa assim que o DOM estiver pronto
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', autoWrapAndScroll);

@@ -21,7 +21,7 @@ export function snapshotRestore(detail) {
 }
 
 export async function kill() {
-  Aellux.resizeObserver.disconnect();
+
 }
 
 function adaptiveObserverUpdate() {

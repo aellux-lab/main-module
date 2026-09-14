@@ -1,12 +1,14 @@
+export { init, kill, update, snapshotRestore };
+export { tabOpen, urlState, flowStep, formUpdate };
 export const globalSnapshot = {};
-const globalRemoveSnapshot = {};
 
+const globalRemoveSnapshot = {};
 let globalSnapshotString = "";
 let skipHashChange = null;
 let baseTitle = "";
 let useHash = true;
 
-export function init() {
+function init() {
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 
@@ -22,28 +24,28 @@ export function init() {
   }, "");
 }
 
-export async function kill() {
+async function kill() {
   window.removeEventListener("popstate", onPopState);
   window.removeEventListener("hashchange", onHashChange);
 }
 
-export function tabOpen(tabGroupId, tabId, title) {
+function tabOpen(tabGroupId, tabId, title) {
   return change(tabGroupId, tabId, title);
 }
 
-export function urlState(url, options) {
+function urlState(url, options) {
 
 }
 
-export function flowStep(flowId, step, options) {
+function flowStep(flowId, step, options) {
 
 }
 
-export function formUpdate(formId, event, value, options) {
+function formUpdate(formId, event, value, options) {
 
 }
 
-export function normalize(key, value, title = null, silent) {
+function normalize(key, value, title = null, silent) {
   return change(key, value, title, silent);
 }
 
@@ -103,7 +105,6 @@ function dispatchSnapshotEvent(name) {
     },
     bubbles: true
   };
-  Object.assign(Aellux.snapshot, globalSnapshot);
   Aellux.dispatch(name, options);
 }
 

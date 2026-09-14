@@ -38,13 +38,11 @@ Object.assign(Aellux, {
     return Promise.reject()
   },
 
-  snapshot: () => Aellux.stateNavigation.globalSnapshot || {},
-
   resizeObserver: new ResizeObserver(resizeObserverCallback),
   mutationObserver: new MutationObserver(mutationObserverCallback),
   intersectionObserver: new IntersectionObserver(mutationObserverCallback),
 
-  layout: createLayoutScheduler(),
+  waitLayout: createLayoutScheduler(),
 });
 
 function intersectionObserverCallback(entries) { observerCallback(entries, "Intersection"); }

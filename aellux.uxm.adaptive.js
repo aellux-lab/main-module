@@ -1,4 +1,6 @@
-export async function init() {
+export { init, kill, update, snapshotRestore };
+
+async function init() {
   Aellux.wait("defaultAdaptiveCSSPromise")
     .then(() => {
       if (document.readyState === "loading") {
@@ -13,14 +15,14 @@ export async function init() {
     });
 }
 
-export function update() {
+function update() {
   adaptiveObserverUpdate();
 }
 
-export function snapshotRestore(detail) {
+function snapshotRestore(detail) {
 }
 
-export async function kill() {
+async function kill() {
 
 }
 
@@ -73,7 +75,7 @@ function onResizeObserver(event) {
 }
 
 function inferOrientation(flexBox, selector = "*") {
-  return Aellux.layout.read(() => {
+  return Aellux.waitLayout.read(() => {
     const fallback = "horizontal";
     var style = getComputedStyle(flexBox);
 

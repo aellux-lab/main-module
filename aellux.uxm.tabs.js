@@ -1,3 +1,5 @@
+export { init, kill, update, snapshotRestore };
+
 const controllers = new WeakMap();
 let pageWasHidden = false;
 
@@ -10,7 +12,7 @@ const attr = {
 
 //TODO: optional title change when tab selected (when role=navigation / nav tag?)
 
-export async function init() {
+async function init() {
   //BFCache
   window.addEventListener("pagehide", () => pageWasHidden = true);
   window.addEventListener("pageshow", (event) => {
@@ -22,21 +24,21 @@ export async function init() {
   update();
 }
 
-export function update() {
+function update() {
   const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
   tabGroups.forEach(tabGroupContainer => {
     updateController(tabGroupContainer);
   }); //Safe to call again
 }
 
-export function snapshotRestore(detail) {
+function snapshotRestore(detail) {
   const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
   tabGroups.forEach(tabGroupContainer => {
     snapshotRestoreController(tabGroupContainer, detail);
   }); //Safe to call again
 }
 
-export async function kill() {
+async function kill() {
 
 }
 
@@ -154,9 +156,10 @@ function snapshotNormalization(tabGroup) {
   const adaptiveController = controllers.get(tabGroup);
   const tabGroupId = adaptiveController.tabGroupId;
   const tab = adaptiveController.currentSelectedTab;
+  const snapshot = Aellux.stateNavigation.globalSnapshot;
 
-  if (!tab || !Aellux.snapshot ||
-    (tabGroupId in Aellux.snapshot && Aellux.snapshot[tabGroupId] === tab.id))
+  if (!tab || !snapshot ||
+    (tabGroupId in snapshot && snapshot[tabGroupId] === tab.id))
     return; //SNAPSHOT ALIGNED
 
   //SNAPSHOT WRONG? UPDATE SILENTLY

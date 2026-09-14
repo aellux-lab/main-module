@@ -1,7 +1,9 @@
-let BScroll;
+export { init, kill, update, snapshotRestore };
 export const templates = Object.create(null);
 
-export async function init() {
+let BScroll;
+
+async function init() {
   // BScroll = await import(Aellux.options.dependencies.scrollbox.betterScroll);
   // // Executa assim que o DOM estiver pronto
   // if (document.readyState === 'loading') {
@@ -11,11 +13,15 @@ export async function init() {
   // }
 }
 
-export function update() {
+function update() {
 
 }
 
-export async function kill() {
+function snapshotRestore() {
+
+}
+
+async function kill() {
 
 }
 

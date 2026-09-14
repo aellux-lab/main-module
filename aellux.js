@@ -109,6 +109,8 @@
       ? globalThis
       : window;
 
+  var old$AInstance = root.$A;
+
   root.Aellux = {
     options: CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS,
     init(options) {
@@ -139,8 +141,11 @@
       local: buildPersistMemory("localStorage"),
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
-    }
+    },
+    noConflict() { return old$AInstance; }
   };
+
+  root.$A = root.Aellux;
 
   function dispatchAwake() {
     var event = document.createEvent("Event");
@@ -253,12 +258,7 @@
       ":where(html){color-scheme:light dark;}" +
       ":where(html[" + p + "color-scheme='dark']){color-scheme:dark;}" + //pref force
       ":where(html[" + p + "color-scheme='light']){color-scheme:light;}" + //pref force
-      ":where(body,html) {" +
-      "margin:0;" +
-      "font-family:system-ui;" +
-      "background-color:Canvas;" +
-      "color:CanvasText;" +
-      "}" +
+      ":where(body,html) {margin:0;font-family:system-ui;background-color:Canvas;color:CanvasText;}" +
 
       ":where([" + p + "fill-viewport]) {position:fixed;height:100vh;height:100dvh;width:100vw;width:100dvw;inset:0;overflow:auto;}" +
       ":where([" + p + "fill-parent]) { position: relative;box-sizing: border-box;width: 100%;height: 100%;min-width: 0;min-height: 0;overflow:auto; }" +

@@ -1,9 +1,6 @@
+export { init, kill, update, snapshotRestore };
 
-
-export async function init() {
-  //import(Aellux.options.dependencies["components"]["interactjs"]);
-}
-
-export async function kill() {
-
-}
+async function init() { }
+async function kill() { }
+async function update() { }
+function snapshotRestore() { }

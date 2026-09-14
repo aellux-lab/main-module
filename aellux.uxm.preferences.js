@@ -1,3 +1,6 @@
+export { init, kill, update, snapshotRestore };
+export { get, set };
+
 const userPreferences = Object.create(null);
 const defaultPreferences = Object.create(null);
 const computedPreferences = Object.create(null);
@@ -6,10 +9,12 @@ const attr = {
   preference: Aellux.attr("preference"),
   option: Aellux.attr("option"),
   label: Aellux.attr("label"),
+  next: Aellux.attr("next"),
+  prev: Aellux.attr("prev"),
   ready: Aellux.attr("ready"),
 }
 
-export async function init() {
+async function init() {
   window.addEventListener("storage", function (event) {
     if (event.key !== "AelluxPreferences") return;
     const newPreferences = new URLSearchParams(event.newValue || "");
@@ -42,7 +47,7 @@ export async function init() {
   }
 }
 
-export function update() {
+function update() {
   Object.assign(computedPreferences, defaultPreferences, userPreferences);
 
   Aellux.preferencesAttributesHTML(computedPreferences);
@@ -53,16 +58,20 @@ export function update() {
   Aellux.dispatch("PreferencesChange");
 }
 
-export function kill() {
+function snapshotRestore() {
 
 }
 
-export function get(preference) {
+function kill() {
+
+}
+
+function get(preference) {
   const key = toCamelCase(preference);
   return computedPreferences[key];
 }
 
-export function set(preference, value) {
+function set(preference, value) {
   const key = toCamelCase(preference);
   if (userPreferences[key] === value) return;
   userPreferences[key] = value;
@@ -106,8 +115,8 @@ function setupPreferenceContainer(container) {
 function onContainerClick(event) {
   const container = event.currentTarget;
   const optionButton = event.target?.closest(`[${attr.option}]`) ?? null;
-  const buttonNext = event.target?.closest("[data-aellux-next]") ?? null;
-  const buttonPrev = event.target?.closest("[data-aellux-prev]") ?? null;
+  const buttonNext = event.target?.closest(`[${attr.next}]`) ?? null;
+  const buttonPrev = event.target?.closest(`[${attr.prev}]`) ?? null;
   if (optionButton) {
     const preference = container.getAttribute(attr.preference);
     const value = optionButton.getAttribute(attr.option);

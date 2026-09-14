@@ -38,7 +38,7 @@ export async function init() {
 export function update() {
   let computedPreferences = { ...defaultPreferences, ...userPreferences };
 
-  Aellux.preferenceAttributesHTML(computedPreferences);
+  Aellux.preferencesAttributesHTML(computedPreferences);
 
   //Configure toggle buttons & events
   preferenceContainersUpdate(computedPreferences);

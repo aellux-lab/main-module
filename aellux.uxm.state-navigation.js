@@ -29,6 +29,10 @@ async function kill() {
   window.removeEventListener("hashchange", onHashChange);
 }
 
+function snapshotRestore(detail) {
+
+}
+
 function tabOpen(tabGroupId, tabId, title) {
   return change(tabGroupId, tabId, title);
 }

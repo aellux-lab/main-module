@@ -51,7 +51,9 @@
 }
 
 [data-aellux-toggle] {
+  background-color: grey;
   border: 2px solid black;
+  cursor: pointer;
 }
 
 [data-aellux-toggle].ux-active {

@@ -1,5 +1,6 @@
 const userPreferences = Object.create(null);
 
+
 export async function init() {
   window.addEventListener("storage", function (event) {
     if (event.key !== "AelluxPreferences") return;
@@ -88,6 +89,7 @@ function onContainerClick(event) {
     const preference = container.getAttribute("data-aellux-preference");
     const value = toggler.getAttribute("data-aellux-toggle");
     set(preference, value);
+    update();
   } else if (buttonNext || buttonPrev) {
     const preference = container.getAttribute("data-aellux-preference");
     const change = buttonNext ? 1 : -1;

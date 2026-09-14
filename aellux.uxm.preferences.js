@@ -15,9 +15,11 @@ export async function init() {
 
   loadUserPreferences();
 
-  document.addEventListener("DOMContentLoaded", () => {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', update, { once: true });
+  } else {
     update();
-  }, { once: true });
+  }
 }
 
 export function update() {

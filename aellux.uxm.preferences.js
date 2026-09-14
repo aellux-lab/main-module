@@ -105,7 +105,7 @@ function setupPreferenceContainer(container) {
 
 function onContainerClick(event) {
   const container = event.currentTarget;
-  const optionButton = event.target?.closest(attr.option) ?? null;
+  const optionButton = event.target?.closest(`[${attr.option}]`) ?? null;
   const buttonNext = event.target?.closest("[data-aellux-next]") ?? null;
   const buttonPrev = event.target?.closest("[data-aellux-prev]") ?? null;
   if (optionButton) {

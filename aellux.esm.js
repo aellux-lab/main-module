@@ -22,8 +22,6 @@ Object.assign(Aellux, {
     Aellux.observers.intersection.disconnect();
   },
 
-  on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
-  off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
   dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
   dispatchFrom(from, event, options) {
     console.log(`dispatch: Aellux${event}`, options);

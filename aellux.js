@@ -31,7 +31,7 @@
         "tabs",
         "feedback",
         "scrollbox",
-        "ajax-content", // Conteúdo assíncrono substituído
+        "ajax-href", // Navegação HREF com conteúdo assíncrono substituído
         "components" // Comportamentos de componentes de interação pré-fabricados
       ],
       preferencesOptions: {

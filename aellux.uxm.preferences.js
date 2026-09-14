@@ -20,9 +20,7 @@ export async function init() {
 
   //Default values
   Object.entries(Aellux.options.preferencesOptions)
-    .forEach(([param, options]) =>
-      defaultPreferences[param] = options[0]
-    );
+    .forEach(([param, options]) => defaultPreferences[param] = options[0]);
 
   loadUserPreferences();
 
@@ -40,15 +38,7 @@ export async function init() {
 export function update() {
   let computedPreferences = { ...defaultPreferences, ...userPreferences };
 
-  //Html tag attributes
-  Object.entries(computedPreferences)
-    .forEach(([param, value]) => {
-      const key = Aellux.fromCamelCase(param);
-      if (value === "auto") { value = getAuto(param); }
-
-      if (value == null) { document.documentElement.removeAttribute(`data-aellux-${key}`); }
-      else { document.documentElement.setAttribute(`data-aellux-${key}`, value); }
-    });
+  Aellux.preferenceAttributesHTML(computedPreferences);
 
   //Configure toggle buttons & events
   preferenceContainersUpdate(computedPreferences);
@@ -68,14 +58,6 @@ export function set(preference, value) {
   if (userPreferences[key] === value) return;
   userPreferences[key] = value;
   saveUserPreferences();
-}
-
-function getAuto(param) {
-  const queries = Aellux.options.preferencesMediaQueries[param];
-  for (const q of Object.keys(queries)) {
-    if (queries[q].matches) return q;
-  }
-  return null;
 }
 
 function saveUserPreferences() {
@@ -125,11 +107,3 @@ function onContainerClick(event) {
     //TODO LIST OPTIONS
   }
 }
-
-/*
-    @media (prefers-color-scheme: dark) { }
-    @media (prefers-contrast: more) { }
-    @media (prefers-reduced-motion: reduce) { }
-    @media (forced-colors: active) { }
-    @media (prefers-reduced-transparency: reduce) { }
- */

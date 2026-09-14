@@ -120,6 +120,7 @@
       addWeakStyles();
       loadAellux();
     },
+    preferencesAttributesHTML: updatePreferencesAttributesHTML,
     legacy: false,
     supported: false,
     notAvailable: [],
@@ -237,11 +238,8 @@
       document.querySelector("[" + attr + "]"))
       return;
 
-    //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
-    let colorScheme = Aellux.persist.preferences.get("color-scheme");
-    if (!colorScheme || colorScheme === "auto")
-      colorScheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    document.documentElement.setAttribute("data-aellux-color-scheme", colorScheme);
+    //SET HTML TO PERSISTED PREFERENCES
+    updatePreferencesAttributesHTML();
 
     var style = document.createElement("style");
     style.setAttribute(attr, "true");
@@ -270,6 +268,19 @@
       meta.content = "width=device-width, initial-scale=1";
       document.head.appendChild(meta);
     }
+  }
+
+  function updatePreferencesAttributesHTML(preferences = null) {
+    const allQueries = Aellux.options.preferencesMediaQueries;
+    Object.entries(allQueries).forEach(([param, queries]) =>
+      Object.entries(queries).forEach(([value, query]) => {
+        if (!preferences && !query.matches) return;
+        if (preferences && preferences[param] !== value) return;
+        const hyphenized = Aellux.fromCamelCase(param);
+        const attributeName = `data-aellux-${hyphenized}`;
+        document.documentElement.setAttribute(attributeName, value);
+      })
+    );
   }
 
   function buildPersistMemory(name, identifier) {

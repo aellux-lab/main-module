@@ -44,7 +44,7 @@ export function update() {
   Object.entries(computedPreferences)
     .forEach(([param, value]) => {
       const key = Aellux.fromCamelCase(param);
-      if (value === "auto") { value = getAuto(key); }
+      if (value === "auto") { value = getAuto(param); }
 
       if (value == null) { document.documentElement.removeAttribute(`data-aellux-${key}`); }
       else { document.documentElement.setAttribute(`data-aellux-${key}`, value); }

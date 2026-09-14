@@ -24,7 +24,7 @@
 
     root.Aellux = {
         options: {
-            themePreferenceAttribute: "data-aellux-theme",
+            themePreferenceAttribute: null,
             defaultAdaptiveCSS: false,
             dependencies: {
                 components: {
@@ -101,6 +101,7 @@
         supported: false,
         notAvailable: [],
         toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); },
+        fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); },
         persist: {
             local: buildPersistMemory("localStorage"),
             session: buildPersistMemory("sessionStorage"),
@@ -214,21 +215,24 @@
             return;
 
         //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
-        const theme = Aellux.persist.preferences.get("theme");
-        if (theme && theme !== "auto") {
+        let theme = Aellux.persist.preferences.get("theme");
+        if (!theme || theme === "auto")
+            theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+        document.documentElement.setAttribute("data-aellux-theme", theme);
+        if (Aellux.options.themePreferenceAttribute)
             document.documentElement.setAttribute(
                 Aellux.options.themePreferenceAttribute,
                 theme
             );
-        }
 
         var style = document.createElement("style");
         style.setAttribute(attr, "true");
         style.textContent =
             ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
-            ":where(html){color-scheme:light dark;}" + //auto device
-            ":where(html[" + Aellux.options.themePreferenceAttribute + "='dark']){color-scheme:dark;}" + //pref force
-            ":where(html[" + Aellux.options.themePreferenceAttribute + "='light']){color-scheme:light;}" + //pref force
+            ":where(html){color-scheme:light dark;}" +
+            ":where(html[data-aellux-theme='dark']){color-scheme:dark;}" + //pref force
+            ":where(html[data-aellux-theme='light']){color-scheme:light;}" + //pref force
             ":where(body,html) {" +
             "margin:0;" +
             "font-family:system-ui;" +

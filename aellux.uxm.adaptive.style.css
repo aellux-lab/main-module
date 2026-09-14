@@ -49,3 +49,11 @@
 [data-aellux-adaptive] {
   display: flex;
 }
+
+[data-aellux-toggle] {
+  border: 2px solid black;
+}
+
+[data-aellux-toggle].ux-active {
+  background-color: black;
+}

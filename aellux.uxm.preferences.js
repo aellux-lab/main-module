@@ -23,6 +23,11 @@ export async function init() {
 }
 
 export function update() {
+  Object.entries(userPreferences)
+    .forEach(([param, value]) => {
+      const key = Aellux.fromCamelCase(param);
+      document.documentElement.setAttribute(`data-aellux-${key}`, value);
+    });
   //Configure toggle buttons & events
   preferenceContainersUpdate();
 }

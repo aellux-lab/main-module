@@ -29,6 +29,10 @@ async function kill() {
   window.removeEventListener("hashchange", onHashChange);
 }
 
+function update() {
+
+}
+
 function snapshotRestore(detail) {
 
 }

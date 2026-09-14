@@ -78,10 +78,16 @@ function preferenceContainersUpdate() {
       if (!ready) { setupPreferenceContainer(container); }
 
       const preference = container.getAttribute("data-aellux-preference");
-      const elements = container.querySelectorAll("[data-aellux-toggle]");
+      const elements = container.querySelectorAll("[data-aellux-option]");
+      const selectedLabel = container.querySelector("[data-aellux-label]");
       elements.forEach(element => {
-        const value = element.getAttribute("data-aellux-toggle");
-        element.classList.toggle("ux-active", value === get(preference));
+        const value = element.getAttribute("data-aellux-option");
+        const selected = value === get(preference);
+        element.classList.toggle("ux-active", selected);
+        if (selectedLabel && selected) {
+          if (selectedLabel.value) { selectedLabel.value = element.innerText; }
+          else { selectedLabel.innerHTML = element.innerHTML; }
+        }
       });
     });
 }
@@ -93,12 +99,12 @@ function setupPreferenceContainer(container) {
 
 function onContainerClick(event) {
   const container = event.currentTarget;
-  const toggler = event.target?.closest("[data-aellux-toggle]") ?? null;
+  const optionButton = event.target?.closest("[data-aellux-option]") ?? null;
   const buttonNext = event.target?.closest("[data-aellux-next]") ?? null;
   const buttonPrev = event.target?.closest("[data-aellux-prev]") ?? null;
-  if (toggler) {
+  if (optionButton) {
     const preference = container.getAttribute("data-aellux-preference");
-    const value = toggler.getAttribute("data-aellux-toggle");
+    const value = optionButton.getAttribute("data-aellux-option");
     set(preference, value);
     update();
   } else if (buttonNext || buttonPrev) {

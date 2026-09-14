@@ -246,8 +246,8 @@
     style.textContent =
       ":where(button,a[href],[role='button'],[role='tab']){touch-action:manipulation;}" +
       ":where(html){color-scheme:light dark;}" +
-      ":where(html[data-aellux-theme='dark']){color-scheme:dark;}" + //pref force
-      ":where(html[data-aellux-theme='light']){color-scheme:light;}" + //pref force
+      ":where(html[data-aellux-color-scheme='dark']){color-scheme:dark;}" + //pref force
+      ":where(html[data-aellux-color-scheme='light']){color-scheme:light;}" + //pref force
       ":where(body,html) {" +
       "margin:0;" +
       "font-family:system-ui;" +

@@ -1,5 +1,6 @@
 const userPreferences = Object.create(null);
 const defaultPreferences = Object.create(null);
+const computedPreferences = Object.create(null);
 
 export async function init() {
   window.addEventListener("storage", function (event) {
@@ -36,7 +37,7 @@ export async function init() {
 }
 
 export function update() {
-  let computedPreferences = { ...defaultPreferences, ...userPreferences };
+  Object.assign(computedPreferences, defaultPreferences, userPreferences);
 
   Aellux.preferencesAttributesHTML(computedPreferences);
 
@@ -50,7 +51,7 @@ export function kill() {
 
 export function get(preference) {
   const key = Aellux.toCamelCase(preference);
-  return userPreferences[key];
+  return computedPreferences[key];
 }
 
 export function set(preference, value) {

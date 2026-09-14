@@ -37,8 +37,7 @@ export async function init() {
 }
 
 export function update() {
-  Object.assign(computedPreferences, defaultPreferences);
-  Object.assign(computedPreferences, userPreferences);
+  Object.assign(computedPreferences, defaultPreferences, userPreferences);
 
   Aellux.preferencesAttributesHTML(computedPreferences);
 

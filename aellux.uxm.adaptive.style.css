@@ -50,12 +50,12 @@
   display: flex;
 }
 
-[data-aellux-toggle] {
+[data-aellux-option] {
   background-color: grey;
   border: 2px solid black;
   cursor: pointer;
 }
 
-[data-aellux-toggle].ux-active {
+[data-aellux-option].ux-active {
   background-color: black;
 }

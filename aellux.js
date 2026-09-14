@@ -216,7 +216,7 @@
         //SET HTML TO PERSISTED THEME PREFERENCE IN BOOTSTRAP
         const theme = Aellux.persist.preferences.get("theme");
         if (theme && theme !== "auto") {
-            document.setAttribute(
+            document.documentElement.setAttribute(
                 Aellux.options.themePreferenceAttribute,
                 theme
             );

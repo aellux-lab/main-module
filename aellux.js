@@ -272,15 +272,19 @@
 
   function updatePreferencesAttributesHTML(preferences = null) {
     const allQueries = Aellux.options.preferencesMediaQueries;
-    Object.entries(allQueries).forEach(([param, queries]) =>
+    Object.entries(allQueries).forEach(([param, queries]) => {
+      const pref = preferences ? null : Aellux.persist.preferences.get(param);
       Object.entries(queries).forEach(([value, query]) => {
-        if (!preferences && !query.matches) return;
+        if (!preferences) {
+          if ((!pref || pref === "auto") && !query.matches) return;
+          else if (pref !== value) return;
+        }
         if (preferences && preferences[param] !== value) return;
         const hyphenized = Aellux.fromCamelCase(param);
         const attributeName = `data-aellux-${hyphenized}`;
         document.documentElement.setAttribute(attributeName, value);
       })
-    );
+    });
   }
 
   function buildPersistMemory(name, identifier) {

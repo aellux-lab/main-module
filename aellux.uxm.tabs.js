@@ -1,9 +1,6 @@
 "use strict";
 
-export { init, kill, update, snapshotRestore };
-
-const controllers = new WeakMap();
-let pageWasHidden = false;
+export { init, kill, mountDOM };
 
 const attr = {
   tabGroup: Aellux.attr("tab-group"),
@@ -12,39 +9,43 @@ const attr = {
   title: Aellux.attr("title"),
   ready: Aellux.attr("ready"),
 }
-
-const className = {
+const modifier = {
   active: Aellux.className("active")
 }
+const mountDOM = new Map();
+const controllers = new WeakMap();
 
 async function init() {
-  //BFCache
-  window.addEventListener("pagehide", () => pageWasHidden = true);
-  window.addEventListener("pageshow", (event) => {
-    if (event.persisted && pageWasHidden) {// página voltou via BFCache
-      pageWasHidden = false;
-      update();
-    }
+  mountDOM.set(`[${attr.tabGroup}]`, {
+    update: updateTabGroup,
+    unmount: unmountTabGroup
   });
-  update();
+
+  Aellux.on("SnapshotRestore", onSnapshotRestore);
+}
+async function kill() {
+
 }
 
-function update() {
-  const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
-  tabGroups.forEach(tabGroupContainer => {
-    updateController(tabGroupContainer);
-  }); //Safe to call again
+function updateTabGroup(tabGroupContainer) {
+  updateController(tabGroupContainer);
 }
 
-function snapshotRestore(detail) {
+function unmountTabGroup(tabGroupContainer) {
+  const adaptiveController = controllers.get(tabGroupContainer);
+  if (!adaptiveController) return;
+  tabGroupContainer.removeEventListener("keydown", adaptiveController.onkeydown);
+  tabGroupContainer.removeEventListener("click", adaptiveController.onclick);
+  controllers.delete(tabGroupContainer)
+}
+
+function onSnapshotRestore(event) {
+  if (!event.detail) return;
+  const detail = event.detail;
   const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
   tabGroups.forEach(tabGroupContainer => {
     snapshotRestoreController(tabGroupContainer, detail);
   }); //Safe to call again
-}
-
-async function kill() {
-
 }
 
 function updateController(tabGroup) {
@@ -75,12 +76,6 @@ function snapshotRestoreController(tabGroup, detail) {
   if (!tab) return;
   if (tab.getAttribute("aria-selected") === "false") // Prevent select what is already
     controller.changeTab(tab, true);
-}
-
-function killController(tabGroup) {
-  const adaptiveController = controllers.get(tabGroup);
-  tabGroup.addEventListener("keydown", adaptiveController.onkeydown);
-  tabGroup.addEventListener("click", adaptiveController.onclick);
 }
 
 function _createController(tabGroup) {
@@ -130,7 +125,7 @@ function _createController(tabGroup) {
           tab.setAttribute("aria-selected", selected);
           tab.setAttribute("tabindex", selected ? 0 : -1);
           const panel = document.querySelector(`#${panelId}`);
-          panel?.classList.toggle(className.active, selected);
+          panel?.classList.toggle(modifier.active, selected);
         });
         Aellux.dispatchFrom(currentTab, "TabsChangeTab", { detail: controller });
       }

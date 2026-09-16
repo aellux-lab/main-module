@@ -1,3 +1,13 @@
+// Aellux ESM orchestrator: extends the bootstrap with shared modern-runtime services.
+// Loads and caches configured UX modules, initializes them, and dispatches the Ready event.
+// Ready signals that the orchestrator is initialized and available; it does not guarantee
+// successful UX module initialization or completed DOM mounting. Component-specific events
+// such as TabsReady and AdaptiveUpdate report their own readiness or updates.
+// Routes explicit DOM update/unmount requests through module connectDOM declarations,
+// forwards browser observer notifications, and provides layout scheduling and fetch helpers.
+// Requires ES modules, dynamic import, Promises, and modern browser APIs; legacy fallback
+// selection belongs to the bootstrap, while feature-specific behavior belongs to UX modules.
+
 "use strict";
 
 const root =
@@ -6,20 +16,41 @@ const root =
     : window;
 const modulePromises = {};
 
-root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
-  initModuleLoader() {
-    return setupAllModules()
-      .catch(error => {
-        console.error(
-          "[Aellux] Module initialization failed.",
-          error
-        );
-      });
-  },
-  update(element) {
+root.Aellux = Object.assign(AelluxForceUpdate, root.Aellux, {
+  async initModuleLoader() {
+    const allModules = [];
+    Aellux.options.load.forEach(mName => allModules.push(
+      loadUXM(mName)
+        .then(module => {
+          if ("init" in module && typeof module.init === "function" &&
+            "kill" in module && typeof module.kill === "function")
+            return module.init();
+        }).catch(error => {
+          console.error(
+            `[Aellux] UX module "${mName}" failed to initialize.`,
+            error
+          );
+        })
+    ));
+    await Promise.all(allModules);
 
+    Aellux.dispatch("Ready");
+
+    if (document.readyState === "loading") {
+      document.addEventListener(
+        "DOMContentLoaded",
+        () => { Aellux.update(); },
+        { once: true }
+      );
+    } else {
+      Aellux.update();
+    }
+
+    return true;
   },
-  kill() {
+  update(root) { AelluxForceUpdate(root); },
+  unmount(root) { AelluxForceUnmount(root); },
+  destroy() {
     Aellux.observers.resize.disconnect();
     Aellux.observers.mutation.disconnect();
     Aellux.observers.intersection.disconnect();
@@ -38,9 +69,8 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
     return Promise.reject()
   },
 
-  observe(element, type) {
-    Aellux.observers[type].observe(element);
-  },
+  observe(element, type) { Aellux.observers[type].observe(element); },
+  unobserve(element, type) { Aellux.observers[type].unobserve(element); },
   request: defaultRequest,
 
   observers: Object.freeze({
@@ -62,18 +92,6 @@ function observerCallback(entries, event) {
     var entry = entries[i];
     Aellux.dispatchFrom(entry.target, `${event}Observer`, { detail: entry });
   }
-}
-
-async function setupAllModules() {
-  const allModules = [];
-  Aellux.options.load.forEach(mName => allModules.push(
-    loadUXM(mName).then(module => {
-      if ("init" in module && typeof module.init === "function" &&
-        "kill" in module && typeof module.kill === "function")
-        return module.init();
-    })));
-  await Promise.all(allModules);
-  Aellux.dispatch("Ready");
 }
 
 function loadUXM(mName) {
@@ -173,15 +191,69 @@ function defaultRequest(url, options) {
     });
 };
 
-function AelluxMethod(element) {
-  // if (element) {
-  //   return Aellux.update(element);
-  // }
+function AelluxForceUpdate(root) { return AelluxForce(root, "update"); }
+function AelluxForceUnmount(root) { return AelluxForce(root, "unmount"); }
 
-  console.log("TESTE");
+function AelluxForce(root, method) {
+  resolveRoots(root)
+    .forEach(rootElement => {
+      Aellux.options.load.forEach(mName => {
+        const key = toCamelCase(mName);
+        const mounter = Aellux[key]?.mountDOM ?? null;
+        if (!mounter) return;
+        for (const [attr, controller] of mounter) {
+          if (!(method in controller)) continue;
+          const elements = findElements(rootElement, attr);
+          elements.forEach(currentElement => {
+            try {
+              Promise.resolve(controller[method](currentElement))
+                .catch(error => console.error(error));
+            } catch (error) {
+              console.error(error);
+            }
+          });
+        }
+      });
+    });
+}
 
-  return Aellux.update(element);
+function resolveRoots(root) {
+  if (!root) { return [document]; }
+  if (typeof root === "string") {
+    try { return Array.from(document.querySelectorAll(root)); }
+    catch (error) { return []; }
+  }
+  if (
+    root instanceof Element ||
+    root instanceof Document ||
+    root instanceof DocumentFragment
+  ) { return [root]; }
+  return [];
+}
+
+function findElements(root, selector) {
+  const elements = [];
+  if (
+    root.nodeType === Node.ELEMENT_NODE &&
+    root.matches(selector)
+  ) { elements.push(root); }
+  if (root.querySelectorAll) {
+    root.querySelectorAll(selector)
+      .forEach(function (element) {
+        elements.push(element);
+      });
+  }
+  return elements;
 }
 
 function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
 function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };
+
+//BFCache
+let pageWasHidden = false;
+window.addEventListener("pagehide", () => pageWasHidden = true);
+window.addEventListener("pageshow", (event) => {
+  if (event.persisted && pageWasHidden) {// página voltou via BFCache
+    pageWasHidden = false;
+  }
+});

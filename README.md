@@ -172,6 +172,8 @@ Aellux.persist.session.get("key", "fallback");
 
 Custom events use the `Aellux` prefix. For example, `Aellux.on("Ready", handler)` listens for `AelluxReady`.
 
+`AelluxReady` signals that the orchestrator is initialized and available. It does not guarantee that every UX module initialized successfully or that elements have finished mounting. Module failures are reported independently and do not prevent orchestrator readiness. Use component-specific events, such as `AelluxTabsReady` and `AelluxAdaptiveUpdate`, to track individual components.
+
 ## Design Principles
 
 - Prefer semantic, declarative HTML over imperative setup code.

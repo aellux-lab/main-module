@@ -152,7 +152,7 @@
       addWeakStyles();
       loadAellux();
     },
-    kill: function () { return false; },
+    destroy: function () { return false; },
     legacy: false,
     supported: false,
     notAvailable: [],
@@ -180,6 +180,7 @@
     dispatch: function (event, options) { Aellux.dispatchFrom(document, event, options); },
     wait: function (moduleName) { throw new Error("[Aellux] Aellux não foi inicializado"); },
     observe: function (element, type) { throw new Error("[Aellux] Aellux não foi inicializado"); },
+    unobserve: function (element, type) { throw new Error("[Aellux] Aellux não foi inicializado"); },
     update: function (element) { throw new Error("[Aellux] Aellux não foi inicializado"); },
     observers: null,
     waitLayout: null,
@@ -193,7 +194,26 @@
 
   function loadAellux() {
     var attr = Aellux.attr("esm");
-    if (typeof Promise === "undefined") { Aellux.notAvailable.push("Promise"); }
+
+    ["Promise", "Map", "ResizeObserver", "MutationObserver",
+      "IntersectionObserver", "CustomEvent", "requestAnimationFrame", "fetch",
+      { name: "Object", function: ["assign", "entries", "freeze"] },
+      { name: "Array", function: ["from", "isArray"] }]
+      .forEach(function (option) {
+        if (typeof option === "string" && typeof window[option] !== "function") { return Aellux.notAvailable.push(option); }
+
+        option.function.forEach(function (method) {
+          if (!window[option.name] || typeof window[option.name][method] !== "function") {
+            Aellux.notAvailable.push(option.name + "." + method);
+          }
+        });
+      });
+
+    if (!window.Element || typeof window.Element.prototype.matches !== "function")
+      Aellux.notAvailable.push("Element.matches");
+    if (!window.NodeList || typeof window.NodeList.prototype.forEach !== "function")
+      Aellux.notAvailable.push("NodeList.forEach");
+
     if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
 
     if (Aellux.notAvailable.length !== 0)
@@ -210,17 +230,24 @@
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = aelluxBasePath + "aellux.loader.esm" + scriptExtension;
+    script.src = aelluxBasePath + "aellux.orchestrator.esm" + scriptExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
-      Aellux.legacy = false;
-      Aellux.supported = true;
-      Aellux.initModuleLoader();
       Aellux.dispatch("Awake");
+      Aellux.initModuleLoader()
+        .then(function () {
+          Aellux.legacy = false;
+          Aellux.supported = true;
+        }).catch(function (error) {
+          script.parentNode.removeChild(script);
+          console.log(error);
+          console.log("[Aellux] Orchestrator failed to load, fallback to legacy.");
+          loadLegacyFallback();
+        });
     };
     script.onerror = function () {
       script.parentNode.removeChild(script);
-      console.log("[Aellux] Modern runtime not supported. Fallback to legacy.");
+      console.log("[Aellux] Orchestrator failed to load, fallback to legacy.");
       loadLegacyFallback();
     };
     document.head.appendChild(script);

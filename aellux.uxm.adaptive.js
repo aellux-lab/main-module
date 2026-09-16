@@ -1,44 +1,35 @@
 "use strict";
 
-export { init, kill, update };
+export { init, kill, mountDOM };
 
+const attr = {
+  adaptive: Aellux.attr("adaptive")
+};
 const modifier = {
   shapeHorizontal: Aellux.className("shape-horizontal"),
   shapeVertical: Aellux.className("shape-vertical"),
-  shapeSquare: Aellux.className("shape-square"),
+  shapeSquare: Aellux.className("shape-square")
 };
+const mountDOM = new Map();
 
 async function init() {
-  Aellux.wait("defaultAdaptiveCSSPromise")
-    .then(() => {
-      if (document.readyState === "loading") {
-        document.addEventListener(
-          "DOMContentLoaded",
-          adaptiveObserverUpdate,
-          { once: true }
-        );
-      } else {
-        adaptiveObserverUpdate();
-      }
-    });
+  mountDOM.set(`[${attr.adaptive}]`, {
+    update: updateAdaptive,
+    unmount: unmountAdaptive,
+  });
+}
+async function kill() { }
+
+function updateAdaptive(adaptiveContainer) {
+  if (!adaptiveContainer.hasAttribute("aria-busy"))
+    adaptiveContainer.setAttribute("aria-busy", true);
+  Aellux.observe(adaptiveContainer, "resize");
+  adaptiveContainer.addEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
 }
 
-function update() {
-  adaptiveObserverUpdate();
-}
-
-async function kill() {
-
-}
-
-function adaptiveObserverUpdate() {
-  const adaptives = document.querySelectorAll(`[${Aellux.attr("adaptive")}]`);
-  adaptives.forEach(adaptiveContainer => {
-    if (!adaptiveContainer.hasAttribute("aria-busy"))
-      adaptiveContainer.setAttribute("aria-busy", true);
-    Aellux.observe(adaptiveContainer, "resize");
-    adaptiveContainer.addEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
-  }); //Safe to call again
+function unmountAdaptive(adaptiveContainer) {
+  Aellux.unobserve(adaptiveContainer, "resize");
+  adaptiveContainer.removeEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
 }
 
 function onResizeObserver(event) {

@@ -15,9 +15,6 @@ function init() {
   window.addEventListener("popstate", onPopState);
   window.addEventListener("hashchange", onHashChange);
 
-  //Restore snapshot listener
-  Aellux.on("SnapshotRestore", onSnapshotRestore);
-
   useHash = Aellux.options.useHash ?? useHash;
   baseTitle = document.title;
   onHashChange();
@@ -30,8 +27,6 @@ function init() {
 async function kill() {
   window.removeEventListener("popstate", onPopState);
   window.removeEventListener("hashchange", onHashChange);
-
-  Aellux.off("SnapshotRestore", onSnapshotRestore);
 }
 
 function updateBaseTitle(title) {
@@ -77,15 +72,6 @@ async function change(key, value, title, silent = false) {
   else history.pushState(state, "", url);
 
   dispatchSnapshotEvent("SnapshotChange");
-}
-
-function onSnapshotRestore(event) {
-  Aellux.options.load.forEach(mName => {
-    Aellux.wait(mName).then(uxm => {
-      if (typeof uxm.snapshotRestore === "function")
-        uxm.snapshotRestore(event.detail);
-    });
-  });
 }
 
 function updateSnapshotData(string) {

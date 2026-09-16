@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill };
+export { init, destroy };
 export { tabOpen, ajaxHref, flowStep, formUpdate, updateBaseTitle };
 export { normalize };
 export const globalSnapshot = {};
@@ -24,7 +24,7 @@ function init() {
   }, "");
 }
 
-async function kill() {
+async function destroy() {
   window.removeEventListener("popstate", onPopState);
   window.removeEventListener("hashchange", onHashChange);
 }

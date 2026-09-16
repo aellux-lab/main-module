@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill };
+export { init, destroy };
 export { load };
 
 const attr = {
@@ -10,7 +10,7 @@ const attr = {
 async function init() {
   document.addEventListener("click", onClick);
 }
-async function kill() {
+async function destroy() {
   document.removeEventListener("click", onClick);
 }
 

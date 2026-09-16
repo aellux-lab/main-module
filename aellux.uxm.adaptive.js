@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill, mountDOM };
+export { init, destroy, mountDOM };
 
 const attr = {
   adaptive: Aellux.attr("adaptive")
@@ -18,7 +18,7 @@ async function init() {
     unmount: unmountAdaptive,
   });
 }
-async function kill() { }
+async function destroy() { }
 
 function updateAdaptive(adaptiveContainer) {
   if (!adaptiveContainer.hasAttribute("aria-busy"))

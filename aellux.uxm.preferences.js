@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill, update };
+export { init, destroy, update };
 export { get, set };
 
 const userPreferences = Object.create(null);
@@ -53,6 +53,10 @@ async function init() {
   }
 }
 
+async function destroy() {
+
+}
+
 function update() {
   Object.assign(computedPreferences, defaultPreferences, userPreferences);
 
@@ -62,10 +66,6 @@ function update() {
   preferenceContainersUpdate();
 
   Aellux.dispatch("PreferencesChange");
-}
-
-function kill() {
-
 }
 
 function get(preference) {

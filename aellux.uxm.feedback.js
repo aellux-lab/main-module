@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill };
+export { init, destroy };
 export { warning, error, success, announce };
 export { busy, validate, progress };
 export { on, off };
@@ -9,7 +9,7 @@ export { send };
 const handlers = new Map();
 
 async function init() { }
-async function kill() { }
+async function destroy() { }
 
 function on(type, handler) {
   if (!handlers.has(type)) { handlers.set(type, new Set()); }

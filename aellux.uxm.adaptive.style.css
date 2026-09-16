@@ -22,11 +22,11 @@
 }
 
 [data-ae-tab][aria-selected=false],
-[data-ae-tabpanel]:not(.ae--active) {
+[data-ae-tab-panel]:not(.ae--active) {
   background: rgba(0 0 0 /50%);
 }
 
-[data-ae-tabpanel]:not(.ae--active) {
+[data-ae-tab-panel]:not(.ae--active) {
   display: none;
 }
 

@@ -37,7 +37,7 @@
         "preferences",
         "state-navigation",
         "adaptive",
-        "tabs",
+        "tab-group",
         "feedback",
         "scrollbox",
         "ajax-href",

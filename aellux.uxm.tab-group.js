@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill, mountDOM };
+export { init, destroy, mountDOM };
 
 const attr = {
   tabGroup: Aellux.attr("tab-group"),
@@ -16,15 +16,11 @@ const mountDOM = new Map();
 const controllers = new WeakMap();
 
 async function init() {
-  mountDOM.set(`[${attr.tabGroup}]`, {
-    update: updateTabGroup,
-    unmount: unmountTabGroup
-  });
-
+  mountDOM.set(`[${attr.tabGroup}]`, { update: updateTabGroup, unmount: unmountTabGroup });
   Aellux.on("SnapshotRestore", onSnapshotRestore);
 }
-async function kill() {
-
+async function destroy() {
+  Aellux.off("SnapshotRestore", onSnapshotRestore);
 }
 
 function updateTabGroup(tabGroupContainer) {
@@ -42,10 +38,9 @@ function unmountTabGroup(tabGroupContainer) {
 function onSnapshotRestore(event) {
   if (!event.detail) return;
   const detail = event.detail;
-  const tabGroups = document.querySelectorAll(`[${attr.tabGroup}]`);
-  tabGroups.forEach(tabGroupContainer => {
-    snapshotRestoreController(tabGroupContainer, detail);
-  }); //Safe to call again
+  for (const [tabGroupContainer, controller] of controllers) {
+    snapshotRestoreController(tabGroupContainer, detail, controller);
+  }
 }
 
 function updateController(tabGroup) {
@@ -62,9 +57,7 @@ function updateController(tabGroup) {
   }
 }
 
-function snapshotRestoreController(tabGroup, detail) {
-  const controller = controllers.get(tabGroup);
-
+function snapshotRestoreController(tabGroup, detail, controller) {
   if (!controller) return;
   if (!detail || !detail.snapshot) return;
 
@@ -79,7 +72,8 @@ function snapshotRestoreController(tabGroup, detail) {
 }
 
 function _createController(tabGroup) {
-  tabGroup.id = tabGroup.id || "tabs";
+  tabGroup.id = tabGroup.id || "tabGroup";
+  tabGroup.setAttribute("role", "tablist");
 
   tabGroup.querySelectorAll(`[${attr.tab}]`).forEach(tab => {
     const panelId = tab.getAttribute(attr.tab);
@@ -127,7 +121,7 @@ function _createController(tabGroup) {
           const panel = document.querySelector(`#${panelId}`);
           panel?.classList.toggle(modifier.active, selected);
         });
-        Aellux.dispatchFrom(currentTab, "TabsChangeTab", { detail: controller });
+        Aellux.dispatchFrom(currentTab, "TabsChange", { detail: controller });
       }
       if (save) savePersistTab(tabGroup, currentTab);
       controller.currentSelectedTab = currentTab;

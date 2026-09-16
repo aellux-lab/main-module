@@ -1,6 +1,6 @@
 "use strict";
 
-export { init, kill };
+export { init, destroy };
 export const templates = Object.create(null);
 
 let BScroll;
@@ -14,8 +14,7 @@ async function init() {
   //   autoWrapAndScroll();
   // }
 }
-
-async function kill() {
+async function destroy() {
 
 }
 

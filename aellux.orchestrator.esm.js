@@ -23,7 +23,7 @@ root.Aellux = Object.assign(AelluxForceUpdate, root.Aellux, {
       loadUXM(mName)
         .then(module => {
           if ("init" in module && typeof module.init === "function" &&
-            "kill" in module && typeof module.kill === "function")
+            "destroy" in module && typeof module.destroy === "function")
             return module.init();
         }).catch(error => {
           console.error(

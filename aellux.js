@@ -1,18 +1,23 @@
-// Aellux bootstrap: intentionally minimal and legacy-safe; keep feature logic out of 
-// this file and use conservative JavaScript only.
-// It must load either the ESM runtime or the legacy fallback without itself depending on 
-// Promise, modules, async/await, or other modern-only features.
+// Aellux bootstrap: intentionally minimal, using ES5-compatible syntax for legacy browsers;
+// keep feature logic out of this file and use conservative JavaScript only.
+
+// It must load either the ESM runtime or the legacy fallback without requiring Promise,
+// modules, async/await, or other modern-only features to reach the fallback path.
+
+// Optional browser capabilities must be feature-detected: use matchMedia when available,
+// URLSearchParams with a JSON-based persistence fallback, Web Storage with an in-memory
+// fallback, and document.currentScript with a script-element lookup fallback.
+// Promise-based stylesheet tracking is optional and must be skipped when unavailable.
 
 "use strict";
 
 (function () {
-  var CONSTANTS = deepFreeze({
+  var CONSTANTS = {
     AELLUX_SHORT_JS_NAME: "$ae",
     AELLUX_EVENT_NAME_PREFFIX: "Aellux",
     AELLUX_UXM_SCRIPT_PREFFIX: "uxm",
     AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX: "ae",
     AELLUX_CLASS_NAME_PREFFIX: "ae--",
-    AELLUX_MINIFIED_SCRIPT_SUFFIX: "min",
 
     AELLUX_DEFAULT_INITIALIZATION_OPTIONS: {
       defaultAdaptiveCSS: false,
@@ -29,13 +34,13 @@
         }
       },
       load: [
-        "preferences", // Preferencias de usuário togglers
-        "state-navigation", // Continuidade de estado scroll, avançar/voltar back button popstate hash
-        "adaptive", // Composição adaptativa ao espaço/forma,
+        "preferences",
+        "state-navigation",
+        "adaptive",
         "tabs",
         "feedback",
         "scrollbox",
-        "ajax-href", // Navegação HREF com conteúdo assíncrono substituído
+        "ajax-href",
       ],
       preferencesOptions: {
         colorScheme: ["auto", "light", "dark"],
@@ -52,25 +57,25 @@
       },
       preferencesMediaQueries: {
         colorScheme: {
-          "light": window.matchMedia("(prefers-color-scheme: light)"),
-          "dark": window.matchMedia("(prefers-color-scheme: dark)")
+          "light": !window.matchMedia ? null : window.matchMedia("(prefers-color-scheme: light)"),
+          "dark": !window.matchMedia ? null : window.matchMedia("(prefers-color-scheme: dark)")
         },
         reducedMotion: {
-          "reduced": window.matchMedia("(prefers-reduced-motion: reduced)"),
-          "no-preference": window.matchMedia("(prefers-reduced-motion: no-preference)")
+          "reduced": !window.matchMedia ? null : window.matchMedia("(prefers-reduced-motion: reduced)"),
+          "no-preference": !window.matchMedia ? null : window.matchMedia("(prefers-reduced-motion: no-preference)")
         },
         reducedTransparency: {
-          "reduced": window.matchMedia("(prefers-reduced-transparency: reduced)"),
-          "no-preference": window.matchMedia("(prefers-reduced-transparency: no-preference)")
+          "reduced": !window.matchMedia ? null : window.matchMedia("(prefers-reduced-transparency: reduced)"),
+          "no-preference": !window.matchMedia ? null : window.matchMedia("(prefers-reduced-transparency: no-preference)")
         },
         forcedColors: {
-          "active": window.matchMedia("(forced-colors: active)"),
-          "no-preference": window.matchMedia("(forced-colors: no-preference)")
+          "active": !window.matchMedia ? null : window.matchMedia("(forced-colors: active)"),
+          "no-preference": !window.matchMedia ? null : window.matchMedia("(forced-colors: no-preference)")
         },
         contrast: {
-          "more": window.matchMedia("(prefers-contrast: more)"),
-          "less": window.matchMedia("(prefers-contrast: less)"),
-          "no-preference": window.matchMedia("(prefers-contrast: no-preference)")
+          "more": !window.matchMedia ? null : window.matchMedia("(prefers-contrast: more)"),
+          "less": !window.matchMedia ? null : window.matchMedia("(prefers-contrast: less)"),
+          "no-preference": !window.matchMedia ? null : window.matchMedia("(prefers-contrast: no-preference)")
         },
       },
       adaptiveParams: {
@@ -93,14 +98,25 @@
         }
       }
     }
-  });
+  };
+
+  var scriptExtension = ".js";
+  var cssExtension = ".css";
+
+  var bootstrapScript =
+    document.currentScript ||
+    document.querySelector("script[src*='aellux.js'],script[src*='aellux.min.js']");
+
+  if (!bootstrapScript || !bootstrapScript.src) {
+    throw new Error("[Aellux] Bootstrap script could not be located.");
+  }
 
   var aelluxBootstrapSrc =
     typeof document !== "undefined" &&
-      document.currentScript &&
-      document.currentScript.src
-      ? document.currentScript.src
-      : "";
+      bootstrapScript &&
+      bootstrapScript.src
+      ? bootstrapScript.src
+      : "/aellux.min.js";
 
   var aelluxBasePath = aelluxBootstrapSrc
     ? aelluxBootstrapSrc.substring(0,
@@ -116,18 +132,18 @@
 
   root.Aellux = {
     shortJSName: CONSTANTS.AELLUX_SHORT_JS_NAME,
-    options: { ...CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS },
-    init(options) {
+    options: CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS,
+    minified: aelluxBootstrapSrc.indexOf(".min.js") !== -1,
+    init: function (options) {
       if (typeof document === "undefined") {
         console.log("[Aellux] Browser not supported.");
         return;
       }
 
-      if (document.querySelector(Aellux.attr("legacy")) ||
-        document.querySelector(Aellux.attr("esm"))) return;
+      if (document.querySelector("[" + Aellux.attr("legacy") + "]") ||
+        document.querySelector("[" + Aellux.attr("esm") + "]")) return;
 
       mergeOptions(Aellux.options, options || {});
-      deepFreeze(Aellux.options);
 
       Aellux.aelluxBasePath = aelluxBasePath;
       Aellux.notAvailable = [];
@@ -136,34 +152,43 @@
       addWeakStyles();
       loadAellux();
     },
-    kill() { return false; },
-    update(element) { return false; },
+    kill: function () { return false; },
     legacy: false,
     supported: false,
     notAvailable: [],
-    persist: Object.freeze({
+    persist: {
       local: buildPersistMemory("localStorage"),
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
-    }),
-    request: defaultRequest,
+    },
     defaultAdaptiveCSSPromise: null,
     updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
-    on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
-    off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
-    attr(name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
-    className(name) { return CONSTANTS.AELLUX_CLASS_NAME_PREFFIX + name; },
-    uxmFilename(name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + ".js"; },
-    eventName(name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + name; },
-    noConflict() { return old$Instance; }
+    on: function (event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
+    off: function (event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
+    attr: function (name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
+    className: function (name) { return CONSTANTS.AELLUX_CLASS_NAME_PREFFIX + name; },
+    uxmFilename: function (name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + scriptExtension; },
+    eventName: function (name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + toCamelCase(name); },
+    noConflict: function () { return old$Instance; },
+
+    initModuleLoader: function () { },
+    dispatchFrom: function (from, event, options) {
+      var obj = document.createEvent("Event");
+      obj.initEvent(Aellux.eventName(event), false, false);
+      from.dispatchEvent(obj);
+    },
+    dispatch: function (event, options) { Aellux.dispatchFrom(document, event, options); },
+    wait: function (moduleName) { throw new Error("[Aellux] Aellux não foi inicializado"); },
+    observe: function (element, type) { throw new Error("[Aellux] Aellux não foi inicializado"); },
+    update: function (element) { throw new Error("[Aellux] Aellux não foi inicializado"); },
+    observers: null,
+    waitLayout: null,
   };
 
   root[CONSTANTS.AELLUX_SHORT_JS_NAME] = root.Aellux;
-
-  function dispatchAwake() {
-    var event = document.createEvent("Event");
-    event.initEvent(Aellux.eventName("Awake"), false, false);
-    document.dispatchEvent(event);
+  if (Aellux.minified) {
+    scriptExtension = ".min.js";
+    cssExtension = ".min.css";
   }
 
   function loadAellux() {
@@ -185,13 +210,13 @@
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = aelluxBasePath + "aellux.loader.esm.js";
+    script.src = aelluxBasePath + "aellux.loader.esm" + scriptExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
       Aellux.legacy = false;
       Aellux.supported = true;
       Aellux.initModuleLoader();
-      dispatchAwake();
+      Aellux.dispatch("Awake");
     };
     script.onerror = function () {
       script.parentNode.removeChild(script);
@@ -214,10 +239,10 @@
     Aellux.supported = false;
 
     var script = document.createElement("script");
-    script.src = aelluxBasePath + "aellux.legacy.js";
+    script.src = aelluxBasePath + "aellux.legacy" + scriptExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
-      dispatchAwake();
+      Aellux.dispatch("Legacy");
     };
     script.onerror = function () {
       console.error("[Aellux] Legacy fallback could not be loaded.");
@@ -226,7 +251,7 @@
   }
 
   function addDefaultAdaptiveCSS() {
-    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style.css";
+    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style" + cssExtension;
     var attr = Aellux.attr("adaptive-style");
     if (!Aellux.options.defaultAdaptiveCSS ||
       typeof document === "undefined" ||
@@ -243,9 +268,14 @@
     link.rel = "stylesheet";
     link.href = aelluxBasePath + aelluxAdaptiveCSS;
     link.setAttribute(attr, "true");
-    document.addEventListener("DOMContentLoaded", function (e) {
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", function (e) {
+        document.head.appendChild(link);
+      });
+    } else {
       document.head.appendChild(link);
-    });
+    }
 
     if (typeof Promise === "undefined") return;
     Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {
@@ -288,22 +318,24 @@
     }
   }
 
-  function updatePreferencesAttributesHTML(preferences = null) {
+  function updatePreferencesAttributesHTML(preferences) {
     var allQueries = Aellux.options.preferencesMediaQueries;
-    preferences = preferences ?? Aellux.persist.preferences.getObject();
-    Object.entries(allQueries).forEach(([param, queries]) => {
-      Object.entries(queries).forEach(([value, query]) => {
+    preferences = preferences ? preferences : Aellux.persist.preferences.getObject();
+    for (var param in allQueries) {
+      var queries = allQueries[param];
+      for (var value in queries) {
+        var query = queries[value];
         if (!preferences || !preferences[param] || preferences[param] === "auto") {
-          if (!query.matches) return;
-        } else if (preferences[param] !== value) return;
+          if (!query || !query.matches) { continue; }
+        } else if (preferences[param] !== value) { continue; }
         var hyphenized = fromCamelCase(param);
         document.documentElement.setAttribute(Aellux.attr(hyphenized), value);
-      })
-    });
+      }
+    }
   }
 
   function buildPersistMemory(name, identifier) {
-    var defaultIdentifier = identifier ?? "AelluxPersist";
+    var defaultIdentifier = identifier ? identifier : "AelluxPersist";
 
     try {
       var target = window[name] || null;
@@ -314,30 +346,69 @@
       }
     } catch (error) {
       var target = {
-        setItem(key, value) { this[key] = value; },
-        getItem(key) { return this[key] ?? null; }
+        data: {},
+        setItem: function (key, value) { this.data[key] = value; },
+        getItem: function (key) { return this.data[key] ? this.data[key] : null; }
       };
     }
 
-    function getData() { return new URLSearchParams(target.getItem(defaultIdentifier) || ""); }
+    var fallback = {
+      data: {},
+      keys: function () {
+        var keys = [];
+        for (var key in this.data) {
+          if (Object.prototype.hasOwnProperty.call(this.data, key)) {
+            keys.push(key);
+          }
+        }
+        return keys;
+      },
+      get: function (key) { return this.data[key] ? this.data[key] : null; },
+      set: function (key, value) { this.data[key] = value },
+      toString: function () { return JSON.stringify(this.data); },
+    };
+
+    function getData() {
+      if (typeof URLSearchParams !== "undefined")
+        return new URLSearchParams(target.getItem(defaultIdentifier) || "");
+      else {
+        fallback.data = JSON.parse(target.getItem(defaultIdentifier) || "{}");
+        return fallback;
+      }
+    }
+
     return {
-      get(key, fallback) {
+      get: function (key, fallback) {
         return getData().get(key) || fallback;
       },
-      set(key, value) {
+      set: function (key, value) {
         var data = getData();
         data.set(key, value);
         return target.setItem(defaultIdentifier, data.toString());
       },
-      setObject(object) {
+      setObject: function (object) {
         var data = getData();
-        Object.entries(object).forEach(([key, value]) => data.set(key, value));
+        for (var key in object) {
+          var value = object[key];
+          data.set(key, value);
+        }
         return target.setItem(defaultIdentifier, data.toString());
       },
-      getObject() {
+      getObject: function () {
         var data = getData();
         var object = {};
-        data.forEach((value, key) => object[key] = value);
+        var keys = data.keys();
+        if (typeof keys.next === "function") {
+          var entry = keys.next();
+          while (!entry.done) {
+            object[entry.value] = data.get(entry.value);
+            entry = keys.next();
+          }
+        } else {
+          keys.forEach(function (key) {
+            object[key] = data.get(key);
+          });
+        }
         return object;
       }
     };
@@ -381,29 +452,17 @@
     return target;
   }
 
-  function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
+  function toCamelCase(name) { return name.replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); }); };
   function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };
 
-  function deepFreeze(object) {
-    Object.freeze(object);
-    Object.values(object).forEach(function (value) {
-      if (
-        value &&
-        typeof value === "object" &&
-        !Object.isFrozen(value)
-      ) {
-        deepFreeze(value);
-      }
-    });
-    return object;
-  }
-
   function inferDistantEnvironment() {
+    if (!window.matchMedia) return false;
+
     var noHover =
-      matchMedia("(hover: none)").matches;
+      window.matchMedia("(hover: none)").matches;
 
     var noFinePointer =
-      !matchMedia("(any-pointer: fine)").matches;
+      !window.matchMedia("(any-pointer: fine)").matches;
 
     var largeViewport =
       window.innerWidth >= 960 &&
@@ -411,25 +470,4 @@
 
     return noHover && noFinePointer && largeViewport;
   }
-
-  function defaultRequest(url, options) {
-    var requestOptions = Object.assign(
-      { method: "GET", credentials: "same-origin" },
-      options
-    );
-    return fetch(url, requestOptions)
-      .then(function (response) {
-        if (!response.ok) {
-          var error = new Error("HTTP " + response.status + " " + response.statusText);
-          error.name = "AelluxRequestError";
-          error.status = response.status;
-          error.statusText = response.statusText;
-          error.response = response;
-          throw error;
-        }
-        return response;
-      }).catch(function (error) {
-        throw error;
-      });
-  };
 })();

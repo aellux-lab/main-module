@@ -25,7 +25,6 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
     Aellux.observers.intersection.disconnect();
   },
 
-  dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
   dispatchFrom(from, event, options) {
     //console.log(`dispatch: Aellux${event}`, options);
     from.dispatchEvent(new CustomEvent(Aellux.eventName(event), options));
@@ -42,6 +41,7 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
   observe(element, type) {
     Aellux.observers[type].observe(element);
   },
+  request: defaultRequest,
 
   observers: Object.freeze({
     resize: new ResizeObserver(resizeObserverCallback),
@@ -151,6 +151,27 @@ function createLayoutScheduler() {
     update: (callback) => queueTask(updateQueue, callback)
   });
 }
+
+function defaultRequest(url, options) {
+  var requestOptions = Object.assign(
+    { method: "GET", credentials: "same-origin" },
+    options
+  );
+  return fetch(url, requestOptions)
+    .then(function (response) {
+      if (!response.ok) {
+        var error = new Error("HTTP " + response.status + " " + response.statusText);
+        error.name = "AelluxRequestError";
+        error.status = response.status;
+        error.statusText = response.statusText;
+        error.response = response;
+        throw error;
+      }
+      return response;
+    }).catch(function (error) {
+      throw error;
+    });
+};
 
 function AelluxMethod(element) {
   // if (element) {

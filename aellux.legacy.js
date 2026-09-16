@@ -2,4 +2,5 @@
 
 "use strict";
 
-if (!Aellux) return;
+
+//TAB CLICK / CLASS EVENT

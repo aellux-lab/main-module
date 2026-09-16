@@ -137,6 +137,7 @@
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
     },
+    request: defaultRequest,
     updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
     on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
     off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
@@ -385,4 +386,25 @@
 
     return noHover && noFinePointer && largeViewport;
   }
+
+  function defaultRequest(url, options) {
+    var requestOptions = Object.assign(
+      { method: "GET", credentials: "same-origin" },
+      options
+    );
+    return fetch(url, requestOptions)
+      .then(function (response) {
+        if (!response.ok) {
+          var error = new Error("HTTP " + response.status + " " + response.statusText);
+          error.name = "AelluxRequestError";
+          error.status = response.status;
+          error.statusText = response.statusText;
+          error.response = response;
+          throw error;
+        }
+        return response;
+      }).catch(function (error) {
+        throw error;
+      });
+  };
 })();

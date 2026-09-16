@@ -200,13 +200,17 @@
       { name: "Object", function: ["assign", "entries", "freeze"] },
       { name: "Array", function: ["from", "isArray"] }]
       .forEach(function (option) {
-        if (typeof option === "string" && typeof window[option] !== "function") { return Aellux.notAvailable.push(option); }
-
-        option.function.forEach(function (method) {
-          if (!window[option.name] || typeof window[option.name][method] !== "function") {
-            Aellux.notAvailable.push(option.name + "." + method);
+        if (typeof option === "string") {
+          if (typeof window[option] !== "function") {
+            Aellux.notAvailable.push(option);
           }
-        });
+        } else {
+          option.function.forEach(function (method) {
+            if (!window[option.name] || typeof window[option.name][method] !== "function") {
+              Aellux.notAvailable.push(option.name + "." + method);
+            }
+          });
+        }
       });
 
     if (!window.Element || typeof window.Element.prototype.matches !== "function")

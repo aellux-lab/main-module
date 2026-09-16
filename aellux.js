@@ -111,7 +111,7 @@
   var old$AInstance = root.$A;
 
   root.Aellux = {
-    options: CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS,
+    options: { ...CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS },
     init(options) {
       if (typeof document === "undefined") {
         console.log("[Aellux] Browser not supported.");
@@ -122,6 +122,8 @@
         document.querySelector(Aellux.attr("esm"))) return;
 
       mergeOptions(Aellux.options, options || {});
+      deepFreeze(Aellux.options);
+
       Aellux.aelluxBasePath = aelluxBasePath;
       Aellux.notAvailable = [];
 

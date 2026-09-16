@@ -130,20 +130,20 @@
       addWeakStyles();
       loadAellux();
     },
-    preferencesAttributesHTML: updatePreferencesAttributesHTML,
     legacy: false,
     supported: false,
     notAvailable: [],
-    on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
-    off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
-    attr(name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
-    uxmFilename(name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + ".js"; },
-    eventName(name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + name; },
     persist: {
       local: buildPersistMemory("localStorage"),
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
     },
+    updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
+    on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
+    off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
+    attr(name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
+    uxmFilename(name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + ".js"; },
+    eventName(name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + name; },
     noConflict() { return old$AInstance; }
   };
 
@@ -174,7 +174,7 @@
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = aelluxBasePath + "aellux.esm.js";
+    script.src = aelluxBasePath + "aellux.loader.esm.js";
     script.setAttribute(attr, "true");
     script.onload = function () {
       Aellux.legacy = false;

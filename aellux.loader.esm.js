@@ -22,6 +22,8 @@ Object.assign(Aellux, {
     Aellux.observers.intersection.disconnect();
   },
 
+  request: defaultRequest,
+
   dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
   dispatchFrom(from, event, options) {
     console.log(`dispatch: Aellux${event}`, options);
@@ -146,6 +148,23 @@ function createLayoutScheduler() {
     update: (callback) => queueTask(updateQueue, callback)
   };
 }
+
+async function defaultRequest(url, options) {
+  const requestOptions = Object.assign(
+    { method: "GET", credentials: "same-origin" },
+    options
+  );
+  const response = await fetch(url, requestOptions);
+  if (!response.ok) {
+    const error = new Error("HTTP " + response.status + " " + response.statusText);
+    error.name = "AelluxRequestError";
+    error.status = response.status;
+    error.statusText = response.statusText;
+    error.response = response;
+    throw error;
+  }
+  return response;
+};
 
 function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
 function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };

@@ -50,7 +50,7 @@ async function init() {
 function update() {
   Object.assign(computedPreferences, defaultPreferences, userPreferences);
 
-  Aellux.preferencesAttributesHTML(computedPreferences);
+  Aellux.updatePreferencesAttributesHTML(computedPreferences);
 
   //Configure toggle buttons & events
   preferenceContainersUpdate();

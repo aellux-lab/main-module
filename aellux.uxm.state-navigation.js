@@ -41,9 +41,10 @@ function tabOpen(tabGroupId, tabId, title) {
   return change(tabGroupId, tabId, title);
 }
 
-function ajaxHref(url) {
+function ajaxHref(url, selectors) {
+  history.replaceState({ aelluxState: true, snapshot: globalSnapshot, ajaxHref: selectors }, "", window.location.href);
   updateSnapshotData();
-  history.pushState({ aelluxState: true, snapshot: null }, "", url);
+  history.pushState({ aelluxState: true, snapshot: null, ajaxHref: selectors }, "", url);
 }
 
 function flowStep(flowId, step, options) {
@@ -132,6 +133,13 @@ function onHashChange() {
 function onPopState(event) {
   const browserState = event.state;
   if (!browserState || !browserState.aelluxState) return;
+
+  if (browserState.ajaxHref) {
+    Aellux.ajaxHref?.load(
+      window.location.href,
+      browserState.ajaxHref
+    );
+  }
 
   if (browserState.snapshot) {
     updateSnapshotData(snapshotToString(browserState.snapshot));

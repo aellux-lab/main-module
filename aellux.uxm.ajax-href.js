@@ -42,12 +42,12 @@ async function load(url, selectors, options = {}) {
   try {
     const response = await Aellux.request(url, { signal: controller.signal });
     const html = await response.text();
+    const loadedDocument = new DOMParser().parseFromString(html, "text/html");
 
     selectorList.forEach(function (selector) {
       const currentElement = elements.get(selector);
       if (!currentElement) return;
 
-      const loadedDocument = new DOMParser().parseFromString(html, "text/html");
       const loadedElement = loadedDocument.querySelector(selector);
       if (!loadedElement) return;
 
@@ -55,12 +55,12 @@ async function load(url, selectors, options = {}) {
       currentElement.replaceWith(replacement);
       Aellux(replacement);
 
-      Aellux.stateNavigation?.ajaxHref(url);
-
       //feedback busy/progress
       Aellux.feedback?.busy(replacement, "Ajax loaded", false);
       Aellux.feedback?.progress(replacement, "Ajax loaded", 1);
     });
+
+    Aellux.stateNavigation?.ajaxHref(url, selectors);
   }
   catch (error) {
     selectorList.forEach(function (selector) {

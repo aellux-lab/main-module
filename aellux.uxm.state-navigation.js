@@ -137,7 +137,8 @@ function onPopState(event) {
   if (browserState.ajaxHref) {
     Aellux.ajaxHref?.load(
       window.location.href,
-      browserState.ajaxHref
+      browserState.ajaxHref,
+      { ignoreHistory: true }
     );
   }
 

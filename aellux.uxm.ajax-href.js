@@ -60,7 +60,7 @@ async function load(url, selectors, options = {}) {
       Aellux.feedback?.progress(replacement, "Ajax loaded", 1);
     });
 
-    Aellux.stateNavigation?.ajaxHref(url, selectors);
+    if (!options.ignoreHistory) { Aellux.stateNavigation?.ajaxHref(url, selectors); }
   }
   catch (error) {
     selectorList.forEach(function (selector) {

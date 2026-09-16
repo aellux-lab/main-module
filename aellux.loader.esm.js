@@ -83,7 +83,7 @@ function loadUXM(mName) {
     import(`${Aellux.aelluxBasePath}${Aellux.uxmFilename(mName)}`)
       .then(module => {
         const realModule = module.default || module;
-        Aellux[key] = Object.freeze(realModule);
+        Aellux[key] = realModule;
         return realModule;
       });
 

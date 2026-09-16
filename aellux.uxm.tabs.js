@@ -113,7 +113,7 @@ function _createController(tabGroup) {
       Aellux.stateNavigation?.tabOpen(
         tabGroup.id,
         tab.id,
-        showTitle ? title : null
+        showTitle ? title : undefined
       );
     },
     changeTab(currentTab, save) {

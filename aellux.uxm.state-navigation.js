@@ -56,7 +56,7 @@ function formUpdate(formId, event, value, options) {
 
 }
 
-function normalize(key, value, title = null, silent) {
+function normalize(key, value, title = undefined, silent) {
   return change(key, value, title, silent);
 }
 
@@ -64,7 +64,9 @@ async function change(key, value, title, silent = false) {
   if (globalSnapshot.title === title &&
     globalSnapshot[key] === value) return;
 
-  globalSnapshot.title = title ? title.replace(/\s+/g, " ") : null;
+  if (title) globalSnapshot.title = title.replace(/\s+/g, " ");
+  else delete globalSnapshot.title;
+
   globalSnapshot[key] = value;
   updateSnapshotData(snapshotToString(globalSnapshot));
 

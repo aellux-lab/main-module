@@ -20,9 +20,11 @@ async function init() {
 }
 async function destroy() { }
 
-function updateAdaptive(adaptiveContainer) {
+async function updateAdaptive(adaptiveContainer) {
   if (!adaptiveContainer.hasAttribute("aria-busy"))
     adaptiveContainer.setAttribute("aria-busy", true);
+
+  await Aellux.wait("defaultAdaptiveCSSPromise");
   Aellux.observe(adaptiveContainer, "resize");
   adaptiveContainer.addEventListener(Aellux.eventName("ResizeObserver"), onResizeObserver);
 }

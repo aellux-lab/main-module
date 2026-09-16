@@ -1,5 +1,6 @@
 export { init, kill, update, snapshotRestore };
 export { tabOpen, ajaxHref, flowStep, formUpdate };
+export { normalize };
 export const globalSnapshot = {};
 
 const globalRemoveSnapshot = {};

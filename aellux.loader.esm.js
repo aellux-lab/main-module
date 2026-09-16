@@ -5,7 +5,9 @@ const root =
 const Aellux = root.Aellux || {};
 const modulePromises = {};
 
-Object.assign(Aellux, {
+root.Aellux = AelluxMethod;
+
+Object.assign(root.Aellux, Aellux, {
   initModule: function () {
     return setupAllModules()
       .catch(error => {
@@ -165,6 +167,16 @@ async function defaultRequest(url, options) {
   }
   return response;
 };
+
+function AelluxMethod(element) {
+  // if (element) {
+  //   return Aellux.update(element);
+  // }
+
+  console.log("TESTE");
+
+  return Aellux;
+}
 
 function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
 function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };

@@ -161,5 +161,5 @@ function snapshotNormalization(tabGroup) {
     return; //SNAPSHOT ALIGNED
 
   //SNAPSHOT WRONG? UPDATE SILENTLY
-  Aellux.stateNavigation.normalize(tabGroupId, tab.id, tab.innerText, true);
+  Aellux.stateNavigation?.normalize(tabGroupId, tab.id, tab.innerText, true);
 }

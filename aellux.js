@@ -4,7 +4,7 @@
 // Promise, modules, async/await, or other modern-only features.
 
 (function () {
-  var CONSTANTS = Object.freeze({
+  var CONSTANTS = deepFreeze({
     AELLUX_EVENT_NAME_PREFFIX: "Aellux",
     AELLUX_UXM_SCRIPT_PREFFIX: "uxm",
     AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX: "aellux",
@@ -129,14 +129,16 @@
       addWeakStyles();
       loadAellux();
     },
+    kill() { return false; },
+    update(element) { return false; },
     legacy: false,
     supported: false,
     notAvailable: [],
-    persist: {
+    persist: Object.freeze({
       local: buildPersistMemory("localStorage"),
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
-    },
+    }),
     request: defaultRequest,
     updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
     on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
@@ -179,7 +181,7 @@
     script.onload = function () {
       Aellux.legacy = false;
       Aellux.supported = true;
-      Aellux.initModule();
+      Aellux.initModuleLoader();
       dispatchAwake();
     };
     script.onerror = function () {
@@ -372,6 +374,20 @@
 
   function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };
   function fromCamelCase(name) { return name.replace(/([A-Z])/g, "-$1").toLowerCase(); };
+
+  function deepFreeze(object) {
+    Object.freeze(object);
+    Object.values(object).forEach(function (value) {
+      if (
+        value &&
+        typeof value === "object" &&
+        !Object.isFrozen(value)
+      ) {
+        deepFreeze(value);
+      }
+    });
+    return object;
+  }
 
   function inferDistantEnvironment() {
     var noHover =

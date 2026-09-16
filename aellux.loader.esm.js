@@ -5,7 +5,7 @@ const root =
 const modulePromises = {};
 
 root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
-  initModule: function () {
+  initModuleLoader() {
     return setupAllModules()
       .catch(error => {
         console.error(
@@ -14,8 +14,10 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
         );
       });
   },
+  update(element) {
 
-  kill: function () {
+  },
+  kill() {
     Aellux.observers.resize.disconnect();
     Aellux.observers.mutation.disconnect();
     Aellux.observers.intersection.disconnect();
@@ -23,7 +25,7 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
 
   dispatch(event, options) { Aellux.dispatchFrom(document, event, options); },
   dispatchFrom(from, event, options) {
-    console.log(`dispatch: Aellux${event}`, options);
+    //console.log(`dispatch: Aellux${event}`, options);
     from.dispatchEvent(new CustomEvent(Aellux.eventName(event), options));
   },
 
@@ -39,11 +41,11 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
     Aellux.observers[type].observe(element);
   },
 
-  observers: {
+  observers: Object.freeze({
     resize: new ResizeObserver(resizeObserverCallback),
     mutation: new MutationObserver(mutationObserverCallback),
     intersection: new IntersectionObserver(mutationObserverCallback)
-  },
+  }),
 
   waitLayout: createLayoutScheduler(),
 });
@@ -81,7 +83,7 @@ function loadUXM(mName) {
     import(`${Aellux.aelluxBasePath}${Aellux.uxmFilename(mName)}`)
       .then(module => {
         const realModule = module.default || module;
-        Aellux[key] = realModule;
+        Aellux[key] = Object.freeze(realModule);
         return realModule;
       });
 
@@ -141,10 +143,10 @@ function createLayoutScheduler() {
     return promise;
   }
 
-  return {
+  return Object.freeze({
     read: (callback) => queueTask(readQueue, callback),
     update: (callback) => queueTask(updateQueue, callback)
-  };
+  });
 }
 
 function AelluxMethod(element) {
@@ -154,7 +156,7 @@ function AelluxMethod(element) {
 
   console.log("TESTE");
 
-  return Aellux;
+  return Aellux.update(element);
 }
 
 function toCamelCase(name) { return name.replace(/-([a-z])/g, (_, c) => c.toUpperCase()); };

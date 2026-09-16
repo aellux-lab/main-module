@@ -54,6 +54,9 @@ async function load(url, selectors, options = {}) {
       const replacement = document.importNode(loadedElement, true);
       currentElement.replaceWith(replacement);
       Aellux(replacement);
+
+      Aellux.stateNavigation?.ajaxHref(url);
+
       //feedback busy/progress
       Aellux.feedback?.busy(replacement, "Ajax loaded", false);
       Aellux.feedback?.progress(replacement, "Ajax loaded", 1);

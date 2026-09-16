@@ -41,8 +41,8 @@ function tabOpen(tabGroupId, tabId, title) {
   return change(tabGroupId, tabId, title);
 }
 
-function urlState(url, options) {
-
+function ajaxHref(url) {
+  history.pushState({ aelluxState: true, snapshot: null }, "", url);
 }
 
 function flowStep(flowId, step, options) {

@@ -105,9 +105,7 @@ function _createController(tabGroup) {
 
       const controller = controllers.get(tabGroup);
       controller.changeTab(tab, true);
-      Aellux.wait("state-navigation").then(() => {
-        Aellux.stateNavigation.tabOpen(tabGroup.id, tab.id, tab.innerText);
-      });
+      Aellux.stateNavigation?.tabOpen(tabGroup.id, tab.id, tab.innerText);
     },
     changeTab(currentTab, save) {
       const controller = controllers.get(tabGroup);

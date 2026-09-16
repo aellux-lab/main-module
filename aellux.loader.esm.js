@@ -49,6 +49,7 @@ root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
 
   waitLayout: createLayoutScheduler(),
 });
+root.$A = root.Aellux;
 
 function intersectionObserverCallback(entries) { observerCallback(entries, "Intersection"); }
 function mutationObserverCallback(entries) { observerCallback(entries, "Mutation"); }

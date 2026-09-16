@@ -28,30 +28,30 @@
 </head>
 
 <body>
-  <div data-aellux-fill-viewport>
-    <main data-aellux-fill-parent data-aellux-adaptive style=" background-color: rgba(255 0 0 /10%);">
-      <progress data-aellux-adaptive-progress style="margin:auto"></progress>
+  <div data-ae-fill-viewport>
+    <main data-ae-fill-parent data-ae-adaptive style=" background-color: rgba(255 0 0 /10%);">
+      <progress data-ae-adaptive-progress style="margin:auto"></progress>
 
-      <nav data-aellux-persist data-aellux-tab-group>
+      <nav data-ae-persist data-ae-tab-group>
         <!-- SUPPORTS ANCHOR DIV AND BUTTON -->
-        <button data-aellux-tab="home">
+        <button data-ae-tab="home" data-ae-title="# Home">
           <span>#</span>
           <span>Home</span>
         </button>
-        <a data-aellux-tab="profile" data-aellux-tab-title>Perfil</a>
-        <div data-aellux-tab="settings" data-aellux-tab-title>Configurações</div>
+        <a data-ae-tab="profile" data-ae-tab-title>Perfil</a>
+        <div data-ae-tab="settings" data-ae-tab-title>Configurações</div>
       </nav>
 
       <section id="home">
         <h1>Home</h1>
         <p>Conteúdo da página inicial.</p>
-        <div data-aellux-preference="color-scheme">
-          <div data-aellux-label></div> :
-          <button data-aellux-option="dark">Dark</button>
-          <button data-aellux-option="light">Light</button>
-          <button data-aellux-option="auto">auto</button>
+        <div data-ae-preference="color-scheme">
+          <div data-ae-label></div> :
+          <button data-ae-option="dark">Dark</button>
+          <button data-ae-option="light">Light</button>
+          <button data-ae-option="auto">auto</button>
         </div>
-        <a href="./ajax.htm" data-aellux-ajax-href="#content,#content2,title">LINK HREF</a>
+        <a href="./ajax.htm" data-ae-ajax-href="#content,#content2,title">LINK HREF</a>
         <div id="content">Carregar aqui1</div>
         <div id="content2">Carregar aqui2</div>
       </section>

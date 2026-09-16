@@ -14,6 +14,10 @@ const attr = {
   ready: Aellux.attr("ready"),
 }
 
+const className = {
+  active: Aellux.className("active")
+}
+
 async function init() {
   window.addEventListener("storage", function (event) {
     if (event.key !== "AelluxPreferences") return;
@@ -98,7 +102,7 @@ function preferenceContainersUpdate() {
       elements.forEach(element => {
         const value = element.getAttribute(attr.option);
         const selected = value === get(preference);
-        element.classList.toggle("ux-active", selected);
+        element.classList.toggle(className.active, selected);
         if (selectedLabel && selected) {
           if (selectedLabel.value) { selectedLabel.value = element.innerText; }
           else { selectedLabel.innerHTML = element.innerHTML; }

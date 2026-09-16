@@ -1,5 +1,11 @@
 export { init, kill, update, snapshotRestore };
 
+const modifier = {
+  shapeHorizontal: Aellux.className("shape-horizontal"),
+  shapeVertical: Aellux.className("shape-vertical"),
+  shapeSquare: Aellux.className("shape-square"),
+};
+
 async function init() {
   Aellux.wait("defaultAdaptiveCSSPromise")
     .then(() => {
@@ -47,9 +53,9 @@ function onResizeObserver(event) {
   const ratioBreakpoints = params.ratioShapes;
   const ratio = height > 0 ? width / height : 0;
 
-  adaptiveContainer.classList.toggle("ux-shape-vertical", ratio < ratioBreakpoints.vertical);
-  adaptiveContainer.classList.toggle("ux-shape-horizontal", ratio > ratioBreakpoints.horizontal);
-  adaptiveContainer.classList.toggle("ux-shape-square",
+  adaptiveContainer.classList.toggle(modifier.shapeVertical, ratio < ratioBreakpoints.vertical);
+  adaptiveContainer.classList.toggle(modifier.shapeHorizontal, ratio > ratioBreakpoints.horizontal);
+  adaptiveContainer.classList.toggle(modifier.shapeSquare,
     ratio >= ratioBreakpoints.vertical &&
     ratio <= ratioBreakpoints.horizontal
   );
@@ -62,7 +68,7 @@ function onResizeObserver(event) {
   for (var i = 0; i < sizes.length; i++) {
     var size = sizes[i];
     adaptiveContainer.classList.toggle(
-      "ux-fits-" + size,
+      Aellux.className("fits-" + size),
       space >= spaceBreakpoints[size]
     );
   }

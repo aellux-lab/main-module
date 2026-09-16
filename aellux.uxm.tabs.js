@@ -7,10 +7,13 @@ const attr = {
   tabGroup: Aellux.attr("tab-group"),
   tabPanel: Aellux.attr("tab-panel"),
   tab: Aellux.attr("tab"),
+  title: Aellux.attr("title"),
   ready: Aellux.attr("ready"),
 }
 
-//TODO: optional title change when tab selected (when role=navigation / nav tag?)
+const className = {
+  active: Aellux.className("active")
+}
 
 async function init() {
   //BFCache
@@ -104,8 +107,14 @@ function _createController(tabGroup) {
       if (!tab) return;
 
       const controller = controllers.get(tabGroup);
+      const showTitle = tab.hasAttribute(attr.title);
+      const title = tab.getAttribute(attr.title) || tab.innerText;
       controller.changeTab(tab, true);
-      Aellux.stateNavigation?.tabOpen(tabGroup.id, tab.id, tab.innerText);
+      Aellux.stateNavigation?.tabOpen(
+        tabGroup.id,
+        tab.id,
+        showTitle ? title : null
+      );
     },
     changeTab(currentTab, save) {
       const controller = controllers.get(tabGroup);
@@ -119,7 +128,7 @@ function _createController(tabGroup) {
           tab.setAttribute("aria-selected", selected);
           tab.setAttribute("tabindex", selected ? 0 : -1);
           const panel = document.querySelector(`#${panelId}`);
-          panel?.classList.toggle("ux-active", selected);
+          panel?.classList.toggle(className.active, selected);
         });
         Aellux.dispatchFrom(currentTab, "TabsChangeTab", { detail: controller });
       }

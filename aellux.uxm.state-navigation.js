@@ -64,7 +64,7 @@ async function change(key, value, title, silent = false) {
   if (globalSnapshot.title === title &&
     globalSnapshot[key] === value) return;
 
-  globalSnapshot.title = title;
+  globalSnapshot.title = title.replace(/\s+/g, " ");
   globalSnapshot[key] = value;
   updateSnapshotData(snapshotToString(globalSnapshot));
 
@@ -105,7 +105,7 @@ function snapshotToString(snapshot) {
 }
 
 function dispatchSnapshotEvent(name) {
-  document.title = globalSnapshot.title ?
+  document.title = (globalSnapshot.title || false) ?
     `${globalSnapshot.title} - ${baseTitle}` :
     baseTitle;
 

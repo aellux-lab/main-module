@@ -1,4 +1,4 @@
-export { init, kill, update, snapshotRestore };
+export { init, kill, update };
 export { get, set };
 
 const userPreferences = Object.create(null);
@@ -60,10 +60,6 @@ function update() {
   preferenceContainersUpdate();
 
   Aellux.dispatch("PreferencesChange");
-}
-
-function snapshotRestore() {
-
 }
 
 function kill() {

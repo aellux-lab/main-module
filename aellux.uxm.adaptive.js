@@ -1,4 +1,4 @@
-export { init, kill, update, snapshotRestore };
+export { init, kill, update };
 
 const modifier = {
   shapeHorizontal: Aellux.className("shape-horizontal"),
@@ -23,9 +23,6 @@ async function init() {
 
 function update() {
   adaptiveObserverUpdate();
-}
-
-function snapshotRestore(detail) {
 }
 
 async function kill() {

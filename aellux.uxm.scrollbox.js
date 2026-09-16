@@ -1,4 +1,4 @@
-export { init, kill, update, snapshotRestore };
+export { init, kill };
 export const templates = Object.create(null);
 
 let BScroll;
@@ -11,14 +11,6 @@ async function init() {
   // } else {
   //   autoWrapAndScroll();
   // }
-}
-
-function update() {
-
-}
-
-function snapshotRestore() {
-
 }
 
 async function kill() {

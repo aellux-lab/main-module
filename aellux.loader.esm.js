@@ -66,7 +66,8 @@ async function setupAllModules() {
   const allModules = [];
   Aellux.options.load.forEach(mName => allModules.push(
     loadUXM(mName).then(module => {
-      if ("init" in module && typeof module.init === "function")
+      if ("init" in module && typeof module.init === "function" &&
+        "kill" in module && typeof module.kill === "function")
         return module.init();
     })));
   await Promise.all(allModules);

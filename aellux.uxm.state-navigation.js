@@ -1,4 +1,4 @@
-export { init, kill, update, snapshotRestore };
+export { init, kill };
 export { tabOpen, ajaxHref, flowStep, formUpdate, updateBaseTitle };
 export { normalize };
 export const globalSnapshot = {};
@@ -28,14 +28,8 @@ function init() {
 async function kill() {
   window.removeEventListener("popstate", onPopState);
   window.removeEventListener("hashchange", onHashChange);
-}
 
-function update() {
-
-}
-
-function snapshotRestore(detail) {
-
+  Aellux.off("SnapshotRestore", onSnapshotRestore);
 }
 
 function updateBaseTitle(title) {

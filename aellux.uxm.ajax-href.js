@@ -1,5 +1,4 @@
-//ajax-content ajax-href ajax-progress
-export { init, kill, update, snapshotRestore };
+export { init, kill };
 export { load };
 
 const attr = {
@@ -9,9 +8,9 @@ const attr = {
 async function init() {
   document.addEventListener("click", onClick);
 }
-async function kill() { }
-async function update() { }
-function snapshotRestore() { }
+async function kill() {
+  document.removeEventListener("click", onClick);
+}
 
 let previousController = null;
 
@@ -37,6 +36,7 @@ async function load(url, selectors, options = {}) {
     //feedback busy/progress
     Aellux.feedback?.busy(currentElement, "Ajax loading", true);
     Aellux.feedback?.progress(currentElement, "Ajax loading", 0);
+    //AJAX PROGRESS UPDATE VALUE
   });
 
   try {

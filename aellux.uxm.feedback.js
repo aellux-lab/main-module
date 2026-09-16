@@ -1,4 +1,4 @@
-export { init, kill, update, snapshotRestore };
+export { init, kill };
 export { warning, error, success, announce };
 export { busy, validate, progress };
 export { on, off };
@@ -8,8 +8,6 @@ const handlers = new Map();
 
 async function init() { }
 async function kill() { }
-async function update() { }
-function snapshotRestore() { }
 
 function on(type, handler) {
   if (!handlers.has(type)) { handlers.set(type, new Set()); }

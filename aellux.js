@@ -5,9 +5,11 @@
 
 (function () {
   var CONSTANTS = deepFreeze({
+    AELLUX_SHORT_JS_NAME: "$ae",
     AELLUX_EVENT_NAME_PREFFIX: "Aellux",
     AELLUX_UXM_SCRIPT_PREFFIX: "uxm",
-    AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX: "aellux",
+    AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX: "ae",
+    AELLUX_CLASS_NAME_PREFFIX: "ae--",
     AELLUX_MINIFIED_SCRIPT_SUFFIX: "min",
 
     AELLUX_DEFAULT_INITIALIZATION_OPTIONS: {
@@ -108,9 +110,10 @@
       ? globalThis
       : window;
 
-  var old$AInstance = root.$A;
+  var old$Instance = root[CONSTANTS.AELLUX_SHORT_JS_NAME];
 
   root.Aellux = {
+    shortJSName: CONSTANTS.AELLUX_SHORT_JS_NAME,
     options: { ...CONSTANTS.AELLUX_DEFAULT_INITIALIZATION_OPTIONS },
     init(options) {
       if (typeof document === "undefined") {
@@ -149,10 +152,10 @@
     attr(name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
     uxmFilename(name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + ".js"; },
     eventName(name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + name; },
-    noConflict() { return old$AInstance; }
+    noConflict() { return old$Instance; }
   };
 
-  root.$A = root.Aellux;
+  root[CONSTANTS.AELLUX_SHORT_JS_NAME] = root.Aellux;
 
   function dispatchAwake() {
     var event = document.createEvent("Event");

@@ -8,19 +8,19 @@
   <script>
     var start = Date.now();
 
-    $A.init({
+    $ae.init({
       defaultAdaptiveCSS: true
     });
 
-    $A.on("Awake", function () {
+    $ae.on("Awake", function () {
       var time = Date.now() - start;
       console.log("[Aellux] Awake in " + (time / 1000) + "ms")
     });
-    $A.on("Ready", function () {
+    $ae.on("Ready", function () {
       var time = Date.now() - start;
       console.log("[Aellux] Ready in " + (time / 1000) + "ms")
 
-      $A.scrollbox.templates["custom"] = {
+      $ae.scrollbox.templates["custom"] = {
 
       };
     });

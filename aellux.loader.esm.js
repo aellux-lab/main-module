@@ -2,12 +2,9 @@ const root =
   typeof globalThis !== "undefined"
     ? globalThis
     : window;
-const Aellux = root.Aellux || {};
 const modulePromises = {};
 
-root.Aellux = AelluxMethod;
-
-Object.assign(root.Aellux, Aellux, {
+root.Aellux = Object.assign(AelluxMethod, root.Aellux, {
   initModule: function () {
     return setupAllModules()
       .catch(error => {

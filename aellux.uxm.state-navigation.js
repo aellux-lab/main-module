@@ -1,5 +1,5 @@
 export { init, kill, update, snapshotRestore };
-export { tabOpen, urlState, flowStep, formUpdate };
+export { tabOpen, ajaxHref, flowStep, formUpdate };
 export const globalSnapshot = {};
 
 const globalRemoveSnapshot = {};
@@ -42,6 +42,7 @@ function tabOpen(tabGroupId, tabId, title) {
 }
 
 function ajaxHref(url) {
+  updateSnapshotData();
   history.pushState({ aelluxState: true, snapshot: null }, "", url);
 }
 

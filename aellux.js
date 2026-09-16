@@ -32,7 +32,6 @@
         "feedback",
         "scrollbox",
         "ajax-href", // Navegação HREF com conteúdo assíncrono substituído
-        "components" // Comportamentos de componentes de interação pré-fabricados
       ],
       preferencesOptions: {
         colorScheme: ["auto", "light", "dark"],

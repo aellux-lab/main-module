@@ -32,14 +32,14 @@ function unmountTabGroup(tabGroupContainer) {
   if (!adaptiveController) return;
   tabGroupContainer.removeEventListener("keydown", adaptiveController.onkeydown);
   tabGroupContainer.removeEventListener("click", adaptiveController.onclick);
-  controllers.delete(tabGroupContainer)
+  controllers.delete(tabGroupContainer);
 }
 
 function onSnapshotRestore(event) {
   if (!event.detail) return;
   const detail = event.detail;
-  for (const [tabGroupContainer, controller] of controllers) {
-    snapshotRestoreController(tabGroupContainer, detail, controller);
+  for (const tabGroupContainer of Object.keys(controllers)) {
+    snapshotRestoreController(tabGroupContainer, detail);
   }
 }
 
@@ -57,7 +57,8 @@ function updateController(tabGroup) {
   }
 }
 
-function snapshotRestoreController(tabGroup, detail, controller) {
+function snapshotRestoreController(tabGroup, detail) {
+  const controller = controllers.get(tabGroup);
   if (!controller) return;
   if (!detail || !detail.snapshot) return;
 

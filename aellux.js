@@ -140,6 +140,7 @@
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
     }),
     request: defaultRequest,
+    defaultAdaptiveCSSPromise: null,
     updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
     on(event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
     off(event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },

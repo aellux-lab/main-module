@@ -1,5 +1,5 @@
 export { init, kill, update, snapshotRestore };
-export { tabOpen, ajaxHref, flowStep, formUpdate };
+export { tabOpen, ajaxHref, flowStep, formUpdate, updateBaseTitle };
 export { normalize };
 export const globalSnapshot = {};
 
@@ -35,6 +35,10 @@ function update() {
 }
 
 function snapshotRestore(detail) {
+
+}
+
+function updateBaseTitle(title) {
 
 }
 

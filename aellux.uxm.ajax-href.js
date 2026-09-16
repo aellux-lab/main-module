@@ -53,6 +53,10 @@ async function load(url, selectors, options = {}) {
 
       const replacement = document.importNode(loadedElement, true);
       currentElement.replaceWith(replacement);
+
+      if (selector === "title")
+        Aellux.stateNavigation?.updateBaseTitle(replacement.innerText);
+
       Aellux(replacement);
 
       //feedback busy/progress

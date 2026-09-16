@@ -1,3 +1,5 @@
+"use strict";
+
 export { init, kill, update, snapshotRestore };
 
 const controllers = new WeakMap();

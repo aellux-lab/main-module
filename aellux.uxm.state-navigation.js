@@ -1,3 +1,5 @@
+"use strict";
+
 export { init, kill };
 export { tabOpen, ajaxHref, flowStep, formUpdate, updateBaseTitle };
 export { normalize };

@@ -1,3 +1,5 @@
+"use strict";
+
 export { init, kill };
 export { warning, error, success, announce };
 export { busy, validate, progress };

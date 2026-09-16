@@ -1,3 +1,5 @@
+"use strict";
+
 const root =
   typeof globalThis !== "undefined"
     ? globalThis

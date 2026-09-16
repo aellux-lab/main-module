@@ -1,3 +1,5 @@
+"use strict";
+
 export { init, kill };
 export const templates = Object.create(null);
 

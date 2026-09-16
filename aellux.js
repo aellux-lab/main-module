@@ -3,6 +3,8 @@
 // It must load either the ESM runtime or the legacy fallback without itself depending on 
 // Promise, modules, async/await, or other modern-only features.
 
+"use strict";
+
 (function () {
   var CONSTANTS = deepFreeze({
     AELLUX_SHORT_JS_NAME: "$ae",

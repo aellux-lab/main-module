@@ -1,3 +1,5 @@
+"use strict";
+
 export { init, kill, update };
 
 const modifier = {

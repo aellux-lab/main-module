@@ -28,7 +28,7 @@ async function load(url, selectors, options = {}) {
   ).map(selector => selector.trim())
     .filter(Boolean);
 
-  const elements = new WeakMap();
+  const elements = new Map();
 
   selectorList.forEach(function (selector) {
     const currentElement = document.querySelector(selector);

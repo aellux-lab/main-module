@@ -1,7 +1,9 @@
 import { build } from "esbuild";
-import { copyFile, mkdir, readdir, unlink } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { createContext, runInContext } from "node:vm";
+import { generateAdaptiveCSS } from "../src/aellux.uxm.adaptive.css.js";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const sourceDirectory = join(projectRoot, "src");
@@ -9,7 +11,7 @@ const outputDirectory = join(projectRoot, "dist");
 const sourceFiles = [];
 
 for (const entry of await readdir(sourceDirectory, { withFileTypes: true })) {
-  if (entry.isFile() && entry.name.endsWith(".js")) {
+  if (entry.isFile() && entry.name.endsWith(".js") && !entry.name.endsWith(".css.js")) {
     sourceFiles.push(join(sourceDirectory, entry.name));
   }
 }
@@ -17,6 +19,29 @@ for (const entry of await readdir(sourceDirectory, { withFileTypes: true })) {
 const generatedFiles = new Set();
 
 await mkdir(outputDirectory, { recursive: true });
+
+const bootstrapPath = join(sourceDirectory, "aellux.js");
+const bootstrapContext = createContext({
+  document: {
+    currentScript: { src: pathToFileURL(bootstrapPath).href },
+    querySelector() { return null; }
+  }
+});
+bootstrapContext.window = bootstrapContext;
+runInContext(await readFile(bootstrapPath, "utf8"), bootstrapContext);
+await writeFile(
+  join(outputDirectory, "aellux.uxm.adaptive.css"),
+  generateAdaptiveCSS(bootstrapContext.Aellux),
+  "utf8"
+);
+
+await build({
+  absWorkingDir: projectRoot,
+  entryPoints: [join(outputDirectory, "aellux.uxm.adaptive.css")],
+  outfile: join(outputDirectory, "aellux.uxm.adaptive.min.css"),
+  minify: true,
+  legalComments: "none"
+});
 
 for (const sourceFile of sourceFiles) {
   const filename = basename(sourceFile);
@@ -51,4 +76,4 @@ for (const entry of await readdir(outputDirectory, { withFileTypes: true })) {
 }
 
 await copyFile(join(projectRoot, "README.md"), join(outputDirectory, "README.md"));
-console.log(`Build complete: ${sourceFiles.length * 2} JavaScript files and source maps in dist/.`);
+console.log(`Build complete: ${sourceFiles.length * 2} JavaScript files, source maps, and adaptive CSS in dist/.`);

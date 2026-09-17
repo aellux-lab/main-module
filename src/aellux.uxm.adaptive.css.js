@@ -1,0 +1,85 @@
+export const spacing = [0, 1, 2, 3, 4, 5];
+export const marginValues = [...spacing, "auto"];
+export const stateAliases = {
+  compact: "cp",
+  small: "sm",
+  medium: "md",
+  large: "lg",
+  wide: "wd",
+  ultrawide: "uw",
+  "shape-vertical": "sv",
+  "shape-horizontal": "sh",
+  "shape-square": "ss"
+};
+export const spacingValues = {
+  0: "0",
+  1: "0.25rem",
+  2: "0.5rem",
+  3: "1rem",
+  4: "1.5rem",
+  5: "3rem"
+};
+
+export const utilities = {
+  p: { properties: ["padding"], values: spacing },
+  px: { properties: ["padding-left", "padding-right"], values: spacing },
+  py: { properties: ["padding-top", "padding-bottom"], values: spacing },
+  pb: { properties: ["padding-bottom"], values: spacing },
+  pt: { properties: ["padding-top"], values: spacing },
+  ps: { properties: ["padding-inline-start"], values: spacing },
+  pe: { properties: ["padding-inline-end"], values: spacing },
+  m: { properties: ["margin"], values: marginValues },
+  mx: { properties: ["margin-left", "margin-right"], values: marginValues },
+  my: { properties: ["margin-top", "margin-bottom"], values: marginValues },
+  mb: { properties: ["margin-bottom"], values: marginValues },
+  mt: { properties: ["margin-top"], values: marginValues },
+  ms: { properties: ["margin-inline-start"], values: marginValues },
+  me: { properties: ["margin-inline-end"], values: marginValues },
+  gap: { properties: ["gap"], values: spacing },
+  d: { properties: ["display"], values: ["none", "block", "inline", "inline-block", "flex", "inline-flex", "grid", "inline-grid"] },
+  "flex": { properties: ["flex-direction"], values: ["row", "row-reverse", "column", "column-reverse"] },
+  "justify-content": { properties: ["justify-content"], values: ["flex-start", "flex-end", "center", "space-between", "space-around", "space-evenly"] },
+  "align-items": { properties: ["align-items"], values: ["stretch", "flex-start", "flex-end", "center", "baseline"] },
+  "align-content": { properties: ["align-content"], values: ["stretch", "flex-start", "flex-end", "center", "baseline", "space-between", "space-around", "space-evenly"] },
+  position: { properties: ["position"], values: ["static", "relative", "absolute", "fixed", "sticky"] },
+  text: {
+    values: ["start", "center", "end", "wrap", "nowrap", "break"],
+    declarations: {
+      start: { "text-align": "start" },
+      center: { "text-align": "center" },
+      end: { "text-align": "end" },
+      wrap: { "white-space": "normal" },
+      nowrap: { "white-space": "nowrap" },
+      break: { "overflow-wrap": "break-word", "word-break": "break-word" }
+    }
+  }
+};
+
+export function generateAdaptiveCSS(aellux) {
+  const states = Object.entries(aellux.options.adaptiveParams.minSizes)
+    .sort((first, second) => first[1] - second[1])
+    .map(([state]) => ({ state, className: "fits-" + state }));
+  for (const state of ["shape-vertical", "shape-horizontal", "shape-square"]) {
+    states.push({ state, className: state });
+  }
+  const rules = [];
+
+  for (const { state, className } of states) {
+    const stateAlias = stateAliases[state] || state;
+    const container = `.${aellux.className(className)}`;
+    for (const [utility, definition] of Object.entries(utilities)) {
+      for (const value of definition.values) {
+        const cssValue = typeof value === "number" ? spacingValues[value] : value;
+        const propertyValues = definition.declarations
+          ? Object.entries(definition.declarations[value])
+          : definition.properties.map(property => [property, cssValue]);
+        const declarations = propertyValues
+          .map(([property, propertyValue]) => `  ${property}: ${propertyValue} !important;`)
+          .join("\n");
+        rules.push(`${container} .${utility}-ux-${stateAlias}-${value} {\n${declarations}\n}`);
+      }
+    }
+  }
+
+  return rules.join("\n\n") + "\n";
+}

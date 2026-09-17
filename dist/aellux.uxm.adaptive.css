@@ -22,6 +22,22 @@
   aspect-ratio: 9 / 16 !important;
 }
 
+.ar-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ar-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ar-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ar-9x21 {
+  aspect-ratio: 9 / 21 !important;
+}
+
 .ae--fits-compact .p-ux-cp-0 {
   padding: 0 !important;
 }
@@ -602,6 +618,22 @@
 
 .ae--fits-compact .ar-ux-cp-9x16 {
   aspect-ratio: 9 / 16 !important;
+}
+
+.ae--fits-compact .ar-ux-cp-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-compact .ar-ux-cp-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-compact .ar-ux-cp-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-compact .ar-ux-cp-9x21 {
+  aspect-ratio: 9 / 21 !important;
 }
 
 .ae--fits-compact .text-ux-cp-start {
@@ -1211,6 +1243,22 @@
   aspect-ratio: 9 / 16 !important;
 }
 
+.ae--fits-small .ar-ux-sm-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-small .ar-ux-sm-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-small .ar-ux-sm-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-small .ar-ux-sm-9x21 {
+  aspect-ratio: 9 / 21 !important;
+}
+
 .ae--fits-small .text-ux-sm-start {
   text-align: start !important;
 }
@@ -1816,6 +1864,22 @@
 
 .ae--fits-medium .ar-ux-md-9x16 {
   aspect-ratio: 9 / 16 !important;
+}
+
+.ae--fits-medium .ar-ux-md-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-medium .ar-ux-md-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-medium .ar-ux-md-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-medium .ar-ux-md-9x21 {
+  aspect-ratio: 9 / 21 !important;
 }
 
 .ae--fits-medium .text-ux-md-start {
@@ -2425,6 +2489,22 @@
   aspect-ratio: 9 / 16 !important;
 }
 
+.ae--fits-large .ar-ux-lg-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-large .ar-ux-lg-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-large .ar-ux-lg-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-large .ar-ux-lg-9x21 {
+  aspect-ratio: 9 / 21 !important;
+}
+
 .ae--fits-large .text-ux-lg-start {
   text-align: start !important;
 }
@@ -3030,6 +3110,22 @@
 
 .ae--fits-wide .ar-ux-wd-9x16 {
   aspect-ratio: 9 / 16 !important;
+}
+
+.ae--fits-wide .ar-ux-wd-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-wide .ar-ux-wd-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-wide .ar-ux-wd-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-wide .ar-ux-wd-9x21 {
+  aspect-ratio: 9 / 21 !important;
 }
 
 .ae--fits-wide .text-ux-wd-start {
@@ -3639,6 +3735,22 @@
   aspect-ratio: 9 / 16 !important;
 }
 
+.ae--fits-ultrawide .ar-ux-uw-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--fits-ultrawide .ar-ux-uw-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--fits-ultrawide .ar-ux-uw-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--fits-ultrawide .ar-ux-uw-9x21 {
+  aspect-ratio: 9 / 21 !important;
+}
+
 .ae--fits-ultrawide .text-ux-uw-start {
   text-align: start !important;
 }
@@ -4244,6 +4356,22 @@
 
 .ae--shape-vertical .ar-ux-sv-9x16 {
   aspect-ratio: 9 / 16 !important;
+}
+
+.ae--shape-vertical .ar-ux-sv-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--shape-vertical .ar-ux-sv-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--shape-vertical .ar-ux-sv-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--shape-vertical .ar-ux-sv-9x21 {
+  aspect-ratio: 9 / 21 !important;
 }
 
 .ae--shape-vertical .text-ux-sv-start {
@@ -4853,6 +4981,22 @@
   aspect-ratio: 9 / 16 !important;
 }
 
+.ae--shape-horizontal .ar-ux-sh-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--shape-horizontal .ar-ux-sh-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--shape-horizontal .ar-ux-sh-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--shape-horizontal .ar-ux-sh-9x21 {
+  aspect-ratio: 9 / 21 !important;
+}
+
 .ae--shape-horizontal .text-ux-sh-start {
   text-align: start !important;
 }
@@ -5458,6 +5602,22 @@
 
 .ae--shape-square .ar-ux-ss-9x16 {
   aspect-ratio: 9 / 16 !important;
+}
+
+.ae--shape-square .ar-ux-ss-18x9 {
+  aspect-ratio: 18 / 9 !important;
+}
+
+.ae--shape-square .ar-ux-ss-9x18 {
+  aspect-ratio: 9 / 18 !important;
+}
+
+.ae--shape-square .ar-ux-ss-21x9 {
+  aspect-ratio: 21 / 9 !important;
+}
+
+.ae--shape-square .ar-ux-ss-9x21 {
+  aspect-ratio: 9 / 21 !important;
 }
 
 .ae--shape-square .text-ux-ss-start {

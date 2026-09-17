@@ -43,7 +43,7 @@ export const utilities = {
   "align-content": { properties: ["align-content"], values: ["stretch", "flex-start", "flex-end", "center", "baseline", "space-between", "space-around", "space-evenly"] },
   position: { properties: ["position"], values: ["static", "relative", "absolute", "fixed", "sticky"] },
   ar: {
-    values: ["auto", "1x1", "4x3", "3x4", "16x9", "9x16"],
+    values: ["auto", "1x1", "4x3", "3x4", "16x9", "9x16", "18x9", "9x18", "21x9", "9x21"],
     declarations: {
       auto: { "aspect-ratio": "auto" },
       "1x1": { "aspect-ratio": "1 / 1" },

@@ -2,6 +2,7 @@
 
 export const spacing = [0, 1, 2, 3, 4, 5];
 export const marginValues = [...spacing, "auto"];
+export const columnCounts = Array.from({ length: 12 }, (_, index) => index + 1);
 export const stateAliases = {
   compact: "cp",
   small: "sm",
@@ -44,6 +45,21 @@ export const utilities = {
   "align-items": { properties: ["align-items"], values: ["stretch", "flex-start", "flex-end", "center", "baseline"] },
   "align-content": { properties: ["align-content"], values: ["stretch", "flex-start", "flex-end", "center", "baseline", "space-between", "space-around", "space-evenly"] },
   position: { properties: ["position"], values: ["static", "relative", "absolute", "fixed", "sticky"] },
+  "row-cols": {
+    values: ["auto", ...columnCounts.slice(0, 6)],
+    selectorSuffix: " > *",
+    declarations: Object.fromEntries(["auto", ...columnCounts.slice(0, 6)].map(value => [value, {
+      flex: "0 0 auto",
+      width: value === "auto" ? "auto" : `${100 / value}%`
+    }]))
+  },
+  col: {
+    values: ["auto", ...columnCounts],
+    declarations: Object.fromEntries(["auto", ...columnCounts].map(value => [value, {
+      flex: "0 0 auto",
+      width: value === "auto" ? "auto" : `${value / 12 * 100}%`
+    }]))
+  },
   ar: {
     values: ["auto", "1x1", "4x3", "3x4", "16x9", "9x16", "18x9", "9x18", "21x9", "9x21"],
     declarations: {
@@ -100,7 +116,7 @@ export function generateAdaptiveCSS(aellux) {
         const declarations = propertyValues
           .map(([property, propertyValue]) => `  ${property}: ${propertyValue} !important;`)
           .join("\n");
-        rules.push(`${container} .${utility}-ux-${stateAlias}-${value} {\n${declarations}\n}`);
+        rules.push(`${container} .${utility}-ux-${stateAlias}-${value}${definition.selectorSuffix || ""} {\n${declarations}\n}`);
       }
     }
   }

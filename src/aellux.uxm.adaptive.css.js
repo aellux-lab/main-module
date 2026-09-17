@@ -50,7 +50,11 @@ export const utilities = {
       "4x3": { "aspect-ratio": "4 / 3" },
       "3x4": { "aspect-ratio": "3 / 4" },
       "16x9": { "aspect-ratio": "16 / 9" },
-      "9x16": { "aspect-ratio": "9 / 16" }
+      "9x16": { "aspect-ratio": "9 / 16" },
+      "18x9": { "aspect-ratio": "18 / 9" },
+      "9x18": { "aspect-ratio": "9 / 18" },
+      "21x9": { "aspect-ratio": "21 / 9" },
+      "9x21": { "aspect-ratio": "9 / 21" }
     }
   },
   text: {

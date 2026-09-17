@@ -42,6 +42,17 @@ export const utilities = {
   "align-items": { properties: ["align-items"], values: ["stretch", "flex-start", "flex-end", "center", "baseline"] },
   "align-content": { properties: ["align-content"], values: ["stretch", "flex-start", "flex-end", "center", "baseline", "space-between", "space-around", "space-evenly"] },
   position: { properties: ["position"], values: ["static", "relative", "absolute", "fixed", "sticky"] },
+  ar: {
+    values: ["auto", "1x1", "4x3", "3x4", "16x9", "9x16"],
+    declarations: {
+      auto: { "aspect-ratio": "auto" },
+      "1x1": { "aspect-ratio": "1 / 1" },
+      "4x3": { "aspect-ratio": "4 / 3" },
+      "3x4": { "aspect-ratio": "3 / 4" },
+      "16x9": { "aspect-ratio": "16 / 9" },
+      "9x16": { "aspect-ratio": "9 / 16" }
+    }
+  },
   text: {
     values: ["start", "center", "end", "wrap", "nowrap", "break"],
     declarations: {
@@ -63,6 +74,13 @@ export function generateAdaptiveCSS(aellux) {
     states.push({ state, className: state });
   }
   const rules = [];
+
+  for (const value of utilities.ar.values) {
+    const declarations = Object.entries(utilities.ar.declarations[value])
+      .map(([property, propertyValue]) => `  ${property}: ${propertyValue} !important;`)
+      .join("\n");
+    rules.push(`.ar-${value} {\n${declarations}\n}`);
+  }
 
   for (const { state, className } of states) {
     const stateAlias = stateAliases[state] || state;

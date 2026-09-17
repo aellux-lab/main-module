@@ -20,7 +20,6 @@
     AELLUX_CLASS_NAME_PREFFIX: "ae--",
 
     AELLUX_DEFAULT_INITIALIZATION_OPTIONS: {
-      defaultAdaptiveCSS: false,
       dependencies: {
         components: {
           "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
@@ -148,7 +147,6 @@
       Aellux.aelluxBasePath = aelluxBasePath;
       Aellux.notAvailable = [];
 
-      addDefaultAdaptiveCSS();
       addWeakStyles();
       loadAellux();
     },
@@ -161,7 +159,6 @@
       session: buildPersistMemory("sessionStorage"),
       preferences: buildPersistMemory("localStorage", "AelluxPreferences")
     },
-    defaultAdaptiveCSSPromise: null,
     updatePreferencesAttributesHTML: updatePreferencesAttributesHTML,
     on: function (event, handler, options) { document.addEventListener(Aellux.eventName(event), handler, options); },
     off: function (event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
@@ -279,40 +276,6 @@
       console.error("[Aellux] Legacy fallback could not be loaded.");
     };
     document.head.appendChild(script);
-  }
-
-  function addDefaultAdaptiveCSS() {
-    var aelluxAdaptiveCSS = "aellux.uxm.adaptive.style" + cssExtension;
-    var attr = Aellux.attr("adaptive-style");
-    if (!Aellux.options.defaultAdaptiveCSS ||
-      typeof document === "undefined" ||
-      document.querySelector("[" + attr + "]"))
-      return;
-
-    var link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "style";
-    link.href = aelluxBasePath + aelluxAdaptiveCSS;
-    document.head.appendChild(link);
-
-    var link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = aelluxBasePath + aelluxAdaptiveCSS;
-    link.setAttribute(attr, "true");
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", function (e) {
-        document.head.appendChild(link);
-      });
-    } else {
-      document.head.appendChild(link);
-    }
-
-    if (typeof Promise === "undefined") return;
-    Aellux.defaultAdaptiveCSSPromise = new Promise(function (resolve, reject) {
-      link.onload = resolve;
-      link.onerror = resolve;
-    });
   }
 
   function addWeakStyles() {

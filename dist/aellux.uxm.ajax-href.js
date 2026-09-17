@@ -1,3 +1,4 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 const attr = {
   ajaxHref: Aellux.attr("ajax-href")
 };

@@ -1,6 +1,7 @@
 {
   "name": "aellux",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "description": "Declarative, modular UX for browser interfaces",
   "type": "module",
   "module": "./dist/aellux.esm.js",
@@ -11,7 +12,7 @@
     "./orchestrator": "./dist/aellux.orchestrator.esm.js",
     "./dist/*": "./dist/*"
   },
-  "files": ["dist", "README.md"],
+  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "node scripts/build.mjs",
     "prepack": "npm run build"

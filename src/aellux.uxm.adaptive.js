@@ -1,3 +1,5 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
+
 "use strict";
 
 export { init, destroy, mountDOM };

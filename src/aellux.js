@@ -1,3 +1,5 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
+
 // Aellux bootstrap: intentionally minimal, using ES5-compatible syntax for legacy browsers;
 // keep feature logic out of this file and use conservative JavaScript only.
 

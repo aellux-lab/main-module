@@ -1,5 +1,6 @@
 "use strict";
 (function() {
+  /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
   (function() {
     var CONSTANTS = {
       AELLUX_SHORT_JS_NAME: "$ae",

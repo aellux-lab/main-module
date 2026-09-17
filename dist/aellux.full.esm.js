@@ -115,6 +115,7 @@ var userPreferences, defaultPreferences, computedPreferences, attr, className;
 var init_aellux_uxm_preferences = __esm({
   "src/aellux.uxm.preferences.js"() {
     "use strict";
+    /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
     userPreferences = /* @__PURE__ */ Object.create(null);
     defaultPreferences = /* @__PURE__ */ Object.create(null);
     computedPreferences = /* @__PURE__ */ Object.create(null);
@@ -260,6 +261,7 @@ var globalSnapshot, globalRemoveSnapshot, globalSnapshotString, skipHashChange, 
 var init_aellux_uxm_state_navigation = __esm({
   "src/aellux.uxm.state-navigation.js"() {
     "use strict";
+    /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
     globalSnapshot = {};
     globalRemoveSnapshot = {};
     globalSnapshotString = "";
@@ -325,6 +327,7 @@ var attr2, modifier, mountDOM;
 var init_aellux_uxm_adaptive = __esm({
   "src/aellux.uxm.adaptive.js"() {
     "use strict";
+    /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
     attr2 = {
       adaptive: Aellux.attr("adaptive")
     };
@@ -401,6 +404,7 @@ var handlers;
 var init_aellux_uxm_feedback = __esm({
   "src/aellux.uxm.feedback.js"() {
     "use strict";
+    /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
     handlers = /* @__PURE__ */ new Map();
   }
 });
@@ -483,6 +487,7 @@ var attr3, previousController;
 var init_aellux_uxm_ajax_href = __esm({
   "src/aellux.uxm.ajax-href.js"() {
     "use strict";
+    /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
     attr3 = {
       ajaxHref: Aellux.attr("ajax-href")
     };
@@ -491,6 +496,7 @@ var init_aellux_uxm_ajax_href = __esm({
 });
 
 // src/aellux.orchestrator.esm.js
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 var root = typeof globalThis !== "undefined" ? globalThis : window;
 var modulePromises = {};
 root.Aellux = Object.assign(AelluxForceUpdate, root.Aellux, {
@@ -721,6 +727,7 @@ window.addEventListener("pageshow", (event) => {
 });
 
 // src/aellux.full.esm.js
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 var root2 = typeof globalThis !== "undefined" ? globalThis : window;
 root2.Aellux.bundledModules = Object.freeze({
   "preferences": () => Promise.resolve().then(() => (init_aellux_uxm_preferences(), aellux_uxm_preferences_exports)),

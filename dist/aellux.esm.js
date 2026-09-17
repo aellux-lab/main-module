@@ -1,3 +1,4 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 const root = typeof globalThis !== "undefined" ? globalThis : window;
 const previousBootstrapURL = root.__aelluxBootstrapURL;
 const bootstrapFilename = /\.min\.js(?:[?#]|$)/.test(import.meta.url) ? "./aellux.min.js" : "./aellux.js";

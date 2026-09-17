@@ -1,3 +1,4 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 const handlers = /* @__PURE__ */ new Map();
 async function init() {
 }

@@ -197,3 +197,9 @@ A legacy bootstrap path exists, but the legacy runtime is not implemented yet.
 Aellux is under active development. The core includes preferences, state navigation, adaptive composition, feedback, and asynchronous links. Experimental components remain only in `examples/components/` and are currently inactive in the examples.
 
 See `examples/` for development markup and experimental demonstrations.
+
+## License
+
+Aellux is licensed under the [Apache License 2.0](LICENSE). You may use, modify, and distribute it, including in commercial projects, subject to the license terms. The software is provided without warranties.
+
+The distribution includes the license text and retains license identifiers in normal and minified JavaScript and adaptive CSS files. Third-party dependencies remain subject to their own licenses.

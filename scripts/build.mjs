@@ -1,3 +1,5 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
+
 import { build } from "esbuild";
 import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
@@ -40,7 +42,7 @@ await build({
   entryPoints: [join(outputDirectory, "aellux.uxm.adaptive.css")],
   outfile: join(outputDirectory, "aellux.uxm.adaptive.min.css"),
   minify: true,
-  legalComments: "none"
+  legalComments: "inline"
 });
 
 for (const sourceFile of sourceFiles) {
@@ -60,7 +62,7 @@ for (const sourceFile of sourceFiles) {
       target: classic ? "es5" : "es2022",
       minify,
       sourcemap: true,
-      legalComments: "none"
+      legalComments: "inline"
     });
     generatedFiles.add(outputFilename);
     generatedFiles.add(outputFilename + ".map");
@@ -76,4 +78,5 @@ for (const entry of await readdir(outputDirectory, { withFileTypes: true })) {
 }
 
 await copyFile(join(projectRoot, "README.md"), join(outputDirectory, "README.md"));
+await copyFile(join(projectRoot, "LICENSE"), join(outputDirectory, "LICENSE"));
 console.log(`Build complete: ${sourceFiles.length * 2} JavaScript files, source maps, and adaptive CSS in dist/.`);

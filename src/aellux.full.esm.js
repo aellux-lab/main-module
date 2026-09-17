@@ -1,3 +1,5 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
+
 import "./aellux.orchestrator.esm.js";
 
 const root = typeof globalThis !== "undefined" ? globalThis : window;

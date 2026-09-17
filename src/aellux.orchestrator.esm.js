@@ -1,3 +1,5 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
+
 // Aellux ESM orchestrator: extends the bootstrap with shared modern-runtime services.
 // Loads and caches configured UX modules, initializes them, and dispatches the Ready event.
 // Ready signals that the orchestrator is initialized and available; it does not guarantee

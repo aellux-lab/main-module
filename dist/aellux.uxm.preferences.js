@@ -1,3 +1,4 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 const userPreferences = /* @__PURE__ */ Object.create(null);
 const defaultPreferences = /* @__PURE__ */ Object.create(null);
 const computedPreferences = /* @__PURE__ */ Object.create(null);

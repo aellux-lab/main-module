@@ -1,3 +1,4 @@
+/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
 const root = typeof globalThis !== "undefined" ? globalThis : window;
 const modulePromises = {};
 root.Aellux = Object.assign(AelluxForceUpdate, root.Aellux, {

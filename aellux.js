@@ -36,9 +36,7 @@
         "preferences",
         "state-navigation",
         "adaptive",
-        "tab-group",
         "feedback",
-        "scrollbox",
         "ajax-href",
       ],
       preferencesOptions: {
@@ -102,30 +100,26 @@
   var scriptExtension = ".js";
   var cssExtension = ".css";
 
+  var root =
+    typeof globalThis !== "undefined"
+      ? globalThis
+      : window;
+
   var bootstrapScript =
     document.currentScript ||
     document.querySelector("script[src*='aellux.js'],script[src*='aellux.min.js']");
 
-  if (!bootstrapScript || !bootstrapScript.src) {
+  var aelluxBootstrapSrc = root.__aelluxBootstrapURL ||
+    (bootstrapScript && bootstrapScript.src);
+
+  if (!aelluxBootstrapSrc) {
     throw new Error("[Aellux] Bootstrap script could not be located.");
   }
-
-  var aelluxBootstrapSrc =
-    typeof document !== "undefined" &&
-      bootstrapScript &&
-      bootstrapScript.src
-      ? bootstrapScript.src
-      : "/aellux.min.js";
 
   var aelluxBasePath = aelluxBootstrapSrc
     ? aelluxBootstrapSrc.substring(0,
       aelluxBootstrapSrc.lastIndexOf("/") + 1)
     : "";
-
-  var root =
-    typeof globalThis !== "undefined"
-      ? globalThis
-      : window;
 
   var old$Instance = root[CONSTANTS.AELLUX_SHORT_JS_NAME];
 

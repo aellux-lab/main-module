@@ -2,7 +2,7 @@
 // Loads and caches configured UX modules, initializes them, and dispatches the Ready event.
 // Ready signals that the orchestrator is initialized and available; it does not guarantee
 // successful UX module initialization or completed DOM mounting. Component-specific events
-// such as TabsReady and AdaptiveUpdate report their own readiness or updates.
+// such as AdaptiveUpdate report their own readiness or updates.
 // Routes explicit DOM update/unmount requests through module connectDOM declarations,
 // forwards browser observer notifications, and provides layout scheduling and fetch helpers.
 // Requires ES modules, dynamic import, Promises, and modern browser APIs; legacy fallback
@@ -100,8 +100,12 @@ function loadUXM(mName) {
   if (modulePromises[key])
     return modulePromises[key];
 
+  const bundledLoader = Aellux.bundledModules?.[mName];
+
   modulePromises[key] =
-    import(`${Aellux.aelluxBasePath}${Aellux.uxmFilename(mName)}`)
+    (bundledLoader
+      ? Promise.resolve().then(() => bundledLoader())
+      : import(`${Aellux.aelluxBasePath}${Aellux.uxmFilename(mName)}`))
       .then(module => {
         const realModule = module.default || module;
         Aellux[key] = realModule;

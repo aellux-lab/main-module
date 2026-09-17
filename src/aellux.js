@@ -20,16 +20,11 @@
     AELLUX_CLASS_NAME_PREFFIX: "ae--",
 
     AELLUX_DEFAULT_INITIALIZATION_OPTIONS: {
+      runtime: "orchestrator",
       dependencies: {
         components: {
           "interactjs": "https://cdn.jsdelivr.net/npm/interactjs@1.10.28/+esm",
           "motion": "https://cdn.jsdelivr.net/npm/motion@13.2.0/+esm"
-        },
-        scrollbox: {
-          "@better-scrol": "https://cdn.jsdelivr.net/npm/better-scroll@2.5.1/+esm",
-          "@better-scroll/slide": "https://cdn.jsdelivr.net/npm/@better-scroll/slide@2.5.1/dist/slide.min.js",
-          "@better-scroll/scroll-bar": "https://cdn.jsdelivr.net/npm/@better-scroll/scroll-bar@2.5.1/dist/scroll-bar.min.js",
-          "@better-scroll/mouse-wheel": "https://cdn.jsdelivr.net/npm/@better-scroll/mouse-wheel@2.5.1/+esm"
         }
       },
       load: [
@@ -138,6 +133,10 @@
 
       mergeOptions(Aellux.options, options || {});
 
+      if (Aellux.options.runtime !== "orchestrator" && Aellux.options.runtime !== "full") {
+        throw new Error("[Aellux] runtime must be orchestrator or full.");
+      }
+
       Aellux.aelluxBasePath = aelluxBasePath;
       Aellux.notAvailable = [];
 
@@ -214,18 +213,18 @@
     if (Aellux.notAvailable.length !== 0)
       return loadLegacyFallback();
 
-    Aellux.options.load.forEach(function (uxmName) { //PRELOAD ALL
-      if (true || Aellux.options.load.indexOf(uxmName) !== -1) {
+    if (Aellux.options.runtime === "orchestrator") {
+      Aellux.options.load.forEach(function (uxmName) {
         var link = document.createElement("link");
         link.rel = "modulepreload";
         link.href = aelluxBasePath + Aellux.uxmFilename(uxmName);
         document.head.appendChild(link);
-      }
-    });
+      });
+    }
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = aelluxBasePath + "aellux.orchestrator.esm" + scriptExtension;
+    script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + ".esm" + scriptExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
       Aellux.dispatch("Awake");

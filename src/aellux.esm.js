@@ -1,10 +1,15 @@
 const root = typeof globalThis !== "undefined" ? globalThis : window;
 const previousBootstrapURL = root.__aelluxBootstrapURL;
 
-root.__aelluxBootstrapURL = new URL("./aellux.js", import.meta.url).href;
+const bootstrapFilename = /\.min\.js(?:[?#]|$)/.test(import.meta.url)
+  ? "./aellux.min.js"
+  : "./aellux.js";
+const bootstrapURL = new URL(bootstrapFilename, import.meta.url).href;
+
+root.__aelluxBootstrapURL = bootstrapURL;
 
 try {
-  await import("./aellux.js");
+  await import(bootstrapURL);
 } finally {
   if (previousBootstrapURL === undefined) {
     delete root.__aelluxBootstrapURL;

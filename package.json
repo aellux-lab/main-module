@@ -1,0 +1,21 @@
+{
+  "name": "aellux",
+  "version": "0.1.0",
+  "description": "Declarative, modular UX for browser interfaces",
+  "type": "module",
+  "module": "./dist/aellux.esm.js",
+  "exports": {
+    ".": "./dist/aellux.esm.js",
+    "./bootstrap": "./dist/aellux.js",
+    "./full": "./dist/aellux.full.esm.js",
+    "./orchestrator": "./dist/aellux.orchestrator.esm.js",
+    "./dist/*": "./dist/*"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "npm run build"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": { "esbuild": "^0.25.0" }
+}

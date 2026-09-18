@@ -176,14 +176,20 @@ Custom events use the `Aellux` prefix. For example, `Aellux.on("Ready", handler)
 
 ## Browser Support
 
-The current runtime targets modern browsers with support for:
+The bootstrap and legacy fallback use ES5-compatible syntax. The orchestrator, individual UXMs, and full bundle target ES2017 and later (ES2017+). This is a syntax baseline, not a guarantee of support in every browser implementing ES2017.
 
-- ES2017 syntax
+All distributed JavaScript files are classic scripts isolated in IIFEs; ES modules are not required in the browser. Modern browser APIs are required separately and are not polyfilled. Depending on the selected UXMs, these include:
+
 - Promises and async functions
-- `ResizeObserver`
+- `ResizeObserver`, `MutationObserver`, and `IntersectionObserver`
+- `fetch`, `CustomEvent`, and `requestAnimationFrame`
 - `URLSearchParams`
 
+The asynchronous-links UXM uses `AbortController` when available; without it, requests still run but cannot be canceled through that API. The bootstrap checks required runtime capabilities and selects the legacy path when those checks fail.
+
 A legacy bootstrap path exists, but the legacy runtime is not implemented yet.
+
+Node.js 20 or newer is required for build tooling, independently of the browser syntax baseline.
 
 ## Project Status
 

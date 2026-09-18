@@ -44,7 +44,7 @@ npm install
 npm run build
 ```
 
-Core sources live in `src/`, build tooling in `scripts/`, and experimental components in `examples/components/`. Only core sources are built and distributed. The flat `dist/` directory contains the ES5 bootstrap and legacy fallback, ESM wrapper, orchestrator, individual core UXMs, and the full core bundle. Each JavaScript file has a minified version and source maps. Obsolete generated artifacts are removed after a successful build. The build uses [esbuild](https://esbuild.github.io/api/) for bundling and minification; modern browser APIs are not polyfilled.
+Core sources live in `src/`, build tooling in `scripts/`, and experimental components in `examples/components/`. Only core sources are built and distributed. The flat `dist/` directory contains the ES5 bootstrap and legacy fallback, ES2017 orchestrator, individual core UXMs, and the full core bundle. All distributed JavaScript files are classic scripts isolated in IIFEs, with minified versions and source maps. `src/aellux.full.esm.js` is only a bundler entry: it generates `aellux.full.js` and `aellux.full.min.js`, not an ESM distribution. Obsolete generated artifacts are removed after a successful build. The build uses [esbuild](https://esbuild.github.io/api/) for bundling and minification; modern browser APIs are not polyfilled.
 
 Serve the repository over HTTP after building to use `index.htm` and the examples.
 
@@ -59,15 +59,7 @@ Choose `runtime: "full"` to load the orchestrator and all core UXMs from one run
 
 The full bundle is a runtime, not a standalone bootstrap: load it through `Aellux.init({ runtime: "full" })`. Example styles remain in `examples/` and are not library runtime dependencies.
 
-ESM usage:
-
-```js
-import Aellux from "./dist/aellux.mjs";
-
-Aellux.init({ runtime: "full" });
-```
-
-ES modules use `.mjs` in both `src/` and `dist/`, with `.min.mjs` variants. The ES5 bootstrap and legacy fallback remain `.js`. Configure your web server to serve `.mjs` files with `Content-Type: text/javascript`; module scripts require a JavaScript MIME type. Existing imports of `.esm.js` or UXM `.js` files must use the new `.mjs` paths.
+The browser distribution exposes the global `Aellux` API; it does not provide ESM named or default exports. Load it with a classic `<script>` tag.
 
 Load the bootstrap script and initialize Aellux after it:
 
@@ -91,7 +83,7 @@ Load the bootstrap script and initialize Aellux after it:
 </html>
 ```
 
-The bootstrap automatically loads the modern ESM runtime and the modules listed in `Aellux.options.load`.
+The bootstrap automatically loads the modern classic-script runtime and the modules listed in `Aellux.options.load`.
 
 ## Adaptive Composition
 
@@ -179,17 +171,16 @@ Custom events use the `Aellux` prefix. For example, `Aellux.on("Ready", handler)
 - Prefer semantic, declarative HTML over imperative setup code.
 - Adapt components to their own space, not only to the viewport.
 - Keep behavior modular and load only the UX capabilities requested by the page.
-- Build on browser standards such as ES modules, custom events, `ResizeObserver`, History API, and Web Storage.
+- Build on browser standards such as custom events, `ResizeObserver`, History API, and Web Storage.
 - Preserve progressive enhancement by keeping the initial HTML meaningful.
 
 ## Browser Support
 
 The current runtime targets modern browsers with support for:
 
-- JavaScript modules
+- ES2017 syntax
 - Promises and async functions
 - `ResizeObserver`
-- Dynamic `import()`
 - `URLSearchParams`
 
 A legacy bootstrap path exists, but the legacy runtime is not implemented yet.

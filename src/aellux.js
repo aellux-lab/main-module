@@ -3,15 +3,13 @@
 // Aellux bootstrap: intentionally minimal, using ES5-compatible syntax for legacy browsers;
 // keep feature logic out of this file and use conservative JavaScript only.
 
-// It must load either the ESM runtime or the legacy fallback without requiring Promise,
+// It must load either the modern classic-script runtime or the legacy fallback without requiring Promise,
 // modules, async/await, or other modern-only features to reach the fallback path.
 
 // Optional browser capabilities must be feature-detected: use matchMedia when available,
 // URLSearchParams with a JSON-based persistence fallback, Web Storage with an in-memory
 // fallback, and document.currentScript with a script-element lookup fallback.
 // Promise-based stylesheet tracking is optional and must be skipped when unavailable.
-
-"use strict";
 
 (function () {
   var CONSTANTS = {
@@ -95,7 +93,6 @@
   };
 
   var scriptExtension = ".js";
-  var moduleExtension = ".mjs";
   var cssExtension = ".css";
 
   var root =
@@ -160,7 +157,7 @@
     off: function (event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
     attr: function (name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
     className: function (name) { return CONSTANTS.AELLUX_CLASS_NAME_PREFFIX + name; },
-    uxmFilename: function (name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + moduleExtension; },
+    uxmFilename: function (name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + scriptExtension; },
     eventName: function (name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + toCamelCase(name); },
     noConflict: function () { return old$Instance; },
 
@@ -182,7 +179,6 @@
   root[CONSTANTS.AELLUX_SHORT_JS_NAME] = root.Aellux;
   if (Aellux.minified) {
     scriptExtension = ".min.js";
-    moduleExtension = ".min.mjs";
     cssExtension = ".min.css";
   }
 
@@ -212,27 +208,25 @@
     if (!window.NodeList || typeof window.NodeList.prototype.forEach !== "function")
       Aellux.notAvailable.push("NodeList.forEach");
 
-    if (!("noModule" in document.createElement("script"))) { Aellux.notAvailable.push("ES modules"); }
-
     if (Aellux.notAvailable.length !== 0)
       return loadLegacyFallback();
 
     if (Aellux.options.runtime === "orchestrator") {
       Aellux.options.load.forEach(function (uxmName) {
         var link = document.createElement("link");
-        link.rel = "modulepreload";
+        link.rel = "preload";
+        link.as = "script";
         link.href = aelluxBasePath + Aellux.uxmFilename(uxmName);
         document.head.appendChild(link);
       });
     }
 
     var script = document.createElement("script");
-    script.type = "module";
-    script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + moduleExtension;
+    script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + scriptExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
       Aellux.dispatch("Awake");
-      Aellux.initModuleLoader()
+      Aellux.startAellux()
         .then(function () {
           Aellux.legacy = false;
           Aellux.supported = true;

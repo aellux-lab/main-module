@@ -4,19 +4,26 @@
   "license": "Apache-2.0",
   "description": "Declarative, modular UX for browser interfaces",
   "type": "module",
-  "module": "./dist/aellux.mjs",
   "exports": {
-    ".": "./dist/aellux.mjs",
+    ".": "./dist/aellux.js",
     "./bootstrap": "./dist/aellux.js",
-    "./full": "./dist/aellux.full.mjs",
-    "./orchestrator": "./dist/aellux.orchestrator.mjs",
+    "./full": "./dist/aellux.full.js",
+    "./orchestrator": "./dist/aellux.orchestrator.js",
     "./dist/*": "./dist/*"
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs",
     "prepack": "npm run build"
   },
-  "engines": { "node": ">=20" },
-  "devDependencies": { "esbuild": "^0.25.0" }
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
 }

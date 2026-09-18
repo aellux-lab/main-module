@@ -1,4 +1,3 @@
-"use strict";
 (function() {
   /*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */
   (function() {
@@ -81,7 +80,6 @@
       }
     };
     var scriptExtension = ".js";
-    var moduleExtension = ".mjs";
     var cssExtension = ".css";
     var root = typeof globalThis !== "undefined" ? globalThis : window;
     var bootstrapScript = document.currentScript || document.querySelector("script[src*='aellux.js'],script[src*='aellux.min.js']");
@@ -138,7 +136,7 @@
         return CONSTANTS.AELLUX_CLASS_NAME_PREFFIX + name;
       },
       uxmFilename: function(name) {
-        return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + moduleExtension;
+        return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + scriptExtension;
       },
       eventName: function(name) {
         return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + toCamelCase(name);
@@ -174,7 +172,6 @@
     root[CONSTANTS.AELLUX_SHORT_JS_NAME] = root.Aellux;
     if (Aellux.minified) {
       scriptExtension = ".min.js";
-      moduleExtension = ".min.mjs";
       cssExtension = ".min.css";
     }
     function loadAellux() {
@@ -207,26 +204,23 @@
         Aellux.notAvailable.push("Element.matches");
       if (!window.NodeList || typeof window.NodeList.prototype.forEach !== "function")
         Aellux.notAvailable.push("NodeList.forEach");
-      if (!("noModule" in document.createElement("script"))) {
-        Aellux.notAvailable.push("ES modules");
-      }
       if (Aellux.notAvailable.length !== 0)
         return loadLegacyFallback();
       if (Aellux.options.runtime === "orchestrator") {
         Aellux.options.load.forEach(function(uxmName) {
           var link = document.createElement("link");
-          link.rel = "modulepreload";
+          link.rel = "preload";
+          link.as = "script";
           link.href = aelluxBasePath + Aellux.uxmFilename(uxmName);
           document.head.appendChild(link);
         });
       }
       var script = document.createElement("script");
-      script.type = "module";
-      script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + moduleExtension;
+      script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + scriptExtension;
       script.setAttribute(attr, "true");
       script.onload = function() {
         Aellux.dispatch("Awake");
-        Aellux.initModuleLoader().then(function() {
+        Aellux.startAellux().then(function() {
           Aellux.legacy = false;
           Aellux.supported = true;
         }).catch(function(error) {

@@ -5,7 +5,7 @@ import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from "node:fs/p
 import { basename, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createContext, runInContext } from "node:vm";
-import { generateAdaptiveCSS } from "../src/aellux.uxm.adaptive.css.mjs";
+import { generateAdaptiveCSS } from "../src/aellux.uxm.adaptive.css.js";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const sourceDirectory = join(projectRoot, "src");
@@ -13,7 +13,7 @@ const outputDirectory = join(projectRoot, "dist");
 const sourceFiles = [];
 
 for (const entry of await readdir(sourceDirectory, { withFileTypes: true })) {
-  if (entry.isFile() && /\.(?:mjs|js)$/.test(entry.name) && !entry.name.endsWith(".css.mjs")) {
+  if (entry.isFile() && entry.name.endsWith(".js") && !entry.name.endsWith(".css.js")) {
     sourceFiles.push(join(sourceDirectory, entry.name));
   }
 }
@@ -48,18 +48,19 @@ await build({
 for (const sourceFile of sourceFiles) {
   const filename = basename(sourceFile);
   const classic = filename === "aellux.js" || filename === "aellux.legacy.js";
-  const full = filename === "aellux.full.mjs";
+  const full = filename === "aellux.full.esm.js";
+  const distributionFilename = full ? "aellux.full.js" : filename;
 
   for (const minify of [false, true]) {
-    const outputFilename = minify ? filename.replace(/\.(mjs|js)$/, ".min.$1") : filename;
+    const outputFilename = minify ? distributionFilename.replace(/\.js$/, ".min.js") : distributionFilename;
     await build({
       absWorkingDir: projectRoot,
       entryPoints: [sourceFile],
       outfile: join(outputDirectory, outputFilename),
       bundle: full,
       platform: "browser",
-      format: classic ? "iife" : "esm",
-      target: classic ? "es5" : "es2022",
+      format: "iife",
+      target: classic ? "es5" : "es2017",
       minify,
       sourcemap: true,
       legalComments: "inline"
@@ -70,8 +71,8 @@ for (const sourceFile of sourceFiles) {
 }
 
 for (const entry of await readdir(outputDirectory, { withFileTypes: true })) {
-  if (entry.isFile() && /^aellux(?:\.[\w-]+)*\.(?:mjs|js)(?:\.map)?$/.test(entry.name) &&
-      !generatedFiles.has(entry.name)) {
+  if (entry.isFile() && /^aellux(?:\.[\w-]+)*\.js(?:\.map)?$/.test(entry.name) &&
+    !generatedFiles.has(entry.name)) {
     await unlink(join(outputDirectory, entry.name));
     console.log(`Removed obsolete build artifact: ${entry.name}`);
   }

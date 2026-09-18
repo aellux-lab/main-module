@@ -4,12 +4,12 @@
   "license": "Apache-2.0",
   "description": "Declarative, modular UX for browser interfaces",
   "type": "module",
-  "module": "./dist/aellux.esm.js",
+  "module": "./dist/aellux.mjs",
   "exports": {
-    ".": "./dist/aellux.esm.js",
+    ".": "./dist/aellux.mjs",
     "./bootstrap": "./dist/aellux.js",
-    "./full": "./dist/aellux.full.esm.js",
-    "./orchestrator": "./dist/aellux.orchestrator.esm.js",
+    "./full": "./dist/aellux.full.mjs",
+    "./orchestrator": "./dist/aellux.orchestrator.mjs",
     "./dist/*": "./dist/*"
   },
   "files": ["dist", "README.md", "LICENSE"],

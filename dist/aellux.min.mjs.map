@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/aellux.mjs"],
+  "sourcesContent": ["/*! Aellux | SPDX-License-Identifier: Apache-2.0 | See LICENSE for terms. */\n\nconst root = typeof globalThis !== \"undefined\" ? globalThis : window;\nconst previousBootstrapURL = root.__aelluxBootstrapURL;\n\nconst bootstrapFilename = /\\.min\\.mjs(?:[?#]|$)/.test(import.meta.url)\n  ? \"./aellux.min.js\"\n  : \"./aellux.js\";\nconst bootstrapURL = new URL(bootstrapFilename, import.meta.url).href;\n\nroot.__aelluxBootstrapURL = bootstrapURL;\n\ntry {\n  await import(bootstrapURL);\n} finally {\n  if (previousBootstrapURL === undefined) {\n    delete root.__aelluxBootstrapURL;\n  } else {\n    root.__aelluxBootstrapURL = previousBootstrapURL;\n  }\n}\n\nconst Aellux = root.Aellux;\n\nexport { Aellux };\nexport default Aellux;\n"],
+  "mappings": "AAAA,4EAEA,MAAMA,EAAO,OAAO,WAAe,IAAc,WAAa,OACxDC,EAAuBD,EAAK,qBAE5BE,EAAoB,uBAAuB,KAAK,YAAY,GAAG,EACjE,kBACA,cACEC,EAAe,IAAI,IAAID,EAAmB,YAAY,GAAG,EAAE,KAEjEF,EAAK,qBAAuBG,EAE5B,GAAI,CACF,MAAM,OAAOA,EACf,QAAE,CACIF,IAAyB,OAC3B,OAAOD,EAAK,qBAEZA,EAAK,qBAAuBC,CAEhC,CAEA,MAAMG,EAASJ,EAAK,OAGpB,IAAOK,EAAQD",
+  "names": ["root", "previousBootstrapURL", "bootstrapFilename", "bootstrapURL", "Aellux", "aellux_default"]
+}

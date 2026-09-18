@@ -95,6 +95,7 @@
   };
 
   var scriptExtension = ".js";
+  var moduleExtension = ".mjs";
   var cssExtension = ".css";
 
   var root =
@@ -159,7 +160,7 @@
     off: function (event, handler, options) { document.removeEventListener(Aellux.eventName(event), handler, options); },
     attr: function (name) { return "data-" + CONSTANTS.AELLUX_DATA_ATTRIBUTE_NAME_PREFFIX + "-" + name; },
     className: function (name) { return CONSTANTS.AELLUX_CLASS_NAME_PREFFIX + name; },
-    uxmFilename: function (name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + scriptExtension; },
+    uxmFilename: function (name) { return "aellux." + CONSTANTS.AELLUX_UXM_SCRIPT_PREFFIX + "." + name + moduleExtension; },
     eventName: function (name) { return CONSTANTS.AELLUX_EVENT_NAME_PREFFIX + toCamelCase(name); },
     noConflict: function () { return old$Instance; },
 
@@ -181,6 +182,7 @@
   root[CONSTANTS.AELLUX_SHORT_JS_NAME] = root.Aellux;
   if (Aellux.minified) {
     scriptExtension = ".min.js";
+    moduleExtension = ".min.mjs";
     cssExtension = ".min.css";
   }
 
@@ -226,7 +228,7 @@
 
     var script = document.createElement("script");
     script.type = "module";
-    script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + ".esm" + scriptExtension;
+    script.src = aelluxBasePath + "aellux." + Aellux.options.runtime + moduleExtension;
     script.setAttribute(attr, "true");
     script.onload = function () {
       Aellux.dispatch("Awake");

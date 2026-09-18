@@ -62,10 +62,12 @@ The full bundle is a runtime, not a standalone bootstrap: load it through `Aellu
 ESM usage:
 
 ```js
-import Aellux from "./dist/aellux.esm.js";
+import Aellux from "./dist/aellux.mjs";
 
 Aellux.init({ runtime: "full" });
 ```
+
+ES modules use `.mjs` in both `src/` and `dist/`, with `.min.mjs` variants. The ES5 bootstrap and legacy fallback remain `.js`. Configure your web server to serve `.mjs` files with `Content-Type: text/javascript`; module scripts require a JavaScript MIME type. Existing imports of `.esm.js` or UXM `.js` files must use the new `.mjs` paths.
 
 Load the bootstrap script and initialize Aellux after it:
 
